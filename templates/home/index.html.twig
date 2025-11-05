@@ -36,19 +36,31 @@
             </div>
 
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="card mb-3">
                         <div class="card-body">
-                            <h3 class="h6">Derniers jeux</h3>
-                            <p>Liste des derniers jeux ajoutés (placeholder).</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h3 class="h6">Stats</h3>
-                            <p>Nombre de jeux, consoles et accessoires (placeholder).</p>
+                            <h3 class="h6">Derniers ajouts</h3>
+                            {% if latest_items is defined and latest_items is not empty %}
+                                <ul class="list-group list-group-flush">
+                                {% for item in latest_items %}
+                                    {% set entity = item.entity %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            {% if item.type == 'game' %}
+                                                <strong>Jeu</strong> — <a href="{{ path('app_game_show', {'id': entity.id}) }}">{{ entity.title }}</a>
+                                            {% elseif item.type == 'console' %}
+                                                <strong>Console</strong> — <a href="{{ path('app_console_show', {'id': entity.id}) }}">{{ entity.name }}</a>
+                                            {% else %}
+                                                <strong>Accessoire</strong> — <a href="{{ path('app_accessory_show', {'id': entity.id}) }}">{{ entity.name }}</a>
+                                            {% endif %}
+                                        </div>
+                                        <small class="text-muted">{{ item.date ? item.date|date('d/m/Y') : '' }}</small>
+                                    </li>
+                                {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="mb-0">Aucun ajout récent.</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -71,4 +83,3 @@
     </div>
 </div>
 {% endblock %}
-

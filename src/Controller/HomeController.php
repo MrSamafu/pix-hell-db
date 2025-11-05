@@ -18,11 +18,46 @@ class HomeController extends AbstractController
         ConsoleRepository $consoleRepository,
         AccessoryRepository $accessoryRepository
     ): Response {
+        // récupérer quelques éléments récents de chaque type
+        $games = $gameRepository->findLatestGames(10);
+        $consoles = $consoleRepository->findLatestConsoles(10);
+        $accessories = $accessoryRepository->findLatestAccessories(10);
+
+        $items = [];
+
+        foreach ($games as $g) {
+            $date = $g->getCreatedAt() ?? $g->getReleaseDate();
+            if ($date) {
+                $items[] = ['type' => 'game', 'entity' => $g, 'date' => $date];
+            }
+        }
+
+        foreach ($consoles as $c) {
+            $date = $c->getAddedAt() ?? $c->getReleaseDate();
+            if ($date) {
+                $items[] = ['type' => 'console', 'entity' => $c, 'date' => $date];
+            }
+        }
+
+        foreach ($accessories as $a) {
+            $date = $a->getCreatedAt() ?? $a->getReleaseDate();
+            if ($date) {
+                $items[] = ['type' => 'accessory', 'entity' => $a, 'date' => $date];
+            }
+        }
+
+        // trier par date desc
+        usort($items, function ($a, $b) {
+            $ta = $a['date'] instanceof \DateTimeInterface ? $a['date']->getTimestamp() : 0;
+            $tb = $b['date'] instanceof \DateTimeInterface ? $b['date']->getTimestamp() : 0;
+            return $tb <=> $ta;
+        });
+
+        // garder les 10 premiers
+        $latestItems = array_slice($items, 0, 10);
+
         return $this->render('home/index.html.twig', [
-            'latest_games' => $gameRepository->findLatestGames(5),
-            'latest_consoles' => $consoleRepository->findLatestConsoles(5),
-            'latest_accessories' => $accessoryRepository->findLatestAccessories(5),
+            'latest_items' => $latestItems,
         ]);
     }
 }
-
