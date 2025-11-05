@@ -9,10 +9,12 @@
         {% if is_granted('edit', accessory) %}
             <a href="{{ path('app_accessory_edit', {'id': accessory.id}) }}" class="btn btn-secondary">Modifier</a>
         {% endif %}
-        <form method="post" action="{{ path('app_accessory_delete', {'id': accessory.id}) }}" style="display:inline-block" onsubmit="return confirm('Voulez-vous supprimer cet accessoire ?');">
-            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ accessory.id) }}">
-            <button class="btn btn-danger">Supprimer</button>
-        </form>
+        {% if is_granted('delete', accessory) %}
+            <form method="post" action="{{ path('app_accessory_delete', {'id': accessory.id}) }}" style="display:inline-block" onsubmit="return confirm('Voulez-vous supprimer cet accessoire ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ accessory.id) }}">
+                <button class="btn btn-danger">Supprimer</button>
+            </form>
+        {% endif %}
     </div>
 </div>
 
@@ -29,4 +31,3 @@
     <button class="btn btn-primary">Ajouter à ma collection</button>
 </form>
 {% endblock %}
-

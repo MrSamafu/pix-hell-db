@@ -9,10 +9,12 @@
         {% if is_granted('edit', console) %}
             <a href="{{ path('app_console_edit', {'id': console.id}) }}" class="btn btn-secondary">Modifier</a>
         {% endif %}
-        <form method="post" action="{{ path('app_console_delete', {'id': console.id}) }}" style="display:inline-block" onsubmit="return confirm('Voulez-vous supprimer cette console ?');">
-            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ console.id) }}">
-            <button class="btn btn-danger">Supprimer</button>
-        </form>
+        {% if is_granted('delete', console) %}
+            <form method="post" action="{{ path('app_console_delete', {'id': console.id}) }}" style="display:inline-block" onsubmit="return confirm('Voulez-vous supprimer cette console ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ console.id) }}">
+                <button class="btn btn-danger">Supprimer</button>
+            </form>
+        {% endif %}
     </div>
 </div>
 
@@ -30,4 +32,3 @@
     <button class="btn btn-primary">Ajouter à ma collection</button>
 </form>
 {% endblock %}
-

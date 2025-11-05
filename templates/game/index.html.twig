@@ -44,6 +44,12 @@
                                         <i class="fas fa-edit"></i>
                                     </a>
                                 {% endif %}
+                                {% if is_granted('delete', game) %}
+                                    <form method="post" action="{{ path('app_game_delete', {'id': game.id}) }}" style="display:inline-block" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce jeu ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ game.id) }}">
+                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>
