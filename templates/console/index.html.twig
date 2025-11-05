@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Consoles - PixHell{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Consoles</h1>
+    <div>
+        {% if is_granted('ROLE_USER') %}
+            <a href="{{ path('app_console_new') }}" class="btn btn-primary">Ajouter une console</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    {% for console in consoles %}
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ console.name }}</h5>
+                    <p class="card-text mb-1">Fabricant : {{ console.manufacturer }}</p>
+                    <p class="card-text mb-2">Génération : {{ console.generation }}</p>
+                    <div class="mt-auto">
+                        <a href="{{ path('app_console_show', {'id': console.id}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+                        {% if is_granted('edit', console) %}
+                            <a href="{{ path('app_console_edit', {'id': console.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="col-12">
+            <p>Aucune console trouvée.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
+

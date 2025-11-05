@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier {{ accessory.name }} - PixHell{% endblock %}
+
+{% block body %}
+<h1>Modifier l'accessoire</h1>
+
+{{ form_start(form) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.type) }}
+    {{ form_row(form.compatibility) }}
+    <button class="btn btn-primary">Mettre à jour</button>
+{{ form_end(form) }}
+{% endblock %}
+

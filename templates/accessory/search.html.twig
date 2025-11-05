@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche accessoires - PixHell{% endblock %}
+
+{% block body %}
+<h1>Résultats de recherche</h1>
+
+{% if accessories is empty %}
+    <p>Aucun résultat pour votre recherche.</p>
+{% else %}
+    <div class="row">
+        {% for accessory in accessories %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ accessory.name }}</h5>
+                        <p class="card-text">Type : {{ accessory.type }}</p>
+                        <div class="mt-auto">
+                            <a href="{{ path('app_accessory_show', {'id': accessory.id}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}
+

@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ console.name }} - PixHell{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>{{ console.name }}</h1>
+    <div>
+        {% if is_granted('edit', console) %}
+            <a href="{{ path('app_console_edit', {'id': console.id}) }}" class="btn btn-secondary">Modifier</a>
+        {% endif %}
+        <form method="post" action="{{ path('app_console_delete', {'id': console.id}) }}" style="display:inline-block" onsubmit="return confirm('Voulez-vous supprimer cette console ?');">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ console.id) }}">
+            <button class="btn btn-danger">Supprimer</button>
+        </form>
+    </div>
+</div>
+
+<ul class="list-group mb-3">
+    <li class="list-group-item"><strong>Fabricant :</strong> {{ console.manufacturer }}</li>
+    <li class="list-group-item"><strong>Génération :</strong> {{ console.generation }}</li>
+    <li class="list-group-item"><strong>Date de sortie :</strong> {{ console.releaseDate ? console.releaseDate|date('d/m/Y') : 'N/A' }}</li>
+</ul>
+
+<form method="post" action="{{ path('app_console_add_to_collection', {'id': console.id}) }}">
+    <div class="mb-3">
+        <label for="quantity" class="form-label">Quantité :</label>
+        <input type="number" name="quantity" id="quantity" value="1" min="1" class="form-control" />
+    </div>
+    <button class="btn btn-primary">Ajouter à ma collection</button>
+</form>
+{% endblock %}
+

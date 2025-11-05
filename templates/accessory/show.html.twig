@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ accessory.name }} - PixHell{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>{{ accessory.name }}</h1>
+    <div>
+        {% if is_granted('edit', accessory) %}
+            <a href="{{ path('app_accessory_edit', {'id': accessory.id}) }}" class="btn btn-secondary">Modifier</a>
+        {% endif %}
+        <form method="post" action="{{ path('app_accessory_delete', {'id': accessory.id}) }}" style="display:inline-block" onsubmit="return confirm('Voulez-vous supprimer cet accessoire ?');">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ accessory.id) }}">
+            <button class="btn btn-danger">Supprimer</button>
+        </form>
+    </div>
+</div>
+
+<ul class="list-group mb-3">
+    <li class="list-group-item"><strong>Type :</strong> {{ accessory.type }}</li>
+    <li class="list-group-item"><strong>Compatibilité :</strong> {{ accessory.compatibility }}</li>
+</ul>
+
+<form method="post" action="{{ path('app_accessory_add_to_collection', {'id': accessory.id}) }}">
+    <div class="mb-3">
+        <label for="quantity" class="form-label">Quantité :</label>
+        <input type="number" name="quantity" id="quantity" value="1" min="1" class="form-control" />
+    </div>
+    <button class="btn btn-primary">Ajouter à ma collection</button>
+</form>
+{% endblock %}
+

@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle console - PixHell{% endblock %}
+
+{% block body %}
+<h1>Ajouter une console</h1>
+
+{{ form_start(form) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.manufacturer) }}
+    {{ form_row(form.releaseDate) }}
+    {{ form_row(form.generation) }}
+    <button class="btn btn-primary">Enregistrer</button>
+{{ form_end(form) }}
+{% endblock %}
+

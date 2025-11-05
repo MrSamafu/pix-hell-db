@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier {{ console.name }} - PixHell{% endblock %}
+
+{% block body %}
+<h1>Modifier la console</h1>
+
+{{ form_start(form) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.manufacturer) }}
+    {{ form_row(form.releaseDate) }}
+    {{ form_row(form.generation) }}
+    <button class="btn btn-primary">Mettre à jour</button>
+{{ form_end(form) }}
+{% endblock %}
+

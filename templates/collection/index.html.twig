@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ma Collection - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <h1>Ma Collection</h1>
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">Mes Jeux</h2>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for gameCollection in game_collections %}
+                            <div class="list-group-item">
+                                <h5 class="mb-1">{{ gameCollection.game.title }}</h5>
+                                <p class="mb-1">Plateforme : {{ gameCollection.game.platform }}</p>
+                                <small>Quantité : {{ gameCollection.quantity }}</small>
+                            </div>
+                        {% else %}
+                            <div class="text-center p-3">
+                                <p class="text-muted">Aucun jeu dans votre collection</p>
+                                <a href="{{ path('app_game_index') }}" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Parcourir les jeux
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">Mes Consoles</h2>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for consoleCollection in console_collections %}
+                            <div class="list-group-item">
+                                <h5 class="mb-1">{{ consoleCollection.console.name }}</h5>
+                                <p class="mb-1">Fabricant : {{ consoleCollection.console.manufacturer }}</p>
+                                <small>Quantité : {{ consoleCollection.quantity }}</small>
+                            </div>
+                        {% else %}
+                            <div class="text-center p-3">
+                                <p class="text-muted">Aucune console dans votre collection</p>
+                                <a href="{{ path('app_console_index') }}" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Parcourir les consoles
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">Mes Accessoires</h2>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for accessoryCollection in accessory_collections %}
+                            <div class="list-group-item">
+                                <h5 class="mb-1">{{ accessoryCollection.accessory.name }}</h5>
+                                <p class="mb-1">Type : {{ accessoryCollection.accessory.type }}</p>
+                                <small>Quantité : {{ accessoryCollection.quantity }}</small>
+                            </div>
+                        {% else %}
+                            <div class="text-center p-3">
+                                <p class="text-muted">Aucun accessoire dans votre collection</p>
+                                <a href="{{ path('app_accessory_index') }}" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Parcourir les accessoires
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

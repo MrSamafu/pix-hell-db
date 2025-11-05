@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center my-4">
+        <h1 class="h3">Bienvenue sur Pix Hell DB</h1>
+
+        <div>
+            {% if app.user %}
+                <div class="btn-group">
+                    <a href="{{ path('app_profile') }}" class="btn btn-outline-primary">Profil</a>
+                    <a href="{{ path('app_logout') }}" class="btn btn-outline-danger">Déconnexion</a>
+                </div>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="btn btn-primary">Se connecter</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <nav class="nav nav-pills mb-4">
+        <a class="nav-link" href="{{ path('app_game_index') }}">Jeux vidéo</a>
+        <a class="nav-link" href="{{ path('app_console_index') }}">Consoles</a>
+        <a class="nav-link" href="{{ path('app_accessory_index') }}">Accessoires</a>
+        <a class="nav-link" href="{{ path('app_collection_index') }}">Ma collection</a>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h2 class="h5">À propos</h2>
+                    <p>Bienvenue sur votre gestionnaire de collection de jeux, consoles et accessoires. Utilisez le menu ci-dessus pour naviguer.</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h3 class="h6">Derniers jeux</h3>
+                            <p>Liste des derniers jeux ajoutés (placeholder).</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h3 class="h6">Stats</h3>
+                            <p>Nombre de jeux, consoles et accessoires (placeholder).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="h6">Raccourcis</h3>
+                    <ul class="list-unstyled mb-0">
+                        <li><a href="{{ path('app_game_index') }}">Consulter les jeux</a></li>
+                        <li><a href="{{ path('app_console_index') }}">Consulter les consoles</a></li>
+                        <li><a href="{{ path('app_accessory_index') }}">Consulter les accessoires</a></li>
+                        <li><a href="{{ path('app_collection_index') }}">Ma collection</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
