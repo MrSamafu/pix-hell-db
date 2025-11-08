@@ -4,73 +4,87 @@
 
 {% block body %}
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center my-4">
-        <h1 class="h3">Bienvenue sur Pix Hell DB</h1>
-
-        <div>
-            {% if app.user %}
-                <div class="btn-group">
-                    <a href="{{ path('app_profile') }}" class="btn btn-outline-primary">Profil</a>
-                    <a href="{{ path('app_logout') }}" class="btn btn-outline-danger">Déconnexion</a>
-                </div>
-            {% else %}
-                <a href="{{ path('app_login') }}" class="btn btn-primary">Se connecter</a>
-            {% endif %}
-        </div>
+    <div class="text--center mb-xl">
+        <h1 style="font-size: 3rem; font-weight: 700; margin-bottom: 1rem; background: linear-gradient(135deg, #6761A8, #A0C1B9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+            Bienvenue sur PixHellDB
+        </h1>
+        <p class="text--muted" style="font-size: 1.2rem;">
+            Votre gestionnaire de collection retrogaming
+        </p>
     </div>
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h2 class="h5">À propos</h2>
-                    <p>Bienvenue sur votre gestionnaire de collection de jeux, consoles et accessoires. Utilisez le menu ci-dessus pour naviguer.</p>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h3 class="h6">Derniers ajouts</h3>
-                            {% if latest_items is defined and latest_items is not empty %}
-                                <ul class="list-group list-group-flush">
-                                {% for item in latest_items %}
-                                    {% set entity = item.entity %}
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            {% if item.type == 'game' %}
-                                                <strong>Jeu</strong> — <a href="{{ path('app_game_show', {'id': entity.id}) }}">{{ entity.title }}</a>
-                                            {% elseif item.type == 'console' %}
-                                                <strong>Console</strong> — <a href="{{ path('app_console_show', {'id': entity.id}) }}">{{ entity.name }}</a>
-                                            {% else %}
-                                                <strong>Accessoire</strong> — <a href="{{ path('app_accessory_show', {'id': entity.id}) }}">{{ entity.name }}</a>
-                                            {% endif %}
-                                        </div>
-                                        <small class="text-muted">{{ item.date ? item.date|date('d/m/Y') : '' }}</small>
-                                    </li>
-                                {% endfor %}
-                                </ul>
-                            {% else %}
-                                <p class="mb-0">Aucun ajout récent.</p>
-                            {% endif %}
+    {# Derniers ajouts #}
+    {% if latest_items is defined and latest_items is not empty %}
+    <div class="mb-xl">
+        <h2 class="mb-md" style="font-size: 2rem; font-weight: 700; color: #F0F0C9;">
+            <i class="fas fa-fire"></i> Derniers ajouts
+        </h2>
+        <div class="grid grid--3">
+            {% for item in latest_items %}
+                {% set entity = item.entity %}
+                <div class="card animate-fade-in">
+                    {% if entity.image %}
+                        <img src="{{ entity.image }}" alt="{{ entity.title ?? entity.name }}" class="card__image">
+                    {% else %}
+                        <div class="card__image" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(103, 97, 168, 0.3), rgba(160, 193, 185, 0.3));">
+                            <i class="fas fa-{{ item.type == 'game' ? 'gamepad' : (item.type == 'console' ? 'desktop' : 'plug') }}" style="font-size: 3rem; opacity: 0.5;"></i>
                         </div>
+                    {% endif %}
+                    <div class="card__body">
+                        <div class="badge badge--{{ item.type == 'game' ? 'primary' : (item.type == 'console' ? 'secondary' : 'accent') }} mb-sm">
+                            {{ item.type == 'game' ? 'Jeu' : (item.type == 'console' ? 'Console' : 'Accessoire') }}
+                        </div>
+                        <h3 class="card__title">{{ entity.title ?? entity.name }}</h3>
+                        <p class="card__text text--muted">
+                            <small>Ajouté le {{ item.date ? item.date|date('d/m/Y') : 'N/A' }}</small>
+                        </p>
+                    </div>
+                    <div class="card__footer">
+                        <a href="{{ path('app_' ~ item.type ~ '_show', {'id': entity.id}) }}" class="btn btn--primary btn--small">
+                            Voir les détails
+                        </a>
                     </div>
                 </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# Sections principales #}
+    <div class="grid grid--4 mb-xl">
+        <div class="card">
+            <div class="card__body text--center">
+                <i class="fas fa-gamepad" style="font-size: 3rem; color: #6761A8; margin-bottom: 1rem; display: block;"></i>
+                <h3 class="card__title">Jeux vidéo</h3>
+                <p class="card__text">Explorez votre bibliothèque de jeux</p>
+                <a href="{{ path('app_game_index') }}" class="btn btn--primary">Consulter</a>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="h6">Raccourcis</h3>
-                    <ul class="list-unstyled mb-0">
-                        <li><a href="{{ path('app_game_index') }}">Consulter les jeux</a></li>
-                        <li><a href="{{ path('app_console_index') }}">Consulter les consoles</a></li>
-                        <li><a href="{{ path('app_accessory_index') }}">Consulter les accessoires</a></li>
-                        <li><a href="{{ path('app_collection_index') }}">Ma collection</a></li>
-                    </ul>
-                </div>
+        <div class="card">
+            <div class="card__body text--center">
+                <i class="fas fa-desktop" style="font-size: 3rem; color: #A0C1B9; margin-bottom: 1rem; display: block;"></i>
+                <h3 class="card__title">Consoles</h3>
+                <p class="card__text">Gérez vos consoles de jeux</p>
+                <a href="{{ path('app_console_index') }}" class="btn btn--secondary">Consulter</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card__body text--center">
+                <i class="fas fa-plug" style="font-size: 3rem; color: #A30015; margin-bottom: 1rem; display: block;"></i>
+                <h3 class="card__title">Accessoires</h3>
+                <p class="card__text">Découvrez vos accessoires</p>
+                <a href="{{ path('app_accessory_index') }}" class="btn btn--accent">Consulter</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card__body text--center">
+                <i class="fas fa-folder-open" style="font-size: 3rem; color: #F0F0C9; margin-bottom: 1rem; display: block;"></i>
+                <h3 class="card__title">Ma Collection</h3>
+                <p class="card__text">Accédez à votre collection</p>
+                <a href="{{ path('app_collection_index') }}" class="btn btn--outline">Consulter</a>
             </div>
         </div>
     </div>

@@ -1,0 +1,243 @@
+{#
+  EXEMPLE DE TEMPLATE - Détail d'un jeu
+  Copiez ce fichier et adaptez-le pour vos autres entités (Console, Accessory)
+#}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ game.title }} - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container">
+
+    {# Breadcrumb / Navigation #}
+    <div class="mb-md">
+        <a href="{{ path('app_game_index') }}" class="text--muted">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+
+    {# Layout 2 colonnes #}
+    <div class="grid grid--2 gap-lg">
+
+        {# Colonne gauche - Image et infos principales #}
+        <div>
+            {# Image principale #}
+            <div class="card mb-md">
+                {% if game.image %}
+                    <img src="{{ game.image }}" alt="{{ game.title }}" style="width: 100%; border-radius: 12px;">
+                {% else %}
+                    <div style="width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(103, 97, 168, 0.3), rgba(160, 193, 185, 0.3)); border-radius: 12px;">
+                        <i class="fas fa-gamepad" style="font-size: 5rem; opacity: 0.5; color: #F0F0C9;"></i>
+                    </div>
+                {% endif %}
+            </div>
+
+            {# Informations complémentaires #}
+            <div class="card">
+                <div class="card__body">
+                    <h3 class="card__title" style="font-size: 1.2rem;">
+                        <i class="fas fa-info-circle"></i> Informations
+                    </h3>
+
+                    <table class="table">
+                        <tbody>
+                            {% if game.console %}
+                            <tr>
+                                <td><strong>Console</strong></td>
+                                <td>
+                                    <a href="{{ path('app_console_show', {'id': game.console.id}) }}">
+                                        {{ game.console.name }}
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endif %}
+
+                            {% if game.developer %}
+                            <tr>
+                                <td><strong>Développeur</strong></td>
+                                <td>{{ game.developer }}</td>
+                            </tr>
+                            {% endif %}
+
+                            {% if game.publisher %}
+                            <tr>
+                                <td><strong>Éditeur</strong></td>
+                                <td>{{ game.publisher }}</td>
+                            </tr>
+                            {% endif %}
+
+                            {% if game.releaseDate %}
+                            <tr>
+                                <td><strong>Date de sortie</strong></td>
+                                <td>{{ game.releaseDate|date('d/m/Y') }}</td>
+                            </tr>
+                            {% endif %}
+
+                            {% if game.serie %}
+                            <tr>
+                                <td><strong>Série</strong></td>
+                                <td>{{ game.serie }}</td>
+                            </tr>
+                            {% endif %}
+
+                            {% if game.createdAt %}
+                            <tr>
+                                <td><strong>Ajouté le</strong></td>
+                                <td>{{ game.createdAt|date('d/m/Y à H:i') }}</td>
+                            </tr>
+                            {% endif %}
+
+                            {% if game.user %}
+                            <tr>
+                                <td><strong>Ajouté par</strong></td>
+                                <td>{{ game.user.username }}</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {# Colonne droite - Détails et actions #}
+        <div>
+            {# Titre et badges #}
+            <div class="mb-md">
+                <h1 class="page-title" style="text-align: left; margin-bottom: 1rem;">
+                    {{ game.title }}
+                </h1>
+
+                <div class="mb-md">
+                    {% if game.console %}
+                        <span class="badge badge--secondary">
+                            <i class="fas fa-desktop"></i> {{ game.console.name }}
+                        </span>
+                    {% endif %}
+                    {% if game.releaseDate %}
+                        <span class="badge badge--primary">
+                            <i class="fas fa-calendar"></i> {{ game.releaseDate|date('Y') }}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Genres #}
+            {% if game.genres is not empty %}
+            <div class="card mb-md">
+                <div class="card__body">
+                    <h3 class="card__title" style="font-size: 1rem; margin-bottom: 0.75rem;">
+                        <i class="fas fa-tag"></i> Genres
+                    </h3>
+                    <div>
+                        {% for genre in game.genres %}
+                            <span class="tag">{{ genre.name }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {# Modes de jeu #}
+            {% if game.gameModes is not empty %}
+            <div class="card mb-md">
+                <div class="card__body">
+                    <h3 class="card__title" style="font-size: 1rem; margin-bottom: 0.75rem;">
+                        <i class="fas fa-users"></i> Modes de jeu
+                    </h3>
+                    <div>
+                        {% for mode in game.gameModes %}
+                            <span class="badge badge--accent">{{ mode.name }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {# Actions #}
+            <div class="card">
+                <div class="card__body">
+                    <h3 class="card__title" style="font-size: 1rem; margin-bottom: 1rem;">
+                        <i class="fas fa-cog"></i> Actions
+                    </h3>
+
+                    <div class="d-flex flex--column gap-sm">
+                        {# Bouton Voir #}
+                        <a href="{{ path('app_game_index') }}" class="btn btn--outline">
+                            <i class="fas fa-list"></i> Voir tous les jeux
+                        </a>
+
+                        {# Bouton Éditer #}
+                        {% if is_granted('EDIT', game) %}
+                            <a href="{{ path('app_game_edit', {'id': game.id}) }}" class="btn btn--primary">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                        {% endif %}
+
+                        {# Bouton Supprimer #}
+                        {% if is_granted('DELETE', game) %}
+                            <form method="post" action="{{ path('app_game_delete', {'id': game.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce jeu ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ game.id) }}">
+                                <button type="submit" class="btn btn--accent" style="width: 100%;">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        {% endif %}
+
+                        {# Bouton Ajouter à la collection #}
+                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                            <div class="divider"></div>
+                            <a href="{{ path('app_collection_add_game', {'id': game.id}) }}" class="btn btn--secondary">
+                                <i class="fas fa-plus-circle"></i> Ajouter à ma collection
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Section description (si vous en avez une) #}
+    {% if game.description is defined and game.description %}
+    <div class="card mt-xl">
+        <div class="card__body">
+            <h2 class="card__title">
+                <i class="fas fa-align-left"></i> Description
+            </h2>
+            <div class="card__text">
+                {{ game.description|nl2br }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# Jeux similaires / de la même série (optionnel) #}
+    {% if similar_games is defined and similar_games is not empty %}
+    <div class="mt-xl">
+        <h2 class="mb-md" style="font-size: 1.5rem; font-weight: 700; color: #F0F0C9;">
+            <i class="fas fa-gamepad"></i> Jeux similaires
+        </h2>
+
+        <div class="grid grid--4">
+            {% for similar in similar_games %}
+            <div class="card">
+                {% if similar.image %}
+                    <img src="{{ similar.image }}" alt="{{ similar.title }}" class="card__image">
+                {% endif %}
+                <div class="card__body">
+                    <h3 class="card__title" style="font-size: 1rem;">{{ similar.title }}</h3>
+                </div>
+                <div class="card__footer">
+                    <a href="{{ path('app_game_show', {'id': similar.id}) }}" class="btn btn--primary btn--small">
+                        Voir
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+

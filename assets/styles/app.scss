@@ -1,0 +1,51 @@
+/* Import du thème retrogaming personnalisé */
+@import './retro-theme.scss';
+@import './enhancements.scss';
+@import '~@fortawesome/fontawesome-free/css/all.min.css';
+
+/* Layout principal */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+    padding: 2rem 0;
+}
+
+/* Styles spécifiques à l'application */
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* Adaptations pour les icônes FontAwesome */
+.fa, .fas, .far, .fab {
+    margin-right: 0.5rem;
+}
+
+/* Styles pour le footer */
+footer {
+    margin-top: auto;
+}
+
+/* Styles pour les alertes */
+.alert {
+    margin-bottom: 1.5rem;
+}
+
+/* Styles pour la liste des collections */
+.list-group-item {
+    border-left: 0;
+    border-right: 0;
+}
+
+.list-group-item:first-child {
+    border-top: 0;
+}
+
+.list-group-item:last-child {
+    border-bottom: 0;
+}

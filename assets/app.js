@@ -1,5 +1,5 @@
 import './bootstrap.js';
-import './styles/app.css';
+import './styles/app.scss';
 
 // Activation des composants Bootstrap qui nécessitent JavaScript
 document.addEventListener('DOMContentLoaded', () => {
