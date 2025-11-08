@@ -49,7 +49,7 @@ class ConsoleRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('c')
             ->where('c.generation = :generation')
             ->setParameter('generation', $generation)
-            ->orderBy('c.releaseDate', 'ASC')
+            ->orderBy('c.name', 'ASC')
             ->getQuery()
             ->getResult();
     }
