@@ -1,16 +1,124 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nouvelle console - PixHell{% endblock %}
+{% block title %}Nouvelle console - {{ parent() }}{% endblock %}
 
 {% block body %}
-<h1>Ajouter une console</h1>
+<div class="container">
 
-{{ form_start(form) }}
-    {{ form_row(form.name) }}
-    {{ form_row(form.manufacturer) }}
-    {{ form_row(form.releaseDate) }}
-    {{ form_row(form.generation) }}
-    <button class="btn btn-primary">Enregistrer</button>
-{{ form_end(form) }}
+    {# Breadcrumb #}
+    <div class="mb-md">
+        <a href="{{ path('app_console_index') }}" class="text--muted">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+
+    {# Titre #}
+    <h1 class="page-title mb-xl">
+        <i class="fas fa-plus"></i>
+        Nouvelle console
+    </h1>
+
+    {# Formulaire centré #}
+    <div class="d-flex flex--center">
+        <div style="max-width: 800px; width: 100%;">
+            <div class="card">
+                <div class="card__body">
+
+                    {{ form_start(form) }}
+
+                    {# Section Informations générales #}
+                    <div class="mb-lg">
+                        <h2 class="mb-md" style="font-size: 1.3rem; font-weight: 700; color: #6761A8; border-bottom: 2px solid #6761A8; padding-bottom: 0.5rem;">
+                            <i class="fas fa-info-circle"></i> Informations générales
+                        </h2>
+
+                        {# Nom #}
+                        <div class="form__group">
+                            {{ form_label(form.name, null, {'label_attr': {'class': 'form__label'}}) }}
+                            {{ form_widget(form.name, {'attr': {'class': 'form__input', 'placeholder': 'Ex: PlayStation 5'}}) }}
+                            {{ form_errors(form.name) }}
+                        </div>
+
+                        {# Fabricant #}
+                        <div class="form__group">
+                            {{ form_label(form.manufacturer, null, {'label_attr': {'class': 'form__label'}}) }}
+                            {{ form_widget(form.manufacturer, {'attr': {'class': 'form__input', 'placeholder': 'Ex: Sony'}}) }}
+                            {{ form_errors(form.manufacturer) }}
+                        </div>
+
+                        {# Grid 2 colonnes #}
+                        <div class="grid grid--2">
+                            {# Date de sortie #}
+                            <div class="form__group">
+                                {{ form_label(form.releaseDate, null, {'label_attr': {'class': 'form__label'}}) }}
+                                {{ form_widget(form.releaseDate, {'attr': {'class': 'form__input'}}) }}
+                                {{ form_errors(form.releaseDate) }}
+                            </div>
+
+                            {# Génération #}
+                            <div class="form__group">
+                                {{ form_label(form.generation, null, {'label_attr': {'class': 'form__label'}}) }}
+                                {{ form_widget(form.generation, {'attr': {'class': 'form__input', 'placeholder': 'Ex: 9'}}) }}
+                                {{ form_errors(form.generation) }}
+                            </div>
+                        </div>
+
+                        <div class="grid grid--2">
+                            {# Nombre maximum de joueurs #}
+                            <div class="form__group">
+                                {{ form_label(form.maxPlayers, null, {'label_attr': {'class': 'form__label'}}) }}
+                                {{ form_widget(form.maxPlayers, {'attr': {'class': 'form__input', 'placeholder': 'Ex: 4'}}) }}
+                                {{ form_errors(form.maxPlayers) }}
+                            </div>
+
+                            {# Image URL #}
+                            <div class="form__group">
+                                {{ form_label(form.image, null, {'label_attr': {'class': 'form__label'}}) }}
+                                {{ form_widget(form.image, {'attr': {'class': 'form__input', 'placeholder': 'https://example.com/image.jpg'}}) }}
+                                {{ form_errors(form.image) }}
+                            </div>
+                        </div>
+
+                        <small class="text--muted" style="display: block; margin-top: 0.25rem;">
+                            <i class="fas fa-info-circle"></i> L'image doit être une URL valide
+                        </small>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    {# Boutons d'action #}
+                    <div class="d-flex gap-md" style="justify-content: flex-end; flex-wrap: wrap;">
+                        <a href="{{ path('app_console_index') }}" class="btn btn--outline">
+                            <i class="fas fa-times"></i> Annuler
+                        </a>
+
+                        <button type="submit" class="btn btn--primary">
+                            <i class="fas fa-save"></i> Créer
+                        </button>
+                    </div>
+
+                    {{ form_end(form) }}
+
+                </div>
+            </div>
+
+            {# Aide #}
+            <div class="card mt-md" style="background: rgba(103, 97, 168, 0.1); border-color: rgba(103, 97, 168, 0.3);">
+                <div class="card__body">
+                    <h3 class="card__title" style="font-size: 1rem; color: #6761A8;">
+                        <i class="fas fa-lightbulb"></i> Conseils
+                    </h3>
+                    <ul class="text--muted" style="margin: 0.5rem 0 0 1.5rem; line-height: 1.8;">
+                        <li>Tous les champs sont obligatoires</li>
+                        <li>Ajoutez une image pour un meilleur rendu visuel</li>
+                        <li>La génération correspond à l'ère de la console (ex: PS5 = 9ème génération)</li>
+                        <li>Le nombre de joueurs indique le maximum supporté nativement</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
 {% endblock %}
 

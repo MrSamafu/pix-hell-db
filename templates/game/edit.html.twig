@@ -3,22 +3,156 @@
 {% block title %}Modifier {{ game.title }} - {{ parent() }}{% endblock %}
 
 {% block body %}
-    <div class="card">
-        <div class="card-header">
-            <h1 class="h2 mb-0">Modifier {{ game.title }}</h1>
-        </div>
-        <div class="card-body">
-            {{ form_start(form) }}
-                {{ form_widget(form) }}
-                <div class="text-center mt-3">
-                    <button class="btn btn-primary">
-                        <i class="fas fa-save"></i> Enregistrer
-                    </button>
-                    <a href="{{ path('app_game_show', {'id': game.id}) }}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Annuler
-                    </a>
+<div class="container">
+
+    {# Breadcrumb #}
+    <div class="mb-md">
+        <a href="{{ path('app_game_show', {'id': game.id}) }}" class="text--muted">
+            <i class="fas fa-arrow-left"></i> Retour au jeu
+        </a>
+    </div>
+
+    {# Titre #}
+    <h1 class="page-title mb-xl">
+        <i class="fas fa-edit"></i>
+        Modifier {{ game.title }}
+    </h1>
+
+    {# Formulaire centré #}
+    <div class="d-flex flex--center">
+        <div style="max-width: 800px; width: 100%;">
+            <div class="card">
+                <div class="card__body">
+
+                    {{ form_start(form) }}
+
+                    {# Section Informations générales #}
+                    <div class="mb-lg">
+                        <h2 class="mb-md" style="font-size: 1.3rem; font-weight: 700; color: #6761A8; border-bottom: 2px solid #6761A8; padding-bottom: 0.5rem;">
+                            <i class="fas fa-info-circle"></i> Informations générales
+                        </h2>
+
+                        {# Titre #}
+                        <div class="form__group">
+                            {{ form_label(form.title, null, {'label_attr': {'class': 'form__label'}}) }}
+                            {{ form_widget(form.title, {'attr': {'class': 'form__input', 'placeholder': 'Ex: Super Mario Bros'}}) }}
+                            {{ form_errors(form.title) }}
+                        </div>
+
+                        {# Console #}
+                        <div class="form__group">
+                            {{ form_label(form.platform, null, {'label_attr': {'class': 'form__label'}}) }}
+                            {{ form_widget(form.platform, {'attr': {'class': 'form__select'}}) }}
+                            {{ form_errors(form.platform) }}
+                        </div>
+
+                        {# Grid 2 colonnes pour les champs courts #}
+                        <div class="grid grid--2">
+                            {# Développeur #}
+                            <div class="form__group">
+                                {{ form_label(form.developer, null, {'label_attr': {'class': 'form__label'}}) }}
+                                {{ form_widget(form.developer, {'attr': {'class': 'form__input', 'placeholder': 'Ex: Nintendo'}}) }}
+                                {{ form_errors(form.developer) }}
+                            </div>
+
+                            {# Éditeur #}
+                            <div class="form__group">
+                                {{ form_label(form.publisher, null, {'label_attr': {'class': 'form__label'}}) }}
+                                {{ form_widget(form.publisher, {'attr': {'class': 'form__input', 'placeholder': 'Ex: Nintendo'}}) }}
+                                {{ form_errors(form.publisher) }}
+                            </div>
+                        </div>
+
+                        <div class="grid grid--2">
+                            {# Date de sortie #}
+                            <div class="form__group">
+                                {{ form_label(form.releaseDate, null, {'label_attr': {'class': 'form__label'}}) }}
+                                {{ form_widget(form.releaseDate, {'attr': {'class': 'form__input'}}) }}
+                                {{ form_errors(form.releaseDate) }}
+                            </div>
+
+                            {# Série #}
+                            <div class="form__group">
+                                {{ form_label(form.serie, null, {'label_attr': {'class': 'form__label'}}) }}
+                                {{ form_widget(form.serie, {'attr': {'class': 'form__input', 'placeholder': 'Ex: Mario'}}) }}
+                                {{ form_errors(form.serie) }}
+                            </div>
+                        </div>
+
+                        {# Image URL #}
+                        <div class="form__group">
+                            {{ form_label(form.image, null, {'label_attr': {'class': 'form__label'}}) }}
+                            {{ form_widget(form.image, {'attr': {'class': 'form__input', 'placeholder': 'https://example.com/image.jpg'}}) }}
+                            {{ form_errors(form.image) }}
+                            <small class="text--muted" style="display: block; margin-top: 0.25rem;">
+                                <i class="fas fa-info-circle"></i> URL de l'image de la jaquette
+                            </small>
+                        </div>
+                    </div>
+
+                    {# Section Catégories #}
+                    <div class="mb-lg">
+                        <h2 class="mb-md" style="font-size: 1.3rem; font-weight: 700; color: #A0C1B9; border-bottom: 2px solid #A0C1B9; padding-bottom: 0.5rem;">
+                            <i class="fas fa-tags"></i> Catégories
+                        </h2>
+
+                        <div class="grid grid--2">
+                            {# Genres #}
+                            <div class="form__group">
+                                {{ form_label(form.genres, null, {'label_attr': {'class': 'form__label'}}) }}
+                                {{ form_widget(form.genres, {'attr': {'class': 'form__select', 'multiple': 'multiple', 'size': '5'}}) }}
+                                {{ form_errors(form.genres) }}
+                                <small class="text--muted" style="display: block; margin-top: 0.25rem;">
+                                    <i class="fas fa-info-circle"></i> Maintenez Ctrl pour sélectionner plusieurs
+                                </small>
+                            </div>
+
+                            {# Modes de jeu #}
+                            <div class="form__group">
+                                {{ form_label(form.gameModes, null, {'label_attr': {'class': 'form__label'}}) }}
+                                {{ form_widget(form.gameModes, {'attr': {'class': 'form__select', 'multiple': 'multiple', 'size': '5'}}) }}
+                                {{ form_errors(form.gameModes) }}
+                                <small class="text--muted" style="display: block; margin-top: 0.25rem;">
+                                    <i class="fas fa-info-circle"></i> Maintenez Ctrl pour sélectionner plusieurs
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    {# Boutons d'action #}
+                    <div class="d-flex gap-md" style="justify-content: flex-end; flex-wrap: wrap;">
+                        <a href="{{ path('app_game_show', {'id': game.id}) }}" class="btn btn--outline">
+                            <i class="fas fa-times"></i> Annuler
+                        </a>
+
+                        <button type="submit" class="btn btn--primary">
+                            <i class="fas fa-save"></i> Enregistrer
+                        </button>
+                    </div>
+
+                    {{ form_end(form) }}
+
                 </div>
-            {{ form_end(form) }}
+            </div>
+
+            {# Aide #}
+            <div class="card mt-md" style="background: rgba(103, 97, 168, 0.1); border-color: rgba(103, 97, 168, 0.3);">
+                <div class="card__body">
+                    <h3 class="card__title" style="font-size: 1rem; color: #6761A8;">
+                        <i class="fas fa-lightbulb"></i> Conseils
+                    </h3>
+                    <ul class="text--muted" style="margin: 0.5rem 0 0 1.5rem; line-height: 1.8;">
+                        <li>Remplissez au minimum le titre et la console</li>
+                        <li>Ajoutez une image pour un meilleur rendu visuel</li>
+                        <li>Les genres et modes de jeu aident à filtrer votre collection</li>
+                        <li>La série permet de regrouper les jeux d'une même franchise</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
+
+</div>
 {% endblock %}
