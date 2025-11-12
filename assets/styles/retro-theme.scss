@@ -830,6 +830,303 @@ a {
   margin: 0;
 }
 
+.btn-actions {
+  display: flex;
+  gap: $spacing-xs;
+  align-items: center;
+}
+
+.btn-block {
+  width: 100%;
+  display: block;
+}
+
+// ============================================
+// DETAIL PAGE
+// ============================================
+
+.detail-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-lg;
+  margin-top: $spacing-lg;
+
+  @media (min-width: $breakpoint-desktop) {
+    grid-template-columns: 1fr 350px;
+  }
+}
+
+.detail-main {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-lg;
+
+  @media (min-width: $breakpoint-tablet) {
+    grid-template-columns: 400px 1fr;
+  }
+}
+
+.detail-image {
+  position: relative;
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba($color-purple, 0.2), rgba($color-teal, 0.2));
+  box-shadow: $box-shadow;
+
+  &-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  &-placeholder {
+    aspect-ratio: 3/4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-sm;
+    color: $color-text-muted;
+
+    .placeholder-icon {
+      font-size: 5rem;
+      opacity: 0.5;
+    }
+
+    p {
+      font-size: $font-size-lg;
+      margin: 0;
+    }
+  }
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.detail-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: $color-cream;
+  margin: 0;
+  line-height: 1.2;
+
+  @media (max-width: $breakpoint-tablet) {
+    font-size: 2rem;
+  }
+}
+
+.detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+
+  .tag-platform {
+    background: rgba($color-primary, 0.3);
+    border-color: $color-primary;
+    color: lighten($color-primary, 25%);
+  }
+
+  .tag-series {
+    background: rgba($color-teal, 0.3);
+    border-color: $color-teal;
+    color: lighten($color-teal, 25%);
+  }
+}
+
+.detail-section {
+  background: rgba($color-surface, 0.5);
+  border: 1px solid rgba($color-primary, 0.2);
+  border-radius: $border-radius-md;
+  padding: $spacing-md;
+
+  &-title {
+    font-size: $font-size-xl;
+    font-weight: 700;
+    color: $color-cream;
+    margin: 0 0 $spacing-md 0;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+  }
+}
+
+.detail-description {
+  color: $color-text;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.detail-info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-md;
+
+  @media (min-width: $breakpoint-tablet) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  padding: $spacing-sm;
+  background: rgba($color-dark, 0.3);
+  border-radius: $border-radius-sm;
+  border-left: 3px solid $color-primary;
+}
+
+.info-label {
+  font-size: $font-size-sm;
+  font-weight: 600;
+  color: $color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: $font-size-base;
+  font-weight: 600;
+  color: $color-cream;
+}
+
+// ============================================
+// COLLECTION CARD (SIDEBAR)
+// ============================================
+
+.detail-sidebar {
+  @media (max-width: $breakpoint-desktop) {
+    order: -1;
+  }
+}
+
+.collection-card {
+  background: $color-surface;
+  border: 2px solid $color-primary;
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  box-shadow: $box-shadow-lg;
+  position: sticky;
+  top: $spacing-lg;
+
+  &-header {
+    background: linear-gradient(135deg, rgba($color-primary, 0.3), rgba($color-primary, 0.2));
+    border-bottom: 1px solid rgba($color-primary, 0.4);
+    padding: $spacing-md;
+  }
+
+  &-title {
+    font-size: $font-size-lg;
+    font-weight: 700;
+    color: $color-cream;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+  }
+
+  &-body {
+    padding: $spacing-md;
+  }
+
+  &-footer {
+    background: rgba($color-dark, 0.3);
+    border-top: 1px solid rgba($color-primary, 0.2);
+    padding: $spacing-md;
+  }
+}
+
+.collection-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.collection-hint {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  margin: 0;
+  text-align: center;
+}
+
+// ============================================
+// QUANTITY INPUT
+// ============================================
+
+.quantity-input {
+  display: flex;
+  align-items: stretch;
+  border: 2px solid rgba($color-primary, 0.3);
+  border-radius: $border-radius-md;
+  overflow: hidden;
+  background: rgba($color-surface, 0.6);
+  transition: all $transition-fast;
+
+  &:focus-within {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.2);
+  }
+}
+
+.quantity-btn {
+  background: rgba($color-primary, 0.2);
+  border: none;
+  color: $color-cream;
+  font-size: $font-size-xl;
+  font-weight: 700;
+  width: 48px;
+  cursor: pointer;
+  transition: all $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: rgba($color-primary, 0.4);
+  }
+
+  &:active {
+    background: rgba($color-primary, 0.6);
+  }
+}
+
+.quantity-field {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: $color-cream;
+  font-size: $font-size-xl;
+  font-weight: 700;
+  text-align: center;
+  padding: $spacing-sm;
+  min-width: 0;
+
+  &:focus {
+    outline: none;
+  }
+
+  // Masquer les flèches du input number
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  -moz-appearance: textfield;
+}
+
+.form-help {
+  display: block;
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  margin-top: $spacing-xs;
+  font-style: italic;
+}
+
 // ============================================
 // TABLES
 // ============================================

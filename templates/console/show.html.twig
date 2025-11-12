@@ -1,34 +1,160 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ console.name }} - PixHell{% endblock %}
+{% block title %}{{ console.name }} - {{ parent() }}{% endblock %}
 
 {% block body %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1>{{ console.name }}</h1>
-    <div>
-        {% if is_granted('edit', console) %}
-            <a href="{{ path('app_console_edit', {'id': console.id}) }}" class="btn btn-secondary">Modifier</a>
-        {% endif %}
-        {% if is_granted('delete', console) %}
-            <form method="post" action="{{ path('app_console_delete', {'id': console.id}) }}" style="display:inline-block" onsubmit="return confirm('Voulez-vous supprimer cette console ?');">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ console.id) }}">
-                <button class="btn btn-danger">Supprimer</button>
-            </form>
+    {# Header avec actions #}
+    <div class="page-header">
+        <div class="page-header-content">
+            <a href="{{ path('app_console_index') }}" class="btn btn-outline btn-sm">
+                ← Retour à la liste
+            </a>
+
+            <div class="btn-actions">
+                {% if is_granted('edit', console) %}
+                    <a href="{{ path('app_console_edit', {'id': console.id}) }}" class="btn btn-outline btn-sm">
+                        ✏️ Modifier
+                    </a>
+                {% endif %}
+                {% if is_granted('delete', console) %}
+                    <form method="post" action="{{ path('app_console_delete', {'id': console.id}) }}" class="inline-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette console ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ console.id) }}">
+                        <button type="submit" class="btn btn-danger btn-sm">🗑️ Supprimer</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# Contenu principal #}
+    <div class="detail-container">
+        <div class="detail-main">
+            {# Image de la console #}
+            <div class="detail-image">
+                {% if console.image %}
+                    <img src="{{ console.image }}" alt="{{ console.name }}" class="detail-image-img">
+                {% else %}
+                    <div class="detail-image-placeholder">
+                        <span class="placeholder-icon">🕹️</span>
+                        <p>Aucune image</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            {# Informations principales #}
+            <div class="detail-content">
+                <h1 class="detail-title">{{ console.name }}</h1>
+
+                {# Tags rapides #}
+                <div class="detail-tags">
+                    <span class="tag tag-platform">🏭 {{ console.manufacturer }}</span>
+                    <span class="tag tag-series">🎯 Génération {{ console.generation }}</span>
+                </div>
+
+                {# Informations détaillées #}
+                <div class="detail-section">
+                    <h2 class="detail-section-title">ℹ️ Informations</h2>
+                    <div class="detail-info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Fabricant</span>
+                            <span class="info-value">{{ console.manufacturer }}</span>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Génération</span>
+                            <span class="info-value">{{ console.generation }}ᵉ génération</span>
+                        </div>
+
+                        {% if console.releaseDate %}
+                            <div class="info-item">
+                                <span class="info-label">Date de sortie</span>
+                                <span class="info-value">{{ console.releaseDate|date('d/m/Y') }}</span>
+                            </div>
+                        {% endif %}
+
+                        {% if console.maxPlayers %}
+                            <div class="info-item">
+                                <span class="info-label">Joueurs maximum</span>
+                                <span class="info-value">{{ console.maxPlayers }} joueur{{ console.maxPlayers > 1 ? 's' : '' }}</span>
+                            </div>
+                        {% endif %}
+
+                        {% if console.addedAt %}
+                            <div class="info-item">
+                                <span class="info-label">Ajoutée le</span>
+                                <span class="info-value">{{ console.addedAt|date('d/m/Y à H:i') }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Sidebar - Ajout à la collection #}
+        {% if is_granted('ROLE_USER') %}
+            <div class="detail-sidebar">
+                <div class="collection-card">
+                    <div class="collection-card-header">
+                        <h3 class="collection-card-title">📦 Ma Collection</h3>
+                    </div>
+
+                    <div class="collection-card-body">
+                        <form method="post" action="{{ path('app_console_add_to_collection', {'id': console.id}) }}" class="collection-form">
+                            <div class="form__group">
+                                <label for="quantity" class="form__label">
+                                    Nombre d'exemplaires
+                                </label>
+                                <div class="quantity-input">
+                                    <button type="button" class="quantity-btn quantity-minus" onclick="decreaseQuantity()">−</button>
+                                    <input
+                                        type="number"
+                                        id="quantity"
+                                        name="quantity"
+                                        class="quantity-field"
+                                        value="1"
+                                        min="1"
+                                        max="99"
+                                        required
+                                    >
+                                    <button type="button" class="quantity-btn quantity-plus" onclick="increaseQuantity()">+</button>
+                                </div>
+                                <small class="form-help">
+                                    Indiquez combien d'exemplaires vous possédez
+                                </small>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <span class="btn-icon">+</span>
+                                Ajouter à ma collection
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="collection-card-footer">
+                        <p class="collection-hint">
+                            💡 Vous pourrez gérer vos consoles depuis votre collection
+                        </p>
+                    </div>
+                </div>
+            </div>
         {% endif %}
     </div>
-</div>
 
-<ul class="list-group mb-3">
-    <li class="list-group-item"><strong>Fabricant :</strong> {{ console.manufacturer }}</li>
-    <li class="list-group-item"><strong>Génération :</strong> {{ console.generation }}</li>
-    <li class="list-group-item"><strong>Date de sortie :</strong> {{ console.releaseDate ? console.releaseDate|date('d/m/Y') : 'N/A' }}</li>
-</ul>
+    <script>
+        function increaseQuantity() {
+            const input = document.getElementById('quantity');
+            const currentValue = parseInt(input.value) || 1;
+            if (currentValue < 99) {
+                input.value = currentValue + 1;
+            }
+        }
 
-<form method="post" action="{{ path('app_console_add_to_collection', {'id': console.id}) }}">
-    <div class="mb-3">
-        <label for="quantity" class="form-label">Quantité :</label>
-        <input type="number" name="quantity" id="quantity" value="1" min="1" class="form-control" />
-    </div>
-    <button class="btn btn-primary">Ajouter à ma collection</button>
-</form>
+        function decreaseQuantity() {
+            const input = document.getElementById('quantity');
+            const currentValue = parseInt(input.value) || 1;
+            if (currentValue > 1) {
+                input.value = currentValue - 1;
+            }
+        }
+    </script>
 {% endblock %}
