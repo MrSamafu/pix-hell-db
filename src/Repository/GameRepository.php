@@ -33,15 +33,95 @@ class GameRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findBySearch(string $search): array
+    /**
+     * Recherche avancée de jeux avec filtres multiples
+     *
+     * @param array $criteria Critères de recherche :
+     *   - search: recherche textuelle (titre, série, éditeur, développeur)
+     *   - platform: ID de la console
+     *   - year: année de sortie
+     *   - genre: ID du genre
+     *   - mode: ID du mode
+     *   - letter: première lettre du titre
+     * @return Game[]
+     */
+    public function findBySearchAndFilters(array $criteria = []): array
     {
-        return $this->createQueryBuilder('g')
-            ->where('g.title LIKE :search')
-            ->orWhere('g.platform LIKE :search')
-            ->orWhere('g.genre LIKE :search')
-            ->setParameter('search', '%'.$search.'%')
-            ->orderBy('g.title', 'ASC')
+        $qb = $this->createQueryBuilder('g')
+            ->leftJoin('g.platform', 'p')
+            ->leftJoin('g.genres', 'ge')
+            ->leftJoin('g.modes', 'm')
+            ->addSelect('p', 'ge', 'm');
+
+        // Recherche textuelle (titre, série, éditeur, développeur)
+        if (!empty($criteria['search'])) {
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->like('g.title', ':search'),
+                    $qb->expr()->like('g.series', ':search'),
+                    $qb->expr()->like('g.publisher', ':search'),
+                    $qb->expr()->like('g.developer', ':search')
+                )
+            )
+            ->setParameter('search', '%' . $criteria['search'] . '%');
+        }
+
+        // Filtre par plateforme (console)
+        if (!empty($criteria['platform'])) {
+            $qb->andWhere('p.id = :platform')
+               ->setParameter('platform', $criteria['platform']);
+        }
+
+        // Filtre par année de sortie
+        if (!empty($criteria['year'])) {
+            $qb->andWhere('SUBSTRING(g.releaseDate, 1, 4) = :year')
+               ->setParameter('year', $criteria['year']);
+        }
+
+        // Filtre par genre
+        if (!empty($criteria['genre'])) {
+            $qb->andWhere('ge.id = :genre')
+               ->setParameter('genre', $criteria['genre']);
+        }
+
+        // Filtre par mode
+        if (!empty($criteria['mode'])) {
+            $qb->andWhere('m.id = :mode')
+               ->setParameter('mode', $criteria['mode']);
+        }
+
+        // Filtre par première lettre (recherche alphabétique)
+        if (!empty($criteria['letter'])) {
+            if ($criteria['letter'] === '0-9') {
+                // Commence par un chiffre
+                $qb->andWhere('g.title REGEXP :regex')
+                   ->setParameter('regex', '^[0-9]');
+            } else {
+                // Commence par une lettre spécifique
+                $qb->andWhere('g.title LIKE :letter')
+                   ->setParameter('letter', $criteria['letter'] . '%');
+            }
+        }
+
+        return $qb->orderBy('g.title', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * Récupère toutes les années de sortie disponibles
+     *
+     * @return array
+     */
+    public function findAvailableYears(): array
+    {
+        $result = $this->createQueryBuilder('g')
+            ->select('DISTINCT SUBSTRING(g.releaseDate, 1, 4) as year')
+            ->where('g.releaseDate IS NOT NULL')
+            ->orderBy('year', 'DESC')
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_map(fn($item) => $item['year'], $result);
     }
 }

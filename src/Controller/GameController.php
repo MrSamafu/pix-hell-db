@@ -5,7 +5,10 @@ namespace App\Controller;
 use App\Entity\Game;
 use App\Entity\GameCollection;
 use App\Form\GameType;
+use App\Repository\ConsoleRepository;
 use App\Repository\GameRepository;
+use App\Repository\GenreRepository;
+use App\Repository\ModeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,12 +19,46 @@ use Symfony\Component\Routing\Annotation\Route;
 class GameController extends AbstractController
 {
     #[Route('/', name: 'app_game_index', methods: ['GET'])]
-    public function index(GameRepository $gameRepository): Response
+    public function index(
+        Request $request,
+        GameRepository $gameRepository,
+        ConsoleRepository $consoleRepository,
+        GenreRepository $genreRepository,
+        ModeRepository $modeRepository
+    ): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
+        // Récupération des critères de recherche et filtres
+        $criteria = [
+            'search' => $request->query->get('search'),
+            'platform' => $request->query->get('platform'),
+            'year' => $request->query->get('year'),
+            'genre' => $request->query->get('genre'),
+            'mode' => $request->query->get('mode'),
+            'letter' => $request->query->get('letter'),
+        ];
+
+        // Recherche avec filtres
+        $games = $gameRepository->findBySearchAndFilters(array_filter($criteria));
+
+        // Données pour les filtres
+        $consoles = $consoleRepository->findAll();
+        $genres = $genreRepository->findAll();
+        $modes = $modeRepository->findAll();
+        $years = $gameRepository->findAvailableYears();
+
+        // Alphabet pour la recherche alphabétique
+        $alphabet = array_merge(['0-9'], range('A', 'Z'));
+
         return $this->render('game/index.html.twig', [
-            'games' => $gameRepository->findAll(),
+            'games' => $games,
+            'consoles' => $consoles,
+            'genres' => $genres,
+            'modes' => $modes,
+            'years' => $years,
+            'alphabet' => $alphabet,
+            'currentFilters' => $criteria,
         ]);
     }
 

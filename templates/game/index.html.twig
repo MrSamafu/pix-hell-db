@@ -18,6 +18,175 @@
         </div>
     </div>
 
+    {# Barre de recherche et filtres #}
+    <div class="search-container">
+        <form method="get" action="{{ path('app_game_index') }}" class="search-form">
+            {# Barre de recherche principale #}
+            <div class="search-bar">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input
+                        type="text"
+                        name="search"
+                        class="search-input"
+                        placeholder="Rechercher un jeu (titre, série, éditeur, développeur)..."
+                        value="{{ currentFilters.search ?? '' }}"
+                    >
+                    {% if currentFilters.search %}
+                        <a href="{{ path('app_game_index') }}" class="search-clear" title="Effacer la recherche">✕</a>
+                    {% endif %}
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    Rechercher
+                </button>
+            </div>
+
+            {# Filtres avancés #}
+            <div class="search-filters">
+                <div class="filters-toggle" onclick="toggleFilters()">
+                    <span class="filters-icon">⚙️</span>
+                    <span class="filters-text">Filtres avancés</span>
+                    <span class="filters-arrow" id="filters-arrow">▼</span>
+                </div>
+
+                <div class="filters-content" id="filters-content">
+                    <div class="filters-grid">
+                        {# Filtre Console/Plateforme #}
+                        <div class="filter-group">
+                            <label for="platform" class="filter-label">🕹️ Console</label>
+                            <select name="platform" id="platform" class="filter-select">
+                                <option value="">Toutes les consoles</option>
+                                {% for console in consoles %}
+                                    <option value="{{ console.id }}" {{ currentFilters.platform == console.id ? 'selected' : '' }}>
+                                        {{ console.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        {# Filtre Année #}
+                        <div class="filter-group">
+                            <label for="year" class="filter-label">📅 Année</label>
+                            <select name="year" id="year" class="filter-select">
+                                <option value="">Toutes les années</option>
+                                {% for year in years %}
+                                    <option value="{{ year }}" {{ currentFilters.year == year ? 'selected' : '' }}>
+                                        {{ year }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        {# Filtre Genre #}
+                        <div class="filter-group">
+                            <label for="genre" class="filter-label">🎯 Genre</label>
+                            <select name="genre" id="genre" class="filter-select">
+                                <option value="">Tous les genres</option>
+                                {% for genre in genres %}
+                                    <option value="{{ genre.id }}" {{ currentFilters.genre == genre.id ? 'selected' : '' }}>
+                                        {{ genre.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        {# Filtre Mode #}
+                        <div class="filter-group">
+                            <label for="mode" class="filter-label">🎮 Mode</label>
+                            <select name="mode" id="mode" class="filter-select">
+                                <option value="">Tous les modes</option>
+                                {% for mode in modes %}
+                                    <option value="{{ mode.id }}" {{ currentFilters.mode == mode.id ? 'selected' : '' }}>
+                                        {{ mode.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    {# Recherche alphabétique #}
+                    <div class="filter-group alphabet-filter">
+                        <label class="filter-label">🔤 Recherche alphabétique</label>
+                        <div class="alphabet-grid">
+                            <a href="{{ path('app_game_index') }}"
+                               class="alphabet-btn {{ currentFilters.letter is empty ? 'active' : '' }}"
+                               title="Tous">
+                                Tous
+                            </a>
+                            {% for letter in alphabet %}
+                                <a href="{{ path('app_game_index', {letter: letter}) }}"
+                                   class="alphabet-btn {{ currentFilters.letter == letter ? 'active' : '' }}"
+                                   title="Commence par {{ letter }}">
+                                    {{ letter }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {# Actions des filtres #}
+                    <div class="filters-actions">
+                        <button type="submit" class="btn btn-primary">
+                            ✓ Appliquer les filtres
+                        </button>
+                        <a href="{{ path('app_game_index') }}" class="btn btn-outline">
+                            ✕ Réinitialiser
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        {# Résumé des filtres actifs #}
+        {% if currentFilters.search or currentFilters.platform or currentFilters.year or currentFilters.genre or currentFilters.mode or currentFilters.letter %}
+            <div class="active-filters">
+                <span class="active-filters-label">Filtres actifs :</span>
+                <div class="active-filters-list">
+                    {% if currentFilters.search %}
+                        <span class="filter-tag">
+                            🔍 "{{ currentFilters.search }}"
+                            <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'search')) }}" class="filter-tag-remove">✕</a>
+                        </span>
+                    {% endif %}
+                    {% if currentFilters.platform %}
+                        <span class="filter-tag">
+                            🕹️ Console
+                            <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'platform')) }}" class="filter-tag-remove">✕</a>
+                        </span>
+                    {% endif %}
+                    {% if currentFilters.year %}
+                        <span class="filter-tag">
+                            📅 {{ currentFilters.year }}
+                            <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'year')) }}" class="filter-tag-remove">✕</a>
+                        </span>
+                    {% endif %}
+                    {% if currentFilters.genre %}
+                        <span class="filter-tag">
+                            🎯 Genre
+                            <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'genre')) }}" class="filter-tag-remove">✕</a>
+                        </span>
+                    {% endif %}
+                    {% if currentFilters.mode %}
+                        <span class="filter-tag">
+                            🎮 Mode
+                            <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'mode')) }}" class="filter-tag-remove">✕</a>
+                        </span>
+                    {% endif %}
+                    {% if currentFilters.letter %}
+                        <span class="filter-tag">
+                            🔤 {{ currentFilters.letter }}
+                            <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'letter')) }}" class="filter-tag-remove">✕</a>
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+
+        {# Compteur de résultats #}
+        <div class="search-results-count">
+            <strong>{{ games|length }}</strong> jeu{{ games|length > 1 ? 'x' : '' }} trouvé{{ games|length > 1 ? 's' : '' }}
+        </div>
+    </div>
+
     {% if games is empty %}
         <div class="empty-state">
             <div class="empty-state-icon">🎮</div>
@@ -98,4 +267,28 @@
             {% endfor %}
         </div>
     {% endif %}
+
+    <script>
+        function toggleFilters() {
+            const content = document.getElementById('filters-content');
+            const arrow = document.getElementById('filters-arrow');
+
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+                arrow.textContent = '▲';
+            } else {
+                content.style.display = 'none';
+                arrow.textContent = '▼';
+            }
+        }
+
+        // Ouvrir les filtres automatiquement si des filtres sont actifs
+        document.addEventListener('DOMContentLoaded', function() {
+            const hasActiveFilters = {{ (currentFilters.platform or currentFilters.year or currentFilters.genre or currentFilters.mode) ? 'true' : 'false' }};
+            if (hasActiveFilters) {
+                document.getElementById('filters-content').style.display = 'block';
+                document.getElementById('filters-arrow').textContent = '▲';
+            }
+        });
+    </script>
 {% endblock %}
