@@ -39,11 +39,21 @@
                             {{ form_errors(form.title) }}
                         </div>
 
+                        {# Description #}
+                        <div class="form__group">
+                            {{ form_label(form.description, null, {'label_attr': {'class': 'form__label'}}) }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form__textarea', 'placeholder': 'Décrivez le jeu...'}}) }}
+                            {{ form_errors(form.description) }}
+                        </div>
+
                         {# Console #}
                         <div class="form__group">
                             {{ form_label(form.platform, null, {'label_attr': {'class': 'form__label'}}) }}
                             {{ form_widget(form.platform, {'attr': {'class': 'form__select'}}) }}
                             {{ form_errors(form.platform) }}
+                            <small class="text--muted" style="display: block; margin-top: 0.25rem;">
+                                <i class="fas fa-info-circle"></i> Sélectionnez la console sur laquelle le jeu est sorti
+                            </small>
                         </div>
 
                         {# Grid 2 colonnes pour les champs courts #}
@@ -73,9 +83,9 @@
 
                             {# Série #}
                             <div class="form__group">
-                                {{ form_label(form.serie, null, {'label_attr': {'class': 'form__label'}}) }}
-                                {{ form_widget(form.serie, {'attr': {'class': 'form__input', 'placeholder': 'Ex: Mario'}}) }}
-                                {{ form_errors(form.serie) }}
+                                {{ form_label(form.series, null, {'label_attr': {'class': 'form__label'}}) }}
+                                {{ form_widget(form.series, {'attr': {'class': 'form__input', 'placeholder': 'Ex: Mario'}}) }}
+                                {{ form_errors(form.series) }}
                             </div>
                         </div>
 
@@ -109,9 +119,9 @@
 
                             {# Modes de jeu #}
                             <div class="form__group">
-                                {{ form_label(form.gameModes, null, {'label_attr': {'class': 'form__label'}}) }}
-                                {{ form_widget(form.gameModes, {'attr': {'class': 'form__select', 'multiple': 'multiple', 'size': '5'}}) }}
-                                {{ form_errors(form.gameModes) }}
+                                {{ form_label(form.modes, null, {'label_attr': {'class': 'form__label'}}) }}
+                                {{ form_widget(form.modes, {'attr': {'class': 'form__select', 'multiple': 'multiple', 'size': '5'}}) }}
+                                {{ form_errors(form.modes) }}
                                 <small class="text--muted" style="display: block; margin-top: 0.25rem;">
                                     <i class="fas fa-info-circle"></i> Maintenez Ctrl pour sélectionner plusieurs
                                 </small>

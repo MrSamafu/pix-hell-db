@@ -39,10 +39,17 @@
                             {{ form_errors(form.title) }}
                         </div>
 
-                        {# Console #}
+                        {# Description #}
+                        <div class="form__group">
+                            {{ form_label(form.description, null, {'label_attr': {'class': 'form__label'}}) }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form__input', 'placeholder': 'Ex: Super Mario Bros'}}) }}
+                            {{ form_errors(form.description) }}
+                        </div>
+
+                        {# Plateform #}
                         <div class="form__group">
                             {{ form_label(form.platform, null, {'label_attr': {'class': 'form__label'}}) }}
-                            {{ form_widget(form.platform, {'attr': {'class': 'form__select'}}) }}
+                            {{ form_widget(form.platform, {'attr': {'class': 'form__input', 'placeholder': 'Ex: Super Mario Bros'}}) }}
                             {{ form_errors(form.platform) }}
                         </div>
 

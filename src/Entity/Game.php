@@ -22,10 +22,11 @@ class Game
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $platform = null;
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Console $platform = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $releaseDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'createdGames')]
@@ -92,12 +93,12 @@ class Game
         return $this;
     }
 
-    public function getPlatform(): ?string
+    public function getPlatform(): ?Console
     {
         return $this->platform;
     }
 
-    public function setPlatform(string $platform): static
+    public function setPlatform(?Console $platform): static
     {
         $this->platform = $platform;
         return $this;

@@ -8,11 +8,9 @@ use App\Form\GameType;
 use App\Repository\GameRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/game')]
 class GameController extends AbstractController
@@ -28,41 +26,18 @@ class GameController extends AbstractController
     }
 
     #[Route('/new', name: 'app_game_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
         $game = new Game();
         $game->setCreator($this->getUser());
+        // createdAt est automatiquement défini dans le constructeur de l'entité
 
         $form = $this->createForm(GameType::class, $game);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // createdAt par défaut si non renseigné
-            if (!$game->getCreatedAt()) {
-                $game->setCreatedAt(new \DateTimeImmutable());
-            }
-
-            // gestion de l'image uploadée
-            $imageFile = $form->get('image')->getData();
-            if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-
-                $uploadDir = $this->getParameter('kernel.project_dir').'/public/uploads/games';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0775, true);
-                }
-
-                try {
-                    $imageFile->move($uploadDir, $newFilename);
-                    $game->setImage('uploads/games/'.$newFilename);
-                } catch (FileException $e) {
-                    // on ignore l'exception ici, mais on peut logger
-                }
-            }
 
             $entityManager->persist($game);
             $entityManager->flush();
@@ -88,7 +63,7 @@ class GameController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_game_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Game $game, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function edit(Request $request, Game $game, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('edit', $game);
 
@@ -96,28 +71,6 @@ class GameController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!$game->getCreatedAt()) {
-                $game->setCreatedAt(new \DateTimeImmutable());
-            }
-
-            $imageFile = $form->get('image')->getData();
-            if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-
-                $uploadDir = $this->getParameter('kernel.project_dir').'/public/uploads/games';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0775, true);
-                }
-
-                try {
-                    $imageFile->move($uploadDir, $newFilename);
-                    $game->setImage('uploads/games/'.$newFilename);
-                } catch (FileException $e) {
-                    // logger ou gérer l'erreur
-                }
-            }
 
             $entityManager->flush();
 
