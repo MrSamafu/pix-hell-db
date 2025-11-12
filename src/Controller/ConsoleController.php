@@ -17,10 +17,35 @@ use Symfony\Component\Routing\Annotation\Route;
 class ConsoleController extends AbstractController
 {
     #[Route('/', name: 'app_console_index', methods: ['GET'])]
-    public function index(ConsoleRepository $consoleRepository): Response
+    public function index(Request $request, ConsoleRepository $consoleRepository): Response
     {
+        // Récupération des critères de recherche et filtres
+        $criteria = [
+            'search' => $request->query->get('search'),
+            'manufacturer' => $request->query->get('manufacturer'),
+            'generation' => $request->query->get('generation'),
+            'year' => $request->query->get('year'),
+            'letter' => $request->query->get('letter'),
+        ];
+
+        // Recherche avec filtres
+        $consoles = $consoleRepository->findBySearchAndFilters(array_filter($criteria));
+
+        // Données pour les filtres
+        $manufacturers = $consoleRepository->findAvailableManufacturers();
+        $generations = $consoleRepository->findAvailableGenerations();
+        $years = $consoleRepository->findAvailableYears();
+
+        // Alphabet pour la recherche alphabétique
+        $alphabet = array_merge(['0-9'], range('A', 'Z'));
+
         return $this->render('console/index.html.twig', [
-            'consoles' => $consoleRepository->findAll(),
+            'consoles' => $consoles,
+            'manufacturers' => $manufacturers,
+            'generations' => $generations,
+            'years' => $years,
+            'alphabet' => $alphabet,
+            'currentFilters' => $criteria,
         ]);
     }
 

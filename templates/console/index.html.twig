@@ -18,6 +18,156 @@
         </div>
     </div>
 
+    {# Barre de recherche et filtres #}
+    <div class="search-container">
+        <form method="get" action="{{ path('app_console_index') }}" class="search-form">
+            {# Barre de recherche principale #}
+            <div class="search-bar">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input
+                        type="text"
+                        name="search"
+                        class="search-input"
+                        placeholder="Rechercher une console (nom, fabricant)..."
+                        value="{{ currentFilters.search ?? '' }}"
+                    >
+                    {% if currentFilters.search %}
+                        <a href="{{ path('app_console_index') }}" class="search-clear" title="Effacer la recherche">✕</a>
+                    {% endif %}
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    Rechercher
+                </button>
+            </div>
+
+            {# Filtres avancés #}
+            <div class="search-filters">
+                <div class="filters-toggle" onclick="toggleFilters()">
+                    <span class="filters-icon">⚙️</span>
+                    <span class="filters-text">Filtres avancés</span>
+                    <span class="filters-arrow" id="filters-arrow">▼</span>
+                </div>
+
+                <div class="filters-content" id="filters-content">
+                    <div class="filters-grid">
+                        {# Filtre Fabricant #}
+                        <div class="filter-group">
+                            <label for="manufacturer" class="filter-label">🏭 Fabricant</label>
+                            <select name="manufacturer" id="manufacturer" class="filter-select">
+                                <option value="">Tous les fabricants</option>
+                                {% for manufacturer in manufacturers %}
+                                    <option value="{{ manufacturer }}" {{ currentFilters.manufacturer == manufacturer ? 'selected' : '' }}>
+                                        {{ manufacturer }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        {# Filtre Génération #}
+                        <div class="filter-group">
+                            <label for="generation" class="filter-label">🎯 Génération</label>
+                            <select name="generation" id="generation" class="filter-select">
+                                <option value="">Toutes les générations</option>
+                                {% for generation in generations %}
+                                    <option value="{{ generation }}" {{ currentFilters.generation == generation ? 'selected' : '' }}>
+                                        {{ generation }}ᵉ génération
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        {# Filtre Année #}
+                        <div class="filter-group">
+                            <label for="year" class="filter-label">📅 Année</label>
+                            <select name="year" id="year" class="filter-select">
+                                <option value="">Toutes les années</option>
+                                {% for year in years %}
+                                    <option value="{{ year }}" {{ currentFilters.year == year ? 'selected' : '' }}>
+                                        {{ year }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    {# Recherche alphabétique #}
+                    <div class="filter-group alphabet-filter">
+                        <label class="filter-label">🔤 Recherche alphabétique</label>
+                        <div class="alphabet-grid">
+                            <a href="{{ path('app_console_index') }}"
+                               class="alphabet-btn {{ currentFilters.letter is empty ? 'active' : '' }}"
+                               title="Toutes">
+                                Toutes
+                            </a>
+                            {% for letter in alphabet %}
+                                <a href="{{ path('app_console_index', {letter: letter}) }}"
+                                   class="alphabet-btn {{ currentFilters.letter == letter ? 'active' : '' }}"
+                                   title="Commence par {{ letter }}">
+                                    {{ letter }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {# Actions des filtres #}
+                    <div class="filters-actions">
+                        <button type="submit" class="btn btn-primary">
+                            ✓ Appliquer les filtres
+                        </button>
+                        <a href="{{ path('app_console_index') }}" class="btn btn-outline">
+                            ✕ Réinitialiser
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        {# Résumé des filtres actifs #}
+        {% if currentFilters.search or currentFilters.manufacturer or currentFilters.generation or currentFilters.year or currentFilters.letter %}
+            <div class="active-filters">
+                <span class="active-filters-label">Filtres actifs :</span>
+                <div class="active-filters-list">
+                    {% if currentFilters.search %}
+                        <span class="filter-tag">
+                            🔍 "{{ currentFilters.search }}"
+                            <a href="{{ path('app_console_index', currentFilters|filter((v, k) => k != 'search')) }}" class="filter-tag-remove">✕</a>
+                        </span>
+                    {% endif %}
+                    {% if currentFilters.manufacturer %}
+                        <span class="filter-tag">
+                            🏭 {{ currentFilters.manufacturer }}
+                            <a href="{{ path('app_console_index', currentFilters|filter((v, k) => k != 'manufacturer')) }}" class="filter-tag-remove">✕</a>
+                        </span>
+                    {% endif %}
+                    {% if currentFilters.generation %}
+                        <span class="filter-tag">
+                            🎯 Génération {{ currentFilters.generation }}
+                            <a href="{{ path('app_console_index', currentFilters|filter((v, k) => k != 'generation')) }}" class="filter-tag-remove">✕</a>
+                        </span>
+                    {% endif %}
+                    {% if currentFilters.year %}
+                        <span class="filter-tag">
+                            📅 {{ currentFilters.year }}
+                            <a href="{{ path('app_console_index', currentFilters|filter((v, k) => k != 'year')) }}" class="filter-tag-remove">✕</a>
+                        </span>
+                    {% endif %}
+                    {% if currentFilters.letter %}
+                        <span class="filter-tag">
+                            🔤 {{ currentFilters.letter }}
+                            <a href="{{ path('app_console_index', currentFilters|filter((v, k) => k != 'letter')) }}" class="filter-tag-remove">✕</a>
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+
+        {# Compteur de résultats #}
+        <div class="search-results-count">
+            <strong>{{ consoles|length }}</strong> console{{ consoles|length > 1 ? 's' : '' }} trouvée{{ consoles|length > 1 ? 's' : '' }}
+        </div>
+    </div>
+
     {% if consoles is empty %}
         <div class="empty-state">
             <div class="empty-state-icon">🕹️</div>
@@ -97,5 +247,29 @@
             {% endfor %}
         </div>
     {% endif %}
+
+    <script>
+        function toggleFilters() {
+            const content = document.getElementById('filters-content');
+            const arrow = document.getElementById('filters-arrow');
+
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+                arrow.textContent = '▲';
+            } else {
+                content.style.display = 'none';
+                arrow.textContent = '▼';
+            }
+        }
+
+        // Ouvrir les filtres automatiquement si des filtres sont actifs
+        document.addEventListener('DOMContentLoaded', function() {
+            const hasActiveFilters = {{ (currentFilters.manufacturer or currentFilters.generation or currentFilters.year) ? 'true' : 'false' }};
+            if (hasActiveFilters) {
+                document.getElementById('filters-content').style.display = 'block';
+                document.getElementById('filters-arrow').textContent = '▲';
+            }
+        });
+    </script>
 {% endblock %}
 

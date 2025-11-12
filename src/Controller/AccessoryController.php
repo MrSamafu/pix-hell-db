@@ -16,10 +16,35 @@ use Symfony\Component\Routing\Annotation\Route;
 class AccessoryController extends AbstractController
 {
     #[Route('/', name: 'app_accessory_index', methods: ['GET'])]
-    public function index(AccessoryRepository $accessoryRepository): Response
+    public function index(Request $request, AccessoryRepository $accessoryRepository): Response
     {
+        // Récupération des critères de recherche et filtres
+        $criteria = [
+            'search' => $request->query->get('search'),
+            'type' => $request->query->get('type'),
+            'compatibility' => $request->query->get('compatibility'),
+            'year' => $request->query->get('year'),
+            'letter' => $request->query->get('letter'),
+        ];
+
+        // Recherche avec filtres
+        $accessories = $accessoryRepository->findBySearchAndFilters(array_filter($criteria));
+
+        // Données pour les filtres
+        $types = $accessoryRepository->findAvailableTypes();
+        $compatibilities = $accessoryRepository->findAvailableCompatibilities();
+        $years = $accessoryRepository->findAvailableYears();
+
+        // Alphabet pour la recherche alphabétique
+        $alphabet = array_merge(['0-9'], range('A', 'Z'));
+
         return $this->render('accessory/index.html.twig', [
-            'accessories' => $accessoryRepository->findAll(),
+            'accessories' => $accessories,
+            'types' => $types,
+            'compatibilities' => $compatibilities,
+            'years' => $years,
+            'alphabet' => $alphabet,
+            'currentFilters' => $criteria,
         ]);
     }
 
