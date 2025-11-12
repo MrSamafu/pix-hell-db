@@ -1,39 +1,94 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accessoires - PixHell{% endblock %}
+{% block title %}Accessoires - {{ parent() }}{% endblock %}
 
 {% block body %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1>Accessoires</h1>
-    <div>
-        {% if is_granted('ROLE_USER') %}
-            <a href="{{ path('app_accessory_new') }}" class="btn btn-primary">Ajouter un accessoire</a>
-        {% endif %}
+    <div class="page-header">
+        <div class="page-header-content">
+            <h1 class="page-title">
+                <span class="icon">🎧</span>
+                Accessoires
+            </h1>
+            {% if is_granted('ROLE_USER') %}
+                <a href="{{ path('app_accessory_new') }}" class="btn btn-primary">
+                    <span class="btn-icon">+</span>
+                    Ajouter un accessoire
+                </a>
+            {% endif %}
+        </div>
     </div>
-</div>
 
-<div class="row">
-    {% for accessory in accessories %}
-        <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">{{ accessory.name }}</h5>
-                    <p class="card-text mb-1">Type : {{ accessory.type }}</p>
-                    <p class="card-text mb-2">Compatibilité : {{ accessory.compatibility }}</p>
-                    <div class="mt-auto">
-                        <a href="{{ path('app_accessory_show', {'id': accessory.id}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
-                        {% if is_granted('edit', accessory) %}
-                            <a href="{{ path('app_accessory_edit', {'id': accessory.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
+    {% if accessories is empty %}
+        <div class="empty-state">
+            <div class="empty-state-icon">🎧</div>
+            <h2 class="empty-state-title">Aucun accessoire pour le moment</h2>
+            <p class="empty-state-text">Commencez à documenter vos accessoires gaming !</p>
+            {% if is_granted('ROLE_USER') %}
+                <a href="{{ path('app_accessory_new') }}" class="btn btn-primary">Ajouter votre premier accessoire</a>
+            {% endif %}
         </div>
     {% else %}
-        <div class="col-12">
-            <p>Aucun accessoire trouvé.</p>
+        <div class="cards-grid">
+            {% for accessory in accessories %}
+                <div class="card-item">
+                    {% if accessory.image %}
+                        <div class="card-image" style="background-image: url('{{ accessory.image }}');">
+                            <div class="card-image-overlay"></div>
+                        </div>
+                    {% else %}
+                        <div class="card-image card-image-placeholder">
+                            <span class="placeholder-icon">🎧</span>
+                        </div>
+                    {% endif %}
+
+                    <div class="card-content">
+                        <h3 class="card-title">{{ accessory.name }}</h3>
+
+                        <div class="card-meta">
+                            {% if accessory.type %}
+                                <span class="meta-item">
+                                    <span class="meta-label">Type</span>
+                                    <span class="meta-value">{{ accessory.type }}</span>
+                                </span>
+                            {% endif %}
+
+                            {% if accessory.compatibility %}
+                                <span class="meta-item">
+                                    <span class="meta-label">Compatibilité</span>
+                                    <span class="meta-value">{{ accessory.compatibility }}</span>
+                                </span>
+                            {% endif %}
+
+                            {% if accessory.releaseDate %}
+                                <span class="meta-item">
+                                    <span class="meta-label">Sortie</span>
+                                    <span class="meta-value">{{ accessory.releaseDate|date('d/m/Y') }}</span>
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="card-actions">
+                            <a href="{{ path('app_accessory_show', {'id': accessory.id}) }}" class="btn btn-secondary btn-sm">
+                                Voir détails
+                            </a>
+
+                            {% if is_granted('edit', accessory) %}
+                                <a href="{{ path('app_accessory_edit', {'id': accessory.id}) }}" class="btn btn-outline btn-sm" title="Modifier">
+                                    ✏️
+                                </a>
+                            {% endif %}
+
+                            {% if is_granted('delete', accessory) %}
+                                <form method="post" action="{{ path('app_accessory_delete', {'id': accessory.id}) }}" class="inline-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet accessoire ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ accessory.id) }}">
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">🗑️</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-</div>
+    {% endif %}
 {% endblock %}
 

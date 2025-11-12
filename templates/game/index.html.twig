@@ -1,64 +1,101 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des jeux - {{ parent() }}{% endblock %}
+{% block title %}Jeux Vidéo - {{ parent() }}{% endblock %}
 
 {% block body %}
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Liste des jeux vidéo</h1>
-        <a href="{{ path('app_game_new') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Ajouter un jeu
-        </a>
+    <div class="page-header">
+        <div class="page-header-content">
+            <h1 class="page-title">
+                <span class="icon">🎮</span>
+                Jeux Vidéo
+            </h1>
+            {% if is_granted('ROLE_USER') %}
+                <a href="{{ path('app_game_new') }}" class="btn btn-primary">
+                    <span class="btn-icon">+</span>
+                    Ajouter un jeu
+                </a>
+            {% endif %}
+        </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Titre</th>
-                    <th>Plateforme</th>
-                    <th>Genres</th>
-                    <th>Date de sortie</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for game in games %}
-                    <tr>
-                        <td>{{ game.title }}</td>
-                        <td>{{ game.platform }}</td>
-                        <td>
-                            {% for g in game.genres %}
-                                {{ g.name }}{% if not loop.last %}, {% endif %}
-                            {% else %}
-                                -
-                            {% endfor %}
-                        </td>
-                        <td>{{ game.releaseDate ? game.releaseDate|date('d/m/Y') : '' }}</td>
-                        <td>
-                            <div class="btn-group">
-                                <a href="{{ path('app_game_show', {'id': game.id}) }}" class="btn btn-sm btn-info">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                {% if is_granted('edit', game) %}
-                                    <a href="{{ path('app_game_edit', {'id': game.id}) }}" class="btn btn-sm btn-warning">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                {% endif %}
-                                {% if is_granted('delete', game) %}
-                                    <form method="post" action="{{ path('app_game_delete', {'id': game.id}) }}" style="display:inline-block" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce jeu ?');">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ game.id) }}">
-                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                    </form>
-                                {% endif %}
+    {% if games is empty %}
+        <div class="empty-state">
+            <div class="empty-state-icon">🎮</div>
+            <h2 class="empty-state-title">Aucun jeu pour le moment</h2>
+            <p class="empty-state-text">Commencez à construire votre bibliothèque de jeux !</p>
+            {% if is_granted('ROLE_USER') %}
+                <a href="{{ path('app_game_new') }}" class="btn btn-primary">Ajouter votre premier jeu</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="cards-grid">
+            {% for game in games %}
+                <div class="card-item">
+                    {% if game.image %}
+                        <div class="card-image" style="background-image: url('{{ game.image }}');">
+                            <div class="card-image-overlay"></div>
+                        </div>
+                    {% else %}
+                        <div class="card-image card-image-placeholder">
+                            <span class="placeholder-icon">🎮</span>
+                        </div>
+                    {% endif %}
+
+                    <div class="card-content">
+                        <h3 class="card-title">{{ game.title }}</h3>
+
+                        <div class="card-meta">
+                            {% if game.platform %}
+                                <span class="meta-item">
+                                    <span class="meta-label">Plateforme</span>
+                                    <span class="meta-value">{{ game.platform }}</span>
+                                </span>
+                            {% endif %}
+
+                            {% if game.developer %}
+                                <span class="meta-item">
+                                    <span class="meta-label">Développeur</span>
+                                    <span class="meta-value">{{ game.developer }}</span>
+                                </span>
+                            {% endif %}
+
+                            {% if game.releaseDate %}
+                                <span class="meta-item">
+                                    <span class="meta-label">Sortie</span>
+                                    <span class="meta-value">{{ game.releaseDate|date('d/m/Y') }}</span>
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        {% if game.genres is not empty %}
+                            <div class="card-tags">
+                                {% for genre in game.genres %}
+                                    <span class="tag">{{ genre.name }}</span>
+                                {% endfor %}
                             </div>
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="5" class="text-center">Aucun jeu trouvé</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                        {% endif %}
+
+                        <div class="card-actions">
+                            <a href="{{ path('app_game_show', {'id': game.id}) }}" class="btn btn-secondary btn-sm">
+                                Voir détails
+                            </a>
+
+                            {% if is_granted('edit', game) %}
+                                <a href="{{ path('app_game_edit', {'id': game.id}) }}" class="btn btn-outline btn-sm" title="Modifier">
+                                    ✏️
+                                </a>
+                            {% endif %}
+
+                            {% if is_granted('delete', game) %}
+                                <form method="post" action="{{ path('app_game_delete', {'id': game.id}) }}" class="inline-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce jeu ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ game.id) }}">
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">🗑️</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}
