@@ -1,0 +1,143 @@
+// ============================================
+// COLLECTION STYLES - Minimal & Cohérent
+// ============================================
+
+@import 'retro-theme';
+
+// ============================================
+// Statistiques cards (spécifique aux collections)
+// ============================================
+.collection-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-md;
+    margin-bottom: $spacing-xl;
+
+    .stat-card {
+        background: linear-gradient(135deg, rgba($color-purple, 0.1), rgba($color-purple, 0.05));
+        border: 2px solid rgba($color-purple, 0.3);
+        border-radius: $border-radius-md;
+        padding: $spacing-lg;
+        text-align: center;
+        transition: all $transition-normal;
+
+        &:hover {
+            transform: translateY(-3px);
+            border-color: $color-purple;
+            box-shadow: 0 8px 20px rgba($color-purple, 0.3);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: $spacing-sm;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: $color-cream;
+            margin-bottom: $spacing-xs;
+        }
+
+        .stat-label {
+            color: $color-text-muted;
+            font-size: $font-size-sm;
+        }
+    }
+}
+
+// ============================================
+// Collection item management
+// ============================================
+.collection-item {
+    .item-controls {
+        input[type="number"],
+        textarea {
+            background: lighten($color-dark, 10%);
+            border: 1px solid rgba($color-purple, 0.3);
+            color: $color-cream;
+            border-radius: $border-radius-sm;
+            padding: $spacing-xs $spacing-sm;
+            width: 100%;
+
+            &:focus {
+                border-color: $color-purple;
+                outline: none;
+                box-shadow: 0 0 0 2px rgba($color-purple, 0.2);
+            }
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+            margin-bottom: $spacing-sm;
+        }
+    }
+}
+
+// ============================================
+// Liste des utilisateurs scrollable
+// ============================================
+.users-list {
+    max-height: 400px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: lighten($color-dark, 5%);
+        border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $color-purple;
+        border-radius: 4px;
+
+        &:hover {
+            background: lighten($color-purple, 10%);
+        }
+    }
+}
+
+// ============================================
+// Résultats de recherche dans les collections
+// ============================================
+.owners-box {
+    background: rgba($color-purple, 0.1);
+    border-left: 3px solid $color-purple;
+    border-radius: $border-radius-sm;
+    padding: $spacing-md;
+    margin-top: $spacing-md;
+
+    .owners-title {
+        color: $color-cream;
+        font-weight: 600;
+        margin-bottom: $spacing-sm;
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+    }
+}
+
+// Section dividers pour les résultats
+.section-divider {
+    width: 4px;
+    height: 40px;
+    border-radius: 2px;
+    margin-right: $spacing-md;
+
+    &.divider-primary {
+        background: linear-gradient(180deg, $color-purple, $color-red);
+    }
+
+    &.divider-success {
+        background: linear-gradient(180deg, $color-teal, $color-red);
+    }
+
+    &.divider-warning {
+        background: linear-gradient(180deg, $color-red, $color-purple);
+    }
+}
+

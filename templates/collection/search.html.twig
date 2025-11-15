@@ -3,44 +3,48 @@
 {% block title %}Recherche dans les collections - {{ parent() }}{% endblock %}
 
 {% block body %}
-    <div class="container-fluid py-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Recherche dans les collections</h1>
-            <a href="{{ path('app_collection_index') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left me-2"></i>Retour
+    <div class="page-header">
+        <div class="page-header-content">
+            <h1 class="page-title">
+                <span class="icon">🔍</span>
+                Recherche dans les collections
+            </h1>
+            <a href="{{ path('app_collection_index') }}" class="btn btn--secondary">
+                ← Retour
             </a>
         </div>
+    </div>
 
+    <div class="container">
         <!-- Formulaire de recherche -->
-        <div class="card mb-4">
-            <div class="card-body">
+        <div class="card mb-xl">
+            <div class="card__body">
+                <h2 class="card__title mb-md">
+                    ⚙️ Critères de recherche
+                </h2>
                 <form action="{{ path('app_collection_search') }}" method="get">
-                    <div class="row g-3">
-                        <div class="col-md-8">
-                            <label for="search-query" class="form-label">Rechercher</label>
-                            <input type="text"
-                                   class="form-control"
-                                   id="search-query"
-                                   name="q"
-                                   value="{{ query }}"
-                                   placeholder="Nom de l'objet..."
-                                   required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="search-type" class="form-label">Type</label>
-                            <select class="form-select" id="search-type" name="type">
-                                <option value="all" {% if type == 'all' %}selected{% endif %}>Tous</option>
-                                <option value="game" {% if type == 'game' %}selected{% endif %}>Jeux</option>
-                                <option value="console" {% if type == 'console' %}selected{% endif %}>Consoles</option>
-                                <option value="accessory" {% if type == 'accessory' %}selected{% endif %}>Accessoires</option>
-                            </select>
-                        </div>
+                    <div class="form__group">
+                        <label for="search-query" class="form__label">Rechercher un objet</label>
+                        <input type="text"
+                               class="form__input"
+                               id="search-query"
+                               name="q"
+                               value="{{ query }}"
+                               placeholder="Ex: Super Mario, PlayStation, Manette..."
+                               required>
                     </div>
-                    <div class="mt-3">
-                        <button type="submit" class="btn btn-warning">
-                            <i class="fas fa-search me-2"></i>Rechercher
-                        </button>
+                    <div class="form__group">
+                        <label for="search-type" class="form__label">Type d'objet</label>
+                        <select class="form__select" id="search-type" name="type">
+                            <option value="all" {% if type == 'all' %}selected{% endif %}>Tous les types</option>
+                            <option value="game" {% if type == 'game' %}selected{% endif %}>Jeux uniquement</option>
+                            <option value="console" {% if type == 'console' %}selected{% endif %}>Consoles uniquement</option>
+                            <option value="accessory" {% if type == 'accessory' %}selected{% endif %}>Accessoires uniquement</option>
+                        </select>
                     </div>
+                    <button type="submit" class="btn btn--accent">
+                        🔍 Lancer la recherche
+                    </button>
                 </form>
             </div>
         </div>
@@ -49,105 +53,105 @@
             <!-- Résultats pour les jeux -->
             {% if type == 'all' or type == 'game' %}
                 {% if results.games is not empty %}
-                    <div class="mb-5">
-                        <h2 class="h4 mb-3">
-                            <i class="fas fa-gamepad me-2 text-primary"></i>Jeux trouvés
-                        </h2>
-                        <div class="row g-3">
+                    <div class="mb-xl">
+                        <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+                            <div class="section-divider divider-primary"></div>
+                            <h2 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                                🎮 Jeux trouvés
+                                <span class="badge badge--primary">{{ results.games|length }}</span>
+                            </h2>
+                        </div>
+                        <div class="grid grid--3">
                             {% for result in results.games %}
-                                <div class="col-md-6 col-lg-4">
-                                    <div class="card h-100">
-                                        {% if result.item.image %}
-                                            <img src="{{ result.item.image }}" class="card-img-top" alt="{{ result.item.title }}" style="height: 200px; object-fit: cover;">
-                                        {% endif %}
-                                        <div class="card-body">
-                                            <h5 class="card-title">{{ result.item.title }}</h5>
-                                            <p class="card-text">
-                                                <small class="text-muted">
-                                                    <i class="fas fa-gamepad me-1"></i>{{ result.item.platform.name ?? 'N/A' }}
-                                                </small>
-                                            </p>
-
-                                            <div class="mt-3">
-                                                <strong class="d-block mb-2">Possédé par :</strong>
-                                                {% if result.owners is not empty %}
-                                                    <div class="list-group list-group-flush">
-                                                        {% for owner in result.owners %}
-                                                            <a href="{{ path('app_collection_user', {'id': owner.id}) }}"
-                                                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2">
-                                                                <span>
-                                                                    <i class="fas fa-user me-2"></i>{{ owner.username }}
-                                                                </span>
-                                                                <span class="badge bg-primary rounded-pill">{{ owner.quantity }}</span>
-                                                            </a>
-                                                        {% endfor %}
-                                                    </div>
-                                                {% else %}
-                                                    <p class="text-muted small">Personne ne possède ce jeu</p>
-                                                {% endif %}
-                                            </div>
-
-                                            <div class="mt-3">
-                                                <a href="{{ path('app_game_show', {'id': result.item.id}) }}" class="btn btn-sm btn-outline-primary">
-                                                    <i class="fas fa-info-circle me-1"></i>Détails
-                                                </a>
-                                            </div>
+                                <div class="card">
+                                    {% if result.item.image %}
+                                        <img src="{{ result.item.image }}" class="card__image" alt="{{ result.item.title }}">
+                                    {% else %}
+                                        <div class="card__image" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(103, 97, 168, 0.3), rgba(160, 193, 185, 0.3));">
+                                            <span style="font-size: 3rem; opacity: 0.5;">🎮</span>
                                         </div>
+                                    {% endif %}
+                                    <div class="card__body">
+                                        <h3 class="card__title">{{ result.item.title }}</h3>
+                                        <p class="card__text text--muted mb-md">
+                                            <small>{{ result.item.platform.name ?? 'N/A' }}</small>
+                                        </p>
+
+                                        <div class="owners-box">
+                                            <strong class="owners-title">👥 Possédé par</strong>
+                                            {% if result.owners is not empty %}
+                                                <div style="margin-top: 0.5rem;">
+                                                    {% for owner in result.owners %}
+                                                        <a href="{{ path('app_collection_user', {'id': owner.id}) }}" class="link" style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(103, 97, 168, 0.2);">
+                                                            <span>👤 {{ owner.username }}</span>
+                                                            <span class="badge badge--primary">×{{ owner.quantity }}</span>
+                                                        </a>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                <p class="text--muted" style="margin: 0.5rem 0 0;">Personne ne possède ce jeu</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="card__footer">
+                                        <a href="{{ path('app_game_show', {'id': result.item.id}) }}" class="btn btn--primary btn--small">
+                                            Voir les détails
+                                        </a>
                                     </div>
                                 </div>
                             {% endfor %}
                         </div>
                     </div>
+                    {% endif %}
                 {% endif %}
-            {% endif %}
 
             <!-- Résultats pour les consoles -->
             {% if type == 'all' or type == 'console' %}
                 {% if results.consoles is not empty %}
-                    <div class="mb-5">
-                        <h2 class="h4 mb-3">
-                            <i class="fas fa-tv me-2 text-success"></i>Consoles trouvées
-                        </h2>
-                        <div class="row g-3">
+                    <div class="mb-xl">
+                        <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+                            <div class="section-divider divider-success"></div>
+                            <h2 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                                📺 Consoles trouvées
+                                <span class="badge badge--secondary">{{ results.consoles|length }}</span>
+                            </h2>
+                        </div>
+                        <div class="grid grid--3">
                             {% for result in results.consoles %}
-                                <div class="col-md-6 col-lg-4">
-                                    <div class="card h-100">
-                                        {% if result.item.image %}
-                                            <img src="{{ result.item.image }}" class="card-img-top" alt="{{ result.item.name }}" style="height: 200px; object-fit: cover;">
-                                        {% endif %}
-                                        <div class="card-body">
-                                            <h5 class="card-title">{{ result.item.name }}</h5>
-                                            <p class="card-text">
-                                                <small class="text-muted">
-                                                    <i class="fas fa-industry me-1"></i>{{ result.item.manufacturer ?? 'N/A' }}
-                                                </small>
-                                            </p>
-
-                                            <div class="mt-3">
-                                                <strong class="d-block mb-2">Possédé par :</strong>
-                                                {% if result.owners is not empty %}
-                                                    <div class="list-group list-group-flush">
-                                                        {% for owner in result.owners %}
-                                                            <a href="{{ path('app_collection_user', {'id': owner.id}) }}"
-                                                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2">
-                                                                <span>
-                                                                    <i class="fas fa-user me-2"></i>{{ owner.username }}
-                                                                </span>
-                                                                <span class="badge bg-success rounded-pill">{{ owner.quantity }}</span>
-                                                            </a>
-                                                        {% endfor %}
-                                                    </div>
-                                                {% else %}
-                                                    <p class="text-muted small">Personne ne possède cette console</p>
-                                                {% endif %}
-                                            </div>
-
-                                            <div class="mt-3">
-                                                <a href="{{ path('app_console_show', {'id': result.item.id}) }}" class="btn btn-sm btn-outline-success">
-                                                    <i class="fas fa-info-circle me-1"></i>Détails
-                                                </a>
-                                            </div>
+                                <div class="card">
+                                    {% if result.item.image %}
+                                        <img src="{{ result.item.image }}" class="card__image" alt="{{ result.item.name }}">
+                                    {% else %}
+                                        <div class="card__image" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(160, 193, 185, 0.3), rgba(103, 97, 168, 0.3));">
+                                            <span style="font-size: 3rem; opacity: 0.5;">📺</span>
                                         </div>
+                                    {% endif %}
+                                    <div class="card__body">
+                                        <h3 class="card__title">{{ result.item.name }}</h3>
+                                        <p class="card__text text--muted mb-md">
+                                            <small>{{ result.item.manufacturer ?? 'N/A' }}</small>
+                                        </p>
+
+                                        <div class="owners-box">
+                                            <strong class="owners-title">👥 Possédé par</strong>
+                                            {% if result.owners is not empty %}
+                                                <div style="margin-top: 0.5rem;">
+                                                    {% for owner in result.owners %}
+                                                        <a href="{{ path('app_collection_user', {'id': owner.id}) }}" class="link" style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(160, 193, 185, 0.2);">
+                                                            <span>👤 {{ owner.username }}</span>
+                                                            <span class="badge badge--secondary">×{{ owner.quantity }}</span>
+                                                        </a>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                <p class="text--muted" style="margin: 0.5rem 0 0;">Personne ne possède cette console</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="card__footer">
+                                        <a href="{{ path('app_console_show', {'id': result.item.id}) }}" class="btn btn--secondary btn--small">
+                                            Voir les détails
+                                        </a>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -159,50 +163,50 @@
             <!-- Résultats pour les accessoires -->
             {% if type == 'all' or type == 'accessory' %}
                 {% if results.accessories is not empty %}
-                    <div class="mb-5">
-                        <h2 class="h4 mb-3">
-                            <i class="fas fa-plug me-2 text-warning"></i>Accessoires trouvés
-                        </h2>
-                        <div class="row g-3">
+                    <div class="mb-xl">
+                        <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+                            <div class="section-divider divider-warning"></div>
+                            <h2 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                                🎧 Accessoires trouvés
+                                <span class="badge badge--accent">{{ results.accessories|length }}</span>
+                            </h2>
+                        </div>
+                        <div class="grid grid--3">
                             {% for result in results.accessories %}
-                                <div class="col-md-6 col-lg-4">
-                                    <div class="card h-100">
-                                        {% if result.item.image %}
-                                            <img src="{{ result.item.image }}" class="card-img-top" alt="{{ result.item.name }}" style="height: 200px; object-fit: cover;">
-                                        {% endif %}
-                                        <div class="card-body">
-                                            <h5 class="card-title">{{ result.item.name }}</h5>
-                                            <p class="card-text">
-                                                <small class="text-muted">
-                                                    <i class="fas fa-tag me-1"></i>{{ result.item.type ?? 'N/A' }}
-                                                </small>
-                                            </p>
-
-                                            <div class="mt-3">
-                                                <strong class="d-block mb-2">Possédé par :</strong>
-                                                {% if result.owners is not empty %}
-                                                    <div class="list-group list-group-flush">
-                                                        {% for owner in result.owners %}
-                                                            <a href="{{ path('app_collection_user', {'id': owner.id}) }}"
-                                                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2">
-                                                                <span>
-                                                                    <i class="fas fa-user me-2"></i>{{ owner.username }}
-                                                                </span>
-                                                                <span class="badge bg-warning rounded-pill">{{ owner.quantity }}</span>
-                                                            </a>
-                                                        {% endfor %}
-                                                    </div>
-                                                {% else %}
-                                                    <p class="text-muted small">Personne ne possède cet accessoire</p>
-                                                {% endif %}
-                                            </div>
-
-                                            <div class="mt-3">
-                                                <a href="{{ path('app_accessory_show', {'id': result.item.id}) }}" class="btn btn-sm btn-outline-warning">
-                                                    <i class="fas fa-info-circle me-1"></i>Détails
-                                                </a>
-                                            </div>
+                                <div class="card">
+                                    {% if result.item.image %}
+                                        <img src="{{ result.item.image }}" class="card__image" alt="{{ result.item.name }}">
+                                    {% else %}
+                                        <div class="card__image" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(163, 0, 21, 0.3), rgba(103, 97, 168, 0.3));">
+                                            <span style="font-size: 3rem; opacity: 0.5;">🎧</span>
                                         </div>
+                                    {% endif %}
+                                    <div class="card__body">
+                                        <h3 class="card__title">{{ result.item.name }}</h3>
+                                        <p class="card__text text--muted mb-md">
+                                            <small>{{ result.item.type ?? 'N/A' }}</small>
+                                        </p>
+
+                                        <div class="owners-box">
+                                            <strong class="owners-title">👥 Possédé par</strong>
+                                            {% if result.owners is not empty %}
+                                                <div style="margin-top: 0.5rem;">
+                                                    {% for owner in result.owners %}
+                                                        <a href="{{ path('app_collection_user', {'id': owner.id}) }}" class="link" style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(163, 0, 21, 0.2);">
+                                                            <span>👤 {{ owner.username }}</span>
+                                                            <span class="badge badge--accent">×{{ owner.quantity }}</span>
+                                                        </a>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                <p class="text--muted" style="margin: 0.5rem 0 0;">Personne ne possède cet accessoire</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="card__footer">
+                                        <a href="{{ path('app_accessory_show', {'id': result.item.id}) }}" class="btn btn--accent btn--small">
+                                            Voir les détails
+                                        </a>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -213,15 +217,17 @@
 
             <!-- Aucun résultat -->
             {% if results.games is empty and results.consoles is empty and results.accessories is empty %}
-                <div class="alert alert-info text-center">
-                    <i class="fas fa-info-circle me-2"></i>
-                    Aucun résultat trouvé pour "{{ query }}"
+                <div class="text--center" style="padding: 3rem;">
+                    <p style="font-size: 3rem; margin-bottom: 1rem;">🔍</p>
+                    <p class="text--muted mb-sm">Aucun résultat trouvé pour "<strong>{{ query }}</strong>"</p>
+                    <p class="text--muted" style="font-size: 0.875rem;">Essayez avec un autre terme de recherche</p>
                 </div>
             {% endif %}
         {% else %}
-            <div class="alert alert-secondary text-center">
-                <i class="fas fa-search me-2"></i>
-                Utilisez le formulaire ci-dessus pour rechercher dans les collections
+            <div class="text--center" style="padding: 3rem;">
+                <p style="font-size: 3rem; margin-bottom: 1rem;">🔍</p>
+                <p class="text--muted mb-sm">Utilisez le formulaire ci-dessus pour rechercher dans les collections</p>
+                <p class="text--muted" style="font-size: 0.875rem;">Recherchez un jeu, une console ou un accessoire et découvrez qui le possède</p>
             </div>
         {% endif %}
     </div>

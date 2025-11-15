@@ -1,0 +1,492 @@
+// ============================================
+// AUTHENTICATION FORMS - Retro Gaming Theme
+// ============================================
+
+@import 'retro-theme';
+
+// ============================================
+// Auth Wrapper
+// ============================================
+.auth-wrapper {
+    background: linear-gradient(135deg, $color-dark 0%, lighten($color-dark, 5%) 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-lg;
+    position: relative;
+    overflow: hidden;
+
+    // Effet de fond animé
+    &::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba($color-purple, 0.1) 0%, transparent 70%);
+        animation: rotate 30s linear infinite;
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// ============================================
+// Auth Card
+// ============================================
+.auth-card {
+    background: $color-surface;
+    border: 2px solid rgba($color-purple, 0.3);
+    border-radius: $border-radius-lg;
+    box-shadow: 0 10px 40px rgba($color-dark, 0.5);
+    max-width: 500px;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    animation: slideUp 0.5s ease-out;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, $color-purple, $color-red, $color-teal);
+        background-size: 200% 100%;
+        animation: gradientShift 3s ease infinite;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+// ============================================
+// Auth Header
+// ============================================
+.auth-header {
+    padding: $spacing-xl $spacing-lg $spacing-md;
+    text-align: center;
+    background: linear-gradient(135deg, rgba($color-purple, 0.1), transparent);
+    border-bottom: 1px solid rgba($color-purple, 0.2);
+
+    h1 {
+        color: $color-cream;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: $spacing-sm;
+        text-shadow: 2px 2px 4px rgba($color-dark, 0.5);
+
+        i {
+            color: $color-purple;
+            margin-right: $spacing-sm;
+        }
+    }
+
+    p {
+        color: $color-text-muted;
+        font-size: $font-size-sm;
+        margin: 0;
+    }
+}
+
+// ============================================
+// Auth Body
+// ============================================
+.auth-body {
+    padding: $spacing-xl $spacing-lg;
+}
+
+// ============================================
+// Auth Form Groups
+// ============================================
+.auth-form-group {
+    margin-bottom: $spacing-lg;
+
+    .form-label {
+        color: $color-cream;
+        font-weight: 600;
+        font-size: $font-size-sm;
+        margin-bottom: $spacing-xs;
+        display: flex;
+        align-items: center;
+
+        i {
+            color: $color-purple;
+            margin-right: $spacing-xs;
+            width: 20px;
+        }
+    }
+
+    .form-control {
+        background: lighten($color-dark, 10%);
+        border: 2px solid rgba($color-purple, 0.3);
+        color: $color-cream;
+        border-radius: $border-radius-sm;
+        padding: $spacing-sm $spacing-md;
+        font-size: $font-size-base;
+        transition: all $transition-fast;
+
+        &:focus {
+            background: lighten($color-dark, 12%);
+            border-color: $color-purple;
+            color: $color-cream;
+            box-shadow: 0 0 0 3px rgba($color-purple, 0.2);
+            outline: none;
+        }
+
+        &::placeholder {
+            color: rgba($color-cream, 0.4);
+        }
+
+        &.is-invalid {
+            border-color: $color-red;
+
+            &:focus {
+                border-color: $color-red;
+                box-shadow: 0 0 0 3px rgba($color-red, 0.2);
+            }
+        }
+    }
+
+    .invalid-feedback {
+        color: $color-red;
+        font-size: $font-size-sm;
+        margin-top: $spacing-xs;
+        display: flex;
+        align-items: center;
+
+        i {
+            margin-right: $spacing-xs;
+        }
+    }
+}
+
+// ============================================
+// Auth Buttons
+// ============================================
+.auth-submit-btn {
+    width: 100%;
+    padding: $spacing-md $spacing-lg;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, $color-purple, darken($color-purple, 10%));
+    border: 2px solid $color-purple;
+    color: $color-cream;
+    border-radius: $border-radius-sm;
+    transition: all $transition-normal;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba($color-cream, 0.1);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    &:hover {
+        background: linear-gradient(135deg, lighten($color-purple, 5%), $color-purple);
+        border-color: lighten($color-purple, 10%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba($color-purple, 0.4);
+
+        &::before {
+            width: 300px;
+            height: 300px;
+        }
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    i {
+        margin-right: $spacing-xs;
+    }
+}
+
+// ============================================
+// Auth Footer
+// ============================================
+.auth-footer {
+    padding: $spacing-md $spacing-lg $spacing-lg;
+    text-align: center;
+    border-top: 1px solid rgba($color-purple, 0.2);
+    background: rgba($color-dark, 0.3);
+
+    p {
+        color: $color-text-muted;
+        margin: 0;
+        font-size: $font-size-sm;
+    }
+
+    a {
+        color: $color-purple;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color $transition-fast;
+
+        &:hover {
+            color: lighten($color-purple, 15%);
+            text-decoration: underline;
+        }
+    }
+}
+
+// ============================================
+// Auth Alerts
+// ============================================
+.auth-alert {
+    padding: $spacing-md;
+    border-radius: $border-radius-sm;
+    margin-bottom: $spacing-md;
+    display: flex;
+    align-items: center;
+    font-size: $font-size-sm;
+
+    i {
+        margin-right: $spacing-sm;
+        font-size: $font-size-lg;
+    }
+
+    &.auth-alert-error {
+        background: rgba($color-red, 0.1);
+        border: 1px solid $color-red;
+        color: lighten($color-red, 20%);
+
+        i {
+            color: $color-red;
+        }
+    }
+
+    &.auth-alert-success {
+        background: rgba($color-teal, 0.1);
+        border: 1px solid $color-teal;
+        color: lighten($color-teal, 20%);
+
+        i {
+            color: $color-teal;
+        }
+    }
+
+    &.auth-alert-info {
+        background: rgba($color-purple, 0.1);
+        border: 1px solid $color-purple;
+        color: lighten($color-purple, 20%);
+
+        i {
+            color: $color-purple;
+        }
+    }
+}
+
+// ============================================
+// Password Strength Indicator
+// ============================================
+.password-strength {
+    margin-top: $spacing-sm;
+
+    .strength-bar {
+        height: 4px;
+        background: rgba($color-cream, 0.1);
+        border-radius: 2px;
+        overflow: hidden;
+        margin-bottom: $spacing-xs;
+
+        .strength-fill {
+            height: 100%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+            border-radius: 2px;
+
+            &.weak {
+                width: 33%;
+                background: $color-red;
+            }
+
+            &.medium {
+                width: 66%;
+                background: #FFA500;
+            }
+
+            &.strong {
+                width: 100%;
+                background: $color-teal;
+            }
+        }
+    }
+
+    .strength-text {
+        font-size: 0.75rem;
+        color: $color-text-muted;
+    }
+}
+
+// ============================================
+// Divider
+// ============================================
+.auth-divider {
+    display: flex;
+    align-items: center;
+    margin: $spacing-lg 0;
+    color: $color-text-muted;
+    font-size: $font-size-sm;
+
+    &::before,
+    &::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba($color-purple, 0.2);
+    }
+
+    &::before {
+        margin-right: $spacing-md;
+    }
+
+    &::after {
+        margin-left: $spacing-md;
+    }
+}
+
+// ============================================
+// Checkbox/Remember Me
+// ============================================
+.auth-checkbox {
+    display: flex;
+    align-items: center;
+    margin: $spacing-md 0;
+
+    input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        margin-right: $spacing-sm;
+        cursor: pointer;
+        accent-color: $color-purple;
+    }
+
+    label {
+        color: $color-text;
+        font-size: $font-size-sm;
+        margin: 0;
+        cursor: pointer;
+        user-select: none;
+    }
+}
+
+// ============================================
+// Responsive Design
+// ============================================
+@media (max-width: $breakpoint-mobile) {
+    .auth-wrapper {
+        padding: $spacing-md;
+    }
+
+    .auth-card {
+        border-radius: $border-radius-md;
+    }
+
+    .auth-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .auth-body {
+        padding: $spacing-lg $spacing-md;
+    }
+
+    .auth-submit-btn {
+        padding: $spacing-sm $spacing-md;
+        font-size: 0.9rem;
+    }
+}
+
+// ============================================
+// Loading State
+// ============================================
+.auth-loading {
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba($color-dark, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: $border-radius-lg;
+        z-index: 10;
+    }
+}
+
+// ============================================
+// Pixel Art Decoration
+// ============================================
+.auth-decoration {
+    position: absolute;
+    opacity: 0.05;
+    pointer-events: none;
+
+    &.top-left {
+        top: 20px;
+        left: 20px;
+        font-size: 4rem;
+        color: $color-purple;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    &.bottom-right {
+        bottom: 20px;
+        right: 20px;
+        font-size: 3rem;
+        color: $color-teal;
+        animation: float 4s ease-in-out infinite reverse;
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
