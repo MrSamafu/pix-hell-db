@@ -45,4 +45,19 @@ class GameCollectionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult() ?? 0;
     }
+
+    /**
+     * Trouve tous les utilisateurs qui possèdent un jeu spécifique
+     */
+    public function findUsersWhoOwn(int $gameId): array
+    {
+        return $this->createQueryBuilder('gc')
+            ->select('u.id', 'u.username', 'gc.quantity')
+            ->join('gc.user', 'u')
+            ->where('gc.game = :gameId')
+            ->setParameter('gameId', $gameId)
+            ->orderBy('u.username', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

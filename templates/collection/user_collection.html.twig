@@ -1,0 +1,179 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Collection de {{ user.username }} - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container-fluid py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Collection de {{ user.username }}</h1>
+            <a href="{{ path('app_collection_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Retour
+            </a>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="display-4 text-primary">{{ total_games }}</h3>
+                        <p class="text-muted mb-0">Jeux</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="display-4 text-success">{{ total_consoles }}</h3>
+                        <p class="text-muted mb-0">Consoles</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="display-4 text-warning">{{ total_accessories }}</h3>
+                        <p class="text-muted mb-0">Accessoires</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation par onglets -->
+        <ul class="nav nav-tabs mb-4" id="collectionTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="games-tab" data-bs-toggle="tab" data-bs-target="#games" type="button" role="tab">
+                    <i class="fas fa-gamepad me-2"></i>Jeux ({{ game_collections|length }})
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="consoles-tab" data-bs-toggle="tab" data-bs-target="#consoles" type="button" role="tab">
+                    <i class="fas fa-tv me-2"></i>Consoles ({{ console_collections|length }})
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="accessories-tab" data-bs-toggle="tab" data-bs-target="#accessories" type="button" role="tab">
+                    <i class="fas fa-plug me-2"></i>Accessoires ({{ accessory_collections|length }})
+                </button>
+            </li>
+        </ul>
+
+        <!-- Contenu des onglets -->
+        <div class="tab-content" id="collectionTabsContent">
+            <!-- Onglet Jeux -->
+            <div class="tab-pane fade show active" id="games" role="tabpanel">
+                {% if game_collections %}
+                    <div class="row g-3">
+                        {% for collection in game_collections %}
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100">
+                                    {% if collection.game.image %}
+                                        <img src="{{ collection.game.image }}" class="card-img-top" alt="{{ collection.game.title }}" style="height: 200px; object-fit: cover;">
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ collection.game.title }}</h5>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-gamepad me-1"></i>{{ collection.game.platform.name ?? 'N/A' }}<br>
+                                                <i class="fas fa-box me-1"></i>Quantité : {{ collection.quantity }}
+                                            </small>
+                                        </p>
+                                        {% if collection.note %}
+                                            <div class="alert alert-info small">
+                                                <strong>Note :</strong> {{ collection.note }}
+                                            </div>
+                                        {% endif %}
+                                        <a href="{{ path('app_game_show', {'id': collection.game.id}) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-info-circle me-1"></i>Détails
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center p-5">
+                        <p class="text-muted">{{ user.username }} n'a aucun jeu dans sa collection</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Onglet Consoles -->
+            <div class="tab-pane fade" id="consoles" role="tabpanel">
+                {% if console_collections %}
+                    <div class="row g-3">
+                        {% for collection in console_collections %}
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100">
+                                    {% if collection.console.image %}
+                                        <img src="{{ collection.console.image }}" class="card-img-top" alt="{{ collection.console.name }}" style="height: 200px; object-fit: cover;">
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ collection.console.name }}</h5>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-industry me-1"></i>{{ collection.console.manufacturer ?? 'N/A' }}<br>
+                                                <i class="fas fa-box me-1"></i>Quantité : {{ collection.quantity }}
+                                            </small>
+                                        </p>
+                                        {% if collection.note %}
+                                            <div class="alert alert-info small">
+                                                <strong>Note :</strong> {{ collection.note }}
+                                            </div>
+                                        {% endif %}
+                                        <a href="{{ path('app_console_show', {'id': collection.console.id}) }}" class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-info-circle me-1"></i>Détails
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center p-5">
+                        <p class="text-muted">{{ user.username }} n'a aucune console dans sa collection</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Onglet Accessoires -->
+            <div class="tab-pane fade" id="accessories" role="tabpanel">
+                {% if accessory_collections %}
+                    <div class="row g-3">
+                        {% for collection in accessory_collections %}
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100">
+                                    {% if collection.accessory.image %}
+                                        <img src="{{ collection.accessory.image }}" class="card-img-top" alt="{{ collection.accessory.name }}" style="height: 200px; object-fit: cover;">
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ collection.accessory.name }}</h5>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-tag me-1"></i>{{ collection.accessory.type ?? 'N/A' }}<br>
+                                                <i class="fas fa-box me-1"></i>Quantité : {{ collection.quantity }}
+                                            </small>
+                                        </p>
+                                        {% if collection.note %}
+                                            <div class="alert alert-info small">
+                                                <strong>Note :</strong> {{ collection.note }}
+                                            </div>
+                                        {% endif %}
+                                        <a href="{{ path('app_accessory_show', {'id': collection.accessory.id}) }}" class="btn btn-sm btn-outline-warning">
+                                            <i class="fas fa-info-circle me-1"></i>Détails
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center p-5">
+                        <p class="text-muted">{{ user.username }} n'a aucun accessoire dans sa collection</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

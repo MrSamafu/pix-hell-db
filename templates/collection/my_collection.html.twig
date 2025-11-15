@@ -1,0 +1,317 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ma Collection - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container-fluid py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Ma Collection</h1>
+            <a href="{{ path('app_collection_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Retour
+            </a>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="display-4 text-primary">{{ total_games }}</h3>
+                        <p class="text-muted mb-0">Jeux</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="display-4 text-success">{{ total_consoles }}</h3>
+                        <p class="text-muted mb-0">Consoles</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="display-4 text-warning">{{ total_accessories }}</h3>
+                        <p class="text-muted mb-0">Accessoires</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation par onglets -->
+        <ul class="nav nav-tabs mb-4" id="collectionTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="games-tab" data-bs-toggle="tab" data-bs-target="#games" type="button" role="tab">
+                    <i class="fas fa-gamepad me-2"></i>Jeux ({{ game_collections|length }})
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="consoles-tab" data-bs-toggle="tab" data-bs-target="#consoles" type="button" role="tab">
+                    <i class="fas fa-tv me-2"></i>Consoles ({{ console_collections|length }})
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="accessories-tab" data-bs-toggle="tab" data-bs-target="#accessories" type="button" role="tab">
+                    <i class="fas fa-plug me-2"></i>Accessoires ({{ accessory_collections|length }})
+                </button>
+            </li>
+        </ul>
+
+        <!-- Contenu des onglets -->
+        <div class="tab-content" id="collectionTabsContent">
+            <!-- Onglet Jeux -->
+            <div class="tab-pane fade show active" id="games" role="tabpanel">
+                {% if game_collections %}
+                    <div class="row g-3">
+                        {% for collection in game_collections %}
+                            <div class="col-md-6 col-lg-4" data-collection-id="{{ collection.id }}">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ collection.game.title }}</h5>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-gamepad me-1"></i>{{ collection.game.platform.name ?? 'N/A' }}
+                                            </small>
+                                        </p>
+
+                                        <div class="mb-3">
+                                            <label class="form-label small">Quantité</label>
+                                            <input type="number"
+                                                   class="form-control form-control-sm quantity-input"
+                                                   value="{{ collection.quantity }}"
+                                                   min="1"
+                                                   data-type="game"
+                                                   data-id="{{ collection.id }}">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label small">Note personnelle</label>
+                                            <textarea class="form-control form-control-sm note-input"
+                                                      rows="2"
+                                                      data-type="game"
+                                                      data-id="{{ collection.id }}"
+                                                      placeholder="Ajoutez une note...">{{ collection.note }}</textarea>
+                                        </div>
+
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-primary btn-sm flex-fill update-btn"
+                                                    data-type="game"
+                                                    data-id="{{ collection.id }}">
+                                                <i class="fas fa-save me-1"></i>Sauvegarder
+                                            </button>
+                                            <button class="btn btn-danger btn-sm delete-btn"
+                                                    data-type="game"
+                                                    data-id="{{ collection.id }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center p-5">
+                        <p class="text-muted">Aucun jeu dans votre collection</p>
+                        <a href="{{ path('app_game_index') }}" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>Parcourir les jeux
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Onglet Consoles -->
+            <div class="tab-pane fade" id="consoles" role="tabpanel">
+                {% if console_collections %}
+                    <div class="row g-3">
+                        {% for collection in console_collections %}
+                            <div class="col-md-6 col-lg-4" data-collection-id="{{ collection.id }}">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ collection.console.name }}</h5>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-industry me-1"></i>{{ collection.console.manufacturer ?? 'N/A' }}
+                                            </small>
+                                        </p>
+
+                                        <div class="mb-3">
+                                            <label class="form-label small">Quantité</label>
+                                            <input type="number"
+                                                   class="form-control form-control-sm quantity-input"
+                                                   value="{{ collection.quantity }}"
+                                                   min="1"
+                                                   data-type="console"
+                                                   data-id="{{ collection.id }}">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label small">Note personnelle</label>
+                                            <textarea class="form-control form-control-sm note-input"
+                                                      rows="2"
+                                                      data-type="console"
+                                                      data-id="{{ collection.id }}"
+                                                      placeholder="Ajoutez une note...">{{ collection.note }}</textarea>
+                                        </div>
+
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-primary btn-sm flex-fill update-btn"
+                                                    data-type="console"
+                                                    data-id="{{ collection.id }}">
+                                                <i class="fas fa-save me-1"></i>Sauvegarder
+                                            </button>
+                                            <button class="btn btn-danger btn-sm delete-btn"
+                                                    data-type="console"
+                                                    data-id="{{ collection.id }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center p-5">
+                        <p class="text-muted">Aucune console dans votre collection</p>
+                        <a href="{{ path('app_console_index') }}" class="btn btn-success">
+                            <i class="fas fa-search me-2"></i>Parcourir les consoles
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Onglet Accessoires -->
+            <div class="tab-pane fade" id="accessories" role="tabpanel">
+                {% if accessory_collections %}
+                    <div class="row g-3">
+                        {% for collection in accessory_collections %}
+                            <div class="col-md-6 col-lg-4" data-collection-id="{{ collection.id }}">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ collection.accessory.name }}</h5>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-tag me-1"></i>{{ collection.accessory.type ?? 'N/A' }}
+                                            </small>
+                                        </p>
+
+                                        <div class="mb-3">
+                                            <label class="form-label small">Quantité</label>
+                                            <input type="number"
+                                                   class="form-control form-control-sm quantity-input"
+                                                   value="{{ collection.quantity }}"
+                                                   min="1"
+                                                   data-type="accessory"
+                                                   data-id="{{ collection.id }}">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label small">Note personnelle</label>
+                                            <textarea class="form-control form-control-sm note-input"
+                                                      rows="2"
+                                                      data-type="accessory"
+                                                      data-id="{{ collection.id }}"
+                                                      placeholder="Ajoutez une note...">{{ collection.note }}</textarea>
+                                        </div>
+
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-primary btn-sm flex-fill update-btn"
+                                                    data-type="accessory"
+                                                    data-id="{{ collection.id }}">
+                                                <i class="fas fa-save me-1"></i>Sauvegarder
+                                            </button>
+                                            <button class="btn btn-danger btn-sm delete-btn"
+                                                    data-type="accessory"
+                                                    data-id="{{ collection.id }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center p-5">
+                        <p class="text-muted">Aucun accessoire dans votre collection</p>
+                        <a href="{{ path('app_accessory_index') }}" class="btn btn-warning">
+                            <i class="fas fa-search me-2"></i>Parcourir les accessoires
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion des mises à jour
+            document.querySelectorAll('.update-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const type = this.dataset.type;
+                    const id = this.dataset.id;
+                    const card = this.closest('[data-collection-id]');
+                    const quantity = card.querySelector('.quantity-input').value;
+                    const note = card.querySelector('.note-input').value;
+
+                    fetch(`/collection/${type}/${id}/update`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `quantity=${quantity}&note=${encodeURIComponent(note)}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Collection mise à jour avec succès !');
+                        } else {
+                            alert('Erreur : ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue');
+                    });
+                });
+            });
+
+            // Gestion des suppressions
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!confirm('Êtes-vous sûr de vouloir retirer cet élément de votre collection ?')) {
+                        return;
+                    }
+
+                    const type = this.dataset.type;
+                    const id = this.dataset.id;
+                    const card = this.closest('[data-collection-id]');
+
+                    fetch(`/collection/${type}/${id}/delete`, {
+                        method: 'POST'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            card.remove();
+                            alert('Élément retiré de la collection');
+                            location.reload();
+                        } else {
+                            alert('Erreur : ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue');
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}
+

@@ -142,4 +142,20 @@ class AccessoryRepository extends ServiceEntityRepository
 
         return array_map(fn($item) => $item['compatibility'], $result);
     }
+
+    /**
+     * Recherche simple d'accessoires par nom
+     */
+    public function searchByName(string $query): array
+    {
+        return $this->createQueryBuilder('a')
+            ->where('a.name LIKE :query')
+            ->orWhere('a.type LIKE :query')
+            ->orWhere('a.compatibility LIKE :query')
+            ->setParameter('query', '%' . $query . '%')
+            ->orderBy('a.name', 'ASC')
+            ->setMaxResults(50)
+            ->getQuery()
+            ->getResult();
+    }
 }

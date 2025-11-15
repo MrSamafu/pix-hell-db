@@ -2,13 +2,23 @@
 
 namespace App\Controller;
 
+use App\Entity\GameCollection;
+use App\Entity\ConsoleCollection;
+use App\Entity\AccessoryCollection;
 use App\Repository\GameCollectionRepository;
 use App\Repository\ConsoleCollectionRepository;
 use App\Repository\AccessoryCollectionRepository;
+use App\Repository\UserRepository;
+use App\Repository\GameRepository;
+use App\Repository\ConsoleRepository;
+use App\Repository\AccessoryRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Route('/collection')]
 #[IsGranted('ROLE_USER')]
@@ -16,13 +26,22 @@ class CollectionController extends AbstractController
 {
     #[Route('/', name: 'app_collection_index', methods: ['GET'])]
     public function index(
+        UserRepository $userRepository
+    ): Response {
+        return $this->render('collection/index.html.twig', [
+            'users' => $userRepository->findAll(),
+        ]);
+    }
+
+    #[Route('/my', name: 'app_collection_my', methods: ['GET'])]
+    public function myCollection(
         GameCollectionRepository $gameCollectionRepository,
         ConsoleCollectionRepository $consoleCollectionRepository,
         AccessoryCollectionRepository $accessoryCollectionRepository
     ): Response {
         $user = $this->getUser();
 
-        return $this->render('collection/index.html.twig', [
+        return $this->render('collection/my_collection.html.twig', [
             'game_collections' => $gameCollectionRepository->findByUserWithDetails($user->getId()),
             'console_collections' => $consoleCollectionRepository->findByUserWithDetails($user->getId()),
             'accessory_collections' => $accessoryCollectionRepository->findByUserWithDetails($user->getId()),
@@ -32,58 +51,225 @@ class CollectionController extends AbstractController
         ]);
     }
 
-    #[Route('/games', name: 'app_collection_games', methods: ['GET'])]
-    public function games(GameCollectionRepository $repository): Response
-    {
-        return $this->render('collection/games.html.twig', [
-            'collections' => $repository->findByUserWithDetails($this->getUser()->getId()),
+    #[Route('/user/{id}', name: 'app_collection_user', methods: ['GET'])]
+    public function userCollection(
+        int $id,
+        UserRepository $userRepository,
+        GameCollectionRepository $gameCollectionRepository,
+        ConsoleCollectionRepository $consoleCollectionRepository,
+        AccessoryCollectionRepository $accessoryCollectionRepository
+    ): Response {
+        $user = $userRepository->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException('Utilisateur non trouvé');
+        }
+
+        return $this->render('collection/user_collection.html.twig', [
+            'user' => $user,
+            'game_collections' => $gameCollectionRepository->findByUserWithDetails($id),
+            'console_collections' => $consoleCollectionRepository->findByUserWithDetails($id),
+            'accessory_collections' => $accessoryCollectionRepository->findByUserWithDetails($id),
+            'total_games' => $gameCollectionRepository->findTotalGamesForUser($id),
+            'total_consoles' => $consoleCollectionRepository->findTotalConsolesForUser($id),
+            'total_accessories' => $accessoryCollectionRepository->findTotalAccessoriesForUser($id),
         ]);
     }
 
-    #[Route('/consoles', name: 'app_collection_consoles', methods: ['GET'])]
-    public function consoles(ConsoleCollectionRepository $repository): Response
-    {
-        return $this->render('collection/consoles.html.twig', [
-            'collections' => $repository->findByUserWithDetails($this->getUser()->getId()),
+    #[Route('/search', name: 'app_collection_search', methods: ['GET'])]
+    public function search(
+        Request $request,
+        GameRepository $gameRepository,
+        ConsoleRepository $consoleRepository,
+        AccessoryRepository $accessoryRepository,
+        GameCollectionRepository $gameCollectionRepository,
+        ConsoleCollectionRepository $consoleCollectionRepository,
+        AccessoryCollectionRepository $accessoryCollectionRepository
+    ): Response {
+        $query = $request->query->get('q', '');
+        $type = $request->query->get('type', 'all');
+
+        $results = [
+            'games' => [],
+            'consoles' => [],
+            'accessories' => []
+        ];
+
+        if ($query) {
+            if ($type === 'all' || $type === 'game') {
+                $games = $gameRepository->searchByTitle($query);
+                foreach ($games as $game) {
+                    $owners = $gameCollectionRepository->findUsersWhoOwn($game->getId());
+                    $results['games'][] = [
+                        'item' => $game,
+                        'owners' => $owners
+                    ];
+                }
+            }
+
+            if ($type === 'all' || $type === 'console') {
+                $consoles = $consoleRepository->searchByName($query);
+                foreach ($consoles as $console) {
+                    $owners = $consoleCollectionRepository->findUsersWhoOwn($console->getId());
+                    $results['consoles'][] = [
+                        'item' => $console,
+                        'owners' => $owners
+                    ];
+                }
+            }
+
+            if ($type === 'all' || $type === 'accessory') {
+                $accessories = $accessoryRepository->searchByName($query);
+                foreach ($accessories as $accessory) {
+                    $owners = $accessoryCollectionRepository->findUsersWhoOwn($accessory->getId());
+                    $results['accessories'][] = [
+                        'item' => $accessory,
+                        'owners' => $owners
+                    ];
+                }
+            }
+        }
+
+        return $this->render('collection/search.html.twig', [
+            'query' => $query,
+            'type' => $type,
+            'results' => $results
         ]);
     }
 
-    #[Route('/accessories', name: 'app_collection_accessories', methods: ['GET'])]
-    public function accessories(AccessoryCollectionRepository $repository): Response
-    {
-        return $this->render('collection/accessories.html.twig', [
-            'collections' => $repository->findByUserWithDetails($this->getUser()->getId()),
-        ]);
-    }
-
-    #[Route('/game/{id}/quantity', name: 'app_collection_game_update_quantity', methods: ['POST'])]
-    public function updateGameQuantity(
+    // Gestion des jeux dans la collection
+    #[Route('/game/{id}/update', name: 'app_collection_game_update', methods: ['POST'])]
+    public function updateGameCollection(
         Request $request,
         GameCollection $gameCollection,
         EntityManagerInterface $entityManager
-    ): Response {
+    ): JsonResponse {
         $this->validateCollectionOwnership($gameCollection);
-        return $this->updateQuantity($request, $gameCollection, $entityManager);
+
+        $quantity = (int) $request->request->get('quantity');
+        $note = $request->request->get('note');
+
+        if ($quantity < 1) {
+            return $this->json(['success' => false, 'message' => 'La quantité doit être au moins 1'], 400);
+        }
+
+        $gameCollection->setQuantity($quantity);
+        if ($note !== null) {
+            $gameCollection->setNote($note);
+        }
+
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Collection mise à jour avec succès'
+        ]);
     }
 
-    #[Route('/console/{id}/quantity', name: 'app_collection_console_update_quantity', methods: ['POST'])]
-    public function updateConsoleQuantity(
+    #[Route('/game/{id}/delete', name: 'app_collection_game_delete', methods: ['POST'])]
+    public function deleteGameCollection(
+        GameCollection $gameCollection,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $this->validateCollectionOwnership($gameCollection);
+
+        $entityManager->remove($gameCollection);
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Jeu retiré de la collection'
+        ]);
+    }
+
+    // Gestion des consoles dans la collection
+    #[Route('/console/{id}/update', name: 'app_collection_console_update', methods: ['POST'])]
+    public function updateConsoleCollection(
         Request $request,
         ConsoleCollection $consoleCollection,
         EntityManagerInterface $entityManager
-    ): Response {
+    ): JsonResponse {
         $this->validateCollectionOwnership($consoleCollection);
-        return $this->updateQuantity($request, $consoleCollection, $entityManager);
+
+        $quantity = (int) $request->request->get('quantity');
+        $note = $request->request->get('note');
+
+        if ($quantity < 1) {
+            return $this->json(['success' => false, 'message' => 'La quantité doit être au moins 1'], 400);
+        }
+
+        $consoleCollection->setQuantity($quantity);
+        if ($note !== null) {
+            $consoleCollection->setNote($note);
+        }
+
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Collection mise à jour avec succès'
+        ]);
     }
 
-    #[Route('/accessory/{id}/quantity', name: 'app_collection_accessory_update_quantity', methods: ['POST'])]
-    public function updateAccessoryQuantity(
+    #[Route('/console/{id}/delete', name: 'app_collection_console_delete', methods: ['POST'])]
+    public function deleteConsoleCollection(
+        ConsoleCollection $consoleCollection,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $this->validateCollectionOwnership($consoleCollection);
+
+        $entityManager->remove($consoleCollection);
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Console retirée de la collection'
+        ]);
+    }
+
+    // Gestion des accessoires dans la collection
+    #[Route('/accessory/{id}/update', name: 'app_collection_accessory_update', methods: ['POST'])]
+    public function updateAccessoryCollection(
         Request $request,
         AccessoryCollection $accessoryCollection,
         EntityManagerInterface $entityManager
-    ): Response {
+    ): JsonResponse {
         $this->validateCollectionOwnership($accessoryCollection);
-        return $this->updateQuantity($request, $accessoryCollection, $entityManager);
+
+        $quantity = (int) $request->request->get('quantity');
+        $note = $request->request->get('note');
+
+        if ($quantity < 1) {
+            return $this->json(['success' => false, 'message' => 'La quantité doit être au moins 1'], 400);
+        }
+
+        $accessoryCollection->setQuantity($quantity);
+        if ($note !== null) {
+            $accessoryCollection->setNote($note);
+        }
+
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Collection mise à jour avec succès'
+        ]);
+    }
+
+    #[Route('/accessory/{id}/delete', name: 'app_collection_accessory_delete', methods: ['POST'])]
+    public function deleteAccessoryCollection(
+        AccessoryCollection $accessoryCollection,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $this->validateCollectionOwnership($accessoryCollection);
+
+        $entityManager->remove($accessoryCollection);
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Accessoire retiré de la collection'
+        ]);
     }
 
     private function validateCollectionOwnership($collection): void
@@ -91,22 +277,5 @@ class CollectionController extends AbstractController
         if ($collection->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException('Vous n\'avez pas accès à cette collection.');
         }
-    }
-
-    private function updateQuantity(Request $request, $collection, EntityManagerInterface $entityManager): Response
-    {
-        $quantity = (int) $request->request->get('quantity', 1);
-        if ($quantity < 1) {
-            throw new BadRequestHttpException('La quantité doit être supérieure à 0.');
-        }
-
-        $collection->setQuantity($quantity);
-        $entityManager->flush();
-
-        return $this->json([
-            'success' => true,
-            'message' => 'Quantité mise à jour avec succès.',
-            'quantity' => $quantity
-        ]);
     }
 }

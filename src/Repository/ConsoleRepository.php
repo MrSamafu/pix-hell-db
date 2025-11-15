@@ -141,4 +141,19 @@ class ConsoleRepository extends ServiceEntityRepository
 
         return array_map(fn($item) => $item['generation'], $result);
     }
+
+    /**
+     * Recherche simple de consoles par nom
+     */
+    public function searchByName(string $query): array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.name LIKE :query')
+            ->orWhere('c.manufacturer LIKE :query')
+            ->setParameter('query', '%' . $query . '%')
+            ->orderBy('c.name', 'ASC')
+            ->setMaxResults(50)
+            ->getQuery()
+            ->getResult();
+    }
 }

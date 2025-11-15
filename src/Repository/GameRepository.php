@@ -124,4 +124,21 @@ class GameRepository extends ServiceEntityRepository
 
         return array_map(fn($item) => $item['year'], $result);
     }
+
+    /**
+     * Recherche simple de jeux par titre
+     */
+    public function searchByTitle(string $query): array
+    {
+        return $this->createQueryBuilder('g')
+            ->where('g.title LIKE :query')
+            ->orWhere('g.series LIKE :query')
+            ->orWhere('g.publisher LIKE :query')
+            ->orWhere('g.developer LIKE :query')
+            ->setParameter('query', '%' . $query . '%')
+            ->orderBy('g.title', 'ASC')
+            ->setMaxResults(50)
+            ->getQuery()
+            ->getResult();
+    }
 }

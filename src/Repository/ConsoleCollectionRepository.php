@@ -45,4 +45,19 @@ class ConsoleCollectionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult() ?? 0;
     }
+
+    /**
+     * Trouve tous les utilisateurs qui possèdent une console spécifique
+     */
+    public function findUsersWhoOwn(int $consoleId): array
+    {
+        return $this->createQueryBuilder('cc')
+            ->select('u.id', 'u.username', 'cc.quantity')
+            ->join('cc.user', 'u')
+            ->where('cc.console = :consoleId')
+            ->setParameter('consoleId', $consoleId)
+            ->orderBy('u.username', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

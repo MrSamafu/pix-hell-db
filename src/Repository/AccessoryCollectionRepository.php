@@ -59,4 +59,19 @@ class AccessoryCollectionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Trouve tous les utilisateurs qui possèdent un accessoire spécifique
+     */
+    public function findUsersWhoOwn(int $accessoryId): array
+    {
+        return $this->createQueryBuilder('ac')
+            ->select('u.id', 'u.username', 'ac.quantity')
+            ->join('ac.user', 'u')
+            ->where('ac.accessory = :accessoryId')
+            ->setParameter('accessoryId', $accessoryId)
+            ->orderBy('u.username', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

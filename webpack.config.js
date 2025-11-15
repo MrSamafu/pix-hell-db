@@ -29,6 +29,7 @@ Encore
         to: 'images/[path][name].[hash:8].[ext]',
         pattern: /\.(png|jpg|jpeg|gif|ico|svg|webp)$/
     })
+    .enableSassLoader()
 ;
 
 module.exports = Encore.getWebpackConfig();

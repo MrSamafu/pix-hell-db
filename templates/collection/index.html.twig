@@ -1,84 +1,97 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ma Collection - {{ parent() }}{% endblock %}
+{% block title %}Collections - {{ parent() }}{% endblock %}
 
 {% block body %}
-    <h1>Ma Collection</h1>
+    <div class="container-fluid py-4">
+        <h1 class="mb-4">Collections</h1>
 
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="h5 mb-0">Mes Jeux</h2>
-                </div>
-                <div class="card-body">
-                    <div class="list-group">
-                        {% for gameCollection in game_collections %}
-                            <div class="list-group-item">
-                                <h5 class="mb-1">{{ gameCollection.game.title }}</h5>
-                                <p class="mb-1">Plateforme : {{ gameCollection.game.platform }}</p>
-                                <small>Quantité : {{ gameCollection.quantity }}</small>
-                            </div>
-                        {% else %}
-                            <div class="text-center p-3">
-                                <p class="text-muted">Aucun jeu dans votre collection</p>
-                                <a href="{{ path('app_game_index') }}" class="btn btn-primary">
-                                    <i class="fas fa-search"></i> Parcourir les jeux
-                                </a>
-                            </div>
-                        {% endfor %}
+        <div class="row g-4">
+            <!-- Partie 1 : Ma Collection -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 collection-card">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="h5 mb-0">
+                            <i class="fas fa-box-open me-2"></i>Ma Collection
+                        </h2>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="card-text mb-4">
+                            Accédez à votre collection personnelle de jeux, consoles et accessoires.
+                        </p>
+                        <a href="{{ path('app_collection_my') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-eye me-2"></i>Voir ma collection
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="h5 mb-0">Mes Consoles</h2>
-                </div>
-                <div class="card-body">
-                    <div class="list-group">
-                        {% for consoleCollection in console_collections %}
-                            <div class="list-group-item">
-                                <h5 class="mb-1">{{ consoleCollection.console.name }}</h5>
-                                <p class="mb-1">Fabricant : {{ consoleCollection.console.manufacturer }}</p>
-                                <small>Quantité : {{ consoleCollection.quantity }}</small>
-                            </div>
-                        {% else %}
-                            <div class="text-center p-3">
-                                <p class="text-muted">Aucune console dans votre collection</p>
-                                <a href="{{ path('app_console_index') }}" class="btn btn-primary">
-                                    <i class="fas fa-search"></i> Parcourir les consoles
+            <!-- Partie 2 : Utilisateurs -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 collection-card">
+                    <div class="card-header bg-success text-white">
+                        <h2 class="h5 mb-0">
+                            <i class="fas fa-users me-2"></i>Utilisateurs
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text mb-3">
+                            Découvrez les collections des autres utilisateurs :
+                        </p>
+                        <div class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
+                            {% for user in users %}
+                                <a href="{{ path('app_collection_user', {'id': user.id}) }}"
+                                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="fas fa-user me-2"></i>{{ user.username }}
+                                    </span>
+                                    <i class="fas fa-chevron-right"></i>
                                 </a>
-                            </div>
-                        {% endfor %}
+                            {% else %}
+                                <div class="text-center text-muted p-3">
+                                    <p>Aucun autre utilisateur pour le moment</p>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="h5 mb-0">Mes Accessoires</h2>
-                </div>
-                <div class="card-body">
-                    <div class="list-group">
-                        {% for accessoryCollection in accessory_collections %}
-                            <div class="list-group-item">
-                                <h5 class="mb-1">{{ accessoryCollection.accessory.name }}</h5>
-                                <p class="mb-1">Type : {{ accessoryCollection.accessory.type }}</p>
-                                <small>Quantité : {{ accessoryCollection.quantity }}</small>
+            <!-- Partie 3 : Recherche -->
+            <div class="col-lg-4 col-md-12">
+                <div class="card h-100 collection-card">
+                    <div class="card-header bg-warning text-dark">
+                        <h2 class="h5 mb-0">
+                            <i class="fas fa-search me-2"></i>Recherche
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text mb-3">
+                            Trouvez qui possède un jeu, une console ou un accessoire :
+                        </p>
+                        <form action="{{ path('app_collection_search') }}" method="get">
+                            <div class="mb-3">
+                                <label for="search-query" class="form-label">Rechercher</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="search-query"
+                                       name="q"
+                                       placeholder="Nom de l'objet..."
+                                       required>
                             </div>
-                        {% else %}
-                            <div class="text-center p-3">
-                                <p class="text-muted">Aucun accessoire dans votre collection</p>
-                                <a href="{{ path('app_accessory_index') }}" class="btn btn-primary">
-                                    <i class="fas fa-search"></i> Parcourir les accessoires
-                                </a>
+                            <div class="mb-3">
+                                <label for="search-type" class="form-label">Type</label>
+                                <select class="form-select" id="search-type" name="type">
+                                    <option value="all">Tous</option>
+                                    <option value="game">Jeux</option>
+                                    <option value="console">Consoles</option>
+                                    <option value="accessory">Accessoires</option>
+                                </select>
                             </div>
-                        {% endfor %}
+                            <button type="submit" class="btn btn-warning w-100">
+                                <i class="fas fa-search me-2"></i>Rechercher
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

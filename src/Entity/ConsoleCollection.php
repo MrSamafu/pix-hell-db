@@ -24,6 +24,9 @@ class ConsoleCollection
     #[ORM\Column]
     private ?int $quantity = null;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $note = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +62,17 @@ class ConsoleCollection
     public function setQuantity(int $quantity): static
     {
         $this->quantity = $quantity;
+        return $this;
+    }
+
+    public function getNote(): ?string
+    {
+        return $this->note;
+    }
+
+    public function setNote(?string $note): static
+    {
+        $this->note = $note;
         return $this;
     }
 }
