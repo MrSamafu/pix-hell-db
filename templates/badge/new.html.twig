@@ -1,0 +1,326 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un badge - Admin - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Header -->
+            <div class="page-header-admin mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h1 class="retro-title mb-1">
+                            <i class="fas fa-trophy me-2"></i>Créer un nouveau badge
+                        </h1>
+                        <p class="text-muted mb-0">Définissez un badge pour récompenser vos membres</p>
+                    </div>
+                    <a href="{{ path('app_badge_index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour
+                    </a>
+                </div>
+            </div>
+
+            <!-- Form Card -->
+            <div class="form-card">
+                <div class="form-card-header">
+                    <h3><i class="fas fa-edit me-2"></i>Informations du badge</h3>
+                </div>
+                <div class="form-card-body">
+                    {{ form_start(form, {'attr': {'class': 'badge-form'}}) }}
+
+                        <!-- Name Field -->
+                        <div class="form-field-group mb-4">
+                            <label class="form-label-retro">
+                                <i class="fas fa-tag me-2"></i>{{ form.name.vars.label }}
+                            </label>
+                            {{ form_widget(form.name, {
+                                'attr': {
+                                    'class': 'form-control-retro',
+                                    'placeholder': 'Ex: Membre Fondateur, Collectionneur Expert...'
+                                }
+                            }) }}
+                            {{ form_errors(form.name) }}
+                            <small class="form-hint">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Nom court et descriptif du badge
+                            </small>
+                        </div>
+
+                        <!-- Image URL Field -->
+                        <div class="form-field-group mb-4">
+                            <label class="form-label-retro">
+                                <i class="fas fa-image me-2"></i>{{ form.imageUrl.vars.label }}
+                            </label>
+                            {{ form_widget(form.imageUrl, {
+                                'attr': {
+                                    'class': 'form-control-retro',
+                                    'placeholder': 'https://exemple.com/badge.png'
+                                }
+                            }) }}
+                            {{ form_errors(form.imageUrl) }}
+                            <small class="form-hint">
+                                <i class="fas fa-info-circle me-1"></i>
+                                URL publique de l'image du badge (PNG ou SVG recommandé)
+                            </small>
+                        </div>
+
+                        <!-- Description Field -->
+                        <div class="form-field-group mb-4">
+                            <label class="form-label-retro">
+                                <i class="fas fa-align-left me-2"></i>{{ form.description.vars.label }}
+                            </label>
+                            {{ form_widget(form.description, {
+                                'attr': {
+                                    'class': 'form-control-retro',
+                                    'placeholder': 'Décrivez ce badge et comment l\'obtenir...',
+                                    'rows': 5
+                                }
+                            }) }}
+                            {{ form_errors(form.description) }}
+                            <small class="form-hint">
+                                <i class="fas fa-lightbulb me-1"></i>
+                                Expliquez la signification du badge et les critères pour l'obtenir
+                            </small>
+                        </div>
+
+                        <!-- Preview Section -->
+                        <div class="badge-preview-section mb-4">
+                            <h4 class="mb-3"><i class="fas fa-eye me-2"></i>Aperçu</h4>
+                            <div class="badge-preview-card">
+                                <div class="badge-preview-image">
+                                    <i class="fas fa-trophy fa-3x"></i>
+                                    <p class="mt-2 mb-0 small text-muted">L'image apparaîtra ici</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-plus-circle me-2"></i>Créer le badge
+                            </button>
+                            <a href="{{ path('app_badge_index') }}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times me-2"></i>Annuler
+                            </a>
+                        </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+
+            <!-- Help Card -->
+            <div class="help-card mt-4">
+                <div class="help-card-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="help-card-content">
+                    <h5>Conseils pour créer un bon badge</h5>
+                    <ul>
+                        <li>Utilisez des images claires et reconnaissables</li>
+                        <li>Choisissez un nom court et mémorable</li>
+                        <li>Expliquez clairement comment obtenir le badge</li>
+                        <li>Privilégiez les images au format PNG avec fond transparent</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Page Header Admin */
+.page-header-admin {
+    background: linear-gradient(135deg, var(--retro-red) 0%, var(--retro-purple) 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.page-header-admin .retro-title,
+.page-header-admin .text-muted {
+    color: var(--retro-light);
+}
+
+/* Form Card */
+.form-card {
+    background: var(--retro-dark);
+    border: 2px solid var(--retro-purple);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.form-card-header {
+    background: var(--retro-purple);
+    padding: 1.25rem 1.5rem;
+    border-bottom: 2px solid var(--retro-cyan);
+}
+
+.form-card-header h3 {
+    margin: 0;
+    color: var(--retro-light);
+    font-size: 1.2rem;
+}
+
+.form-card-body {
+    padding: 2rem;
+}
+
+/* Form Fields */
+.form-field-group {
+    position: relative;
+}
+
+.form-label-retro {
+    display: block;
+    color: var(--retro-cyan);
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-control-retro {
+    width: 100%;
+    background: rgba(13, 10, 11, 0.6);
+    border: 2px solid var(--retro-purple);
+    color: var(--retro-light);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.form-control-retro:focus {
+    background: rgba(13, 10, 11, 0.8);
+    border-color: var(--retro-cyan);
+    color: var(--retro-light);
+    box-shadow: 0 0 15px rgba(160, 193, 185, 0.3);
+    outline: none;
+}
+
+.form-control-retro::placeholder {
+    color: rgba(240, 240, 201, 0.4);
+}
+
+textarea.form-control-retro {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-hint {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: rgba(240, 240, 201, 0.6);
+}
+
+/* Badge Preview */
+.badge-preview-section h4 {
+    color: var(--retro-light);
+}
+
+.badge-preview-card {
+    background: linear-gradient(135deg, rgba(103, 97, 168, 0.2), rgba(160, 193, 185, 0.2));
+    border: 2px solid var(--retro-purple);
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+}
+
+.badge-preview-image {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(13, 10, 11, 0.3);
+    border-radius: 10px;
+    color: var(--retro-light);
+    opacity: 0.6;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(103, 97, 168, 0.3);
+}
+
+.form-actions .btn {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Help Card */
+.help-card {
+    background: rgba(160, 193, 185, 0.1);
+    border: 2px solid var(--retro-cyan);
+    border-radius: 15px;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.help-card-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--retro-cyan);
+    color: var(--retro-dark);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.help-card-content h5 {
+    color: var(--retro-light);
+    margin-bottom: 0.75rem;
+}
+
+.help-card-content ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    color: var(--retro-light);
+    opacity: 0.8;
+}
+
+.help-card-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .page-header-admin .d-flex {
+        flex-direction: column;
+        align-items: stretch !important;
+        text-align: center;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .btn {
+        min-width: 100%;
+    }
+
+    .help-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .help-card-icon {
+        margin: 0 auto;
+    }
+}
+</style>
+{% endblock %}
+

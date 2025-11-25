@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des utilisateurs - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container my-4">
+    <h1 class="retro-title mb-4">Membres de l'association</h1>
+
+    <div class="row">
+        {% for user in users %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ user.username }}</h5>
+                    {% if user.firstName or user.lastName %}
+                    <p class="text-muted small mb-2">
+                        {% if user.firstName %}{{ user.firstName }}{% endif %}
+                        {% if user.lastName %} {{ user.lastName }}{% endif %}
+                    </p>
+                    {% endif %}
+
+                    {% if user.bio %}
+                    <p class="card-text small">{{ user.bio|length > 100 ? user.bio|slice(0, 100) ~ '...' : user.bio }}</p>
+                    {% endif %}
+
+                    {% if user.badges|length > 0 %}
+                    <div class="d-flex gap-2 mb-3 flex-wrap">
+                        {% for badge in user.badges|slice(0, 3) %}
+                        <img src="{{ badge.imageUrl }}" alt="{{ badge.name }}" class="img-fluid" style="max-height: 30px;" title="{{ badge.name }}">
+                        {% endfor %}
+                        {% if user.badges|length > 3 %}
+                        <span class="badge bg-secondary align-self-center">+{{ user.badges|length - 3 }}</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex gap-2">
+                        <a href="{{ path('app_user_profile', {'id': user.id}) }}" class="btn btn-sm btn-primary">Voir le profil</a>
+                        <a href="{{ path('app_collection_user', {'id': user.id}) }}" class="btn btn-sm btn-secondary">Voir la collection</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                Aucun utilisateur inscrit pour le moment.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="{{ path('app_collection_index') }}" class="btn btn-secondary mt-3">Retour aux collections</a>
+</div>
+{% endblock %}
+

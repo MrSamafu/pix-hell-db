@@ -29,6 +29,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $username = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $firstName = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $lastName = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $bio = null;
+
+    #[ORM\Column(type: 'date', nullable: true)]
+    private ?\DateTimeInterface $birthDate = null;
+
+    #[ORM\Column(type: 'date', nullable: true)]
+    private ?\DateTimeInterface $associationJoinDate = null;
+
+    #[ORM\ManyToMany(targetEntity: Badge::class, inversedBy: 'users')]
+    #[ORM\JoinTable(name: 'user_badge')]
+    private Collection $badges;
+
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: GameCollection::class)]
     private Collection $gameCollections;
 
@@ -55,6 +74,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->createdGames = new ArrayCollection();
         $this->createdConsoles = new ArrayCollection();
         $this->createdAccessories = new ArrayCollection();
+        $this->badges = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -146,5 +166,79 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getCreatedAccessories(): Collection
     {
         return $this->createdAccessories;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(?string $firstName): static
+    {
+        $this->firstName = $firstName;
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(?string $lastName): static
+    {
+        $this->lastName = $lastName;
+        return $this;
+    }
+
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+
+    public function setBio(?string $bio): static
+    {
+        $this->bio = $bio;
+        return $this;
+    }
+
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(?\DateTimeInterface $birthDate): static
+    {
+        $this->birthDate = $birthDate;
+        return $this;
+    }
+
+    public function getAssociationJoinDate(): ?\DateTimeInterface
+    {
+        return $this->associationJoinDate;
+    }
+
+    public function setAssociationJoinDate(?\DateTimeInterface $associationJoinDate): static
+    {
+        $this->associationJoinDate = $associationJoinDate;
+        return $this;
+    }
+
+    public function getBadges(): Collection
+    {
+        return $this->badges;
+    }
+
+    public function addBadge(Badge $badge): static
+    {
+        if (!$this->badges->contains($badge)) {
+            $this->badges->add($badge);
+        }
+        return $this;
+    }
+
+    public function removeBadge(Badge $badge): static
+    {
+        $this->badges->removeElement($badge);
+        return $this;
     }
 }

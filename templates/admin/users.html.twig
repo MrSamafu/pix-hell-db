@@ -1,0 +1,374 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des utilisateurs - Admin - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="admin-users-page">
+        <!-- Header -->
+        <div class="page-header mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h1 class="retro-title mb-1">
+                        <i class="fas fa-users-cog me-2"></i>Gestion des utilisateurs
+                    </h1>
+                    <p class="text-muted mb-0">{{ users|length }} membre(s) inscrit(s)</p>
+                </div>
+                <a href="{{ path('app_admin_dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Retour au dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="admin-table-wrapper">
+            <div class="table-responsive">
+                <table class="table admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Utilisateur</th>
+                            <th>Email</th>
+                            <th>Rôle</th>
+                            <th>Badges</th>
+                            <th>Collection</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td class="text-muted">#{{ user.id }}</td>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar-sm">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div>
+                                        <strong>{{ user.username }}</strong>
+                                        {% if user.firstName or user.lastName %}
+                                        <br>
+                                        <small class="text-muted">
+                                            {{ user.firstName }} {{ user.lastName }}
+                                        </small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <small>{{ user.email }}</small>
+                            </td>
+                            <td>
+                                {% if 'ROLE_ADMIN' in user.roles %}
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-shield-alt me-1"></i>Admin
+                                </span>
+                                {% else %}
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-user me-1"></i>Utilisateur
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-trophy me-1"></i>{{ user.badges|length }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="collection-stats">
+                                    <span class="badge bg-primary" title="Jeux">
+                                        <i class="fas fa-gamepad"></i> {{ user.gameCollections|length }}
+                                    </span>
+                                    <span class="badge bg-info" title="Consoles">
+                                        <i class="fas fa-desktop"></i> {{ user.consoleCollections|length }}
+                                    </span>
+                                    <span class="badge bg-success" title="Accessoires">
+                                        <i class="fas fa-puzzle-piece"></i> {{ user.accessoryCollections|length }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ path('app_user_profile', {'id': user.id}) }}"
+                                       class="btn btn-sm btn-outline-primary"
+                                       title="Voir le profil">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+
+                                    <a href="{{ path('app_admin_user_manage_badges', {'id': user.id}) }}"
+                                       class="btn btn-sm btn-outline-warning"
+                                       title="Gérer les badges">
+                                        <i class="fas fa-trophy"></i>
+                                    </a>
+
+                                    <form method="post"
+                                          action="{{ path('app_admin_user_toggle_admin', {'id': user.id}) }}"
+                                          class="d-inline"
+                                          onsubmit="return confirm('Modifier les droits de cet utilisateur ?')">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('toggle_admin_' ~ user.id) }}">
+                                        {% if 'ROLE_ADMIN' in user.roles %}
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-danger"
+                                                title="Retirer les droits admin">
+                                            <i class="fas fa-user-shield"></i>
+                                        </button>
+                                        {% else %}
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-success"
+                                                title="Promouvoir admin">
+                                            <i class="fas fa-user-plus"></i>
+                                        </button>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <i class="fas fa-users fa-3x mb-3 text-muted"></i>
+                                <p class="text-muted">Aucun utilisateur trouvé.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Page Header */
+.page-header {
+    background: linear-gradient(135deg, var(--retro-purple) 0%, var(--retro-cyan) 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.page-header .retro-title,
+.page-header .text-muted {
+    color: var(--retro-light);
+}
+
+/* Table Wrapper */
+.admin-table-wrapper {
+    background: var(--retro-dark);
+    border: 2px solid var(--retro-purple);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Admin Table */
+.admin-table {
+    margin: 0;
+    color: var(--retro-light);
+}
+
+.admin-table thead {
+    background: var(--retro-purple);
+    border-bottom: 2px solid var(--retro-cyan);
+}
+
+.admin-table thead th {
+    color: var(--retro-light);
+    font-weight: bold;
+    padding: 1rem;
+    border: none;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    position: relative;
+}
+
+.admin-table thead th::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--retro-cyan);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.admin-table thead th:hover::after {
+    transform: scaleX(1);
+}
+
+.admin-table tbody tr {
+    border-bottom: 1px solid rgba(103, 97, 168, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.admin-table tbody tr::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--retro-cyan);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+}
+
+.admin-table tbody tr:hover {
+    background: rgba(103, 97, 168, 0.15);
+}
+
+.admin-table tbody tr:hover::before {
+    transform: scaleY(1);
+}
+
+.admin-table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border: none;
+}
+
+/* User Cell */
+.user-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.user-avatar-sm {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--retro-purple), var(--retro-cyan));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--retro-light);
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.user-avatar-sm::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    transform: rotate(45deg);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.admin-table tbody tr:hover .user-avatar-sm {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(160, 193, 185, 0.5);
+}
+
+/* Collection Stats */
+.collection-stats {
+    display: flex;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.3rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+    padding: 0.25rem 0.5rem;
+    min-width: 35px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.action-buttons .btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.action-buttons .btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.action-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Badges */
+.badge {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.65rem;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .admin-table {
+        font-size: 0.9rem;
+    }
+
+    .admin-table td,
+    .admin-table th {
+        padding: 0.75rem 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .table-responsive {
+        border-radius: 15px;
+    }
+
+    .admin-table {
+        font-size: 0.85rem;
+    }
+
+    .user-cell {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .collection-stats {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}
+

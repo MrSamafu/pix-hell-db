@@ -237,6 +237,25 @@ a {
       color: $color-accent;
       background: rgba($color-accent, 0.1);
     }
+
+    // Style spécial pour le lien Admin
+    &--admin {
+      background: linear-gradient(135deg, $color-red, $color-purple);
+      color: $color-cream;
+      font-weight: 600;
+      border: 2px solid transparent;
+
+      &::after {
+        display: none;
+      }
+
+      &:hover {
+        color: $color-cream;
+        border-color: $color-teal;
+        box-shadow: 0 0 15px rgba($color-teal, 0.5);
+        transform: translateY(-2px);
+      }
+    }
   }
 }
 
@@ -1590,4 +1609,3 @@ a {
 .animate-slide-in {
   animation: slideInUp $transition-normal;
 }
-

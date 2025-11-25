@@ -1,0 +1,205 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des badges - Admin - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <!-- Header -->
+    <div class="page-header mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="retro-title mb-1">
+                    <i class="fas fa-trophy me-2"></i>Gestion des badges
+                </h1>
+                <p class="text-muted mb-0">{{ badges|length }} badge(s) créé(s)</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ path('app_badge_new') }}" class="btn btn-success">
+                    <i class="fas fa-plus me-2"></i>Créer un badge
+                </a>
+                <a href="{{ path('app_admin_dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if badges|length > 0 %}
+    <div class="badges-management-grid">
+        {% for badge in badges %}
+        <div class="badge-management-card">
+            <div class="badge-card-image">
+                <img src="{{ badge.imageUrl }}" alt="{{ badge.name }}">
+            </div>
+            <div class="badge-card-content">
+                <h5 class="badge-card-title">{{ badge.name }}</h5>
+                {% if badge.description %}
+                <p class="badge-card-description">{{ badge.description|length > 80 ? badge.description|slice(0, 80) ~ '...' : badge.description }}</p>
+                {% endif %}
+                <div class="badge-card-actions">
+                    <a href="{{ path('app_badge_edit', {'id': badge.id}) }}"
+                       class="btn btn-sm btn-warning"
+                       title="Modifier">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <form method="post"
+                          action="{{ path('app_badge_delete', {'id': badge.id}) }}"
+                          class="d-inline"
+                          onsubmit="return confirm('Supprimer ce badge définitivement ?')">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ badge.id) }}">
+                        <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-trophy fa-5x mb-4 text-muted"></i>
+        <h3 class="mb-3">Aucun badge créé</h3>
+        <p class="text-muted mb-4">Créez votre premier badge pour récompenser vos membres !</p>
+        <a href="{{ path('app_badge_new') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus me-2"></i>Créer mon premier badge
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+/* Page Header */
+.page-header {
+    background: linear-gradient(135deg, var(--retro-red) 0%, var(--retro-purple) 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.page-header .retro-title,
+.page-header .text-muted {
+    color: var(--retro-light);
+}
+
+/* Badges Management Grid */
+.badges-management-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.badge-management-card {
+    background: var(--retro-dark);
+    border: 2px solid var(--retro-purple);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.badge-management-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--retro-cyan);
+    box-shadow: 0 8px 20px rgba(160, 193, 185, 0.3);
+}
+
+.badge-card-image {
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(103, 97, 168, 0.3), rgba(160, 193, 185, 0.3));
+    padding: 2rem;
+    border-bottom: 2px solid var(--retro-purple);
+    position: relative;
+    overflow: hidden;
+}
+
+.badge-card-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.03) 0px,
+        rgba(255, 255, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+}
+
+.badge-card-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s ease;
+}
+
+.badge-management-card:hover .badge-card-image img {
+    transform: scale(1.1);
+}
+
+.badge-card-content {
+    padding: 1.5rem;
+}
+
+.badge-card-title {
+    color: var(--retro-light);
+    margin-bottom: 0.5rem;
+    text-align: center;
+    font-weight: bold;
+}
+
+.badge-card-description {
+    color: var(--retro-light);
+    opacity: 0.7;
+    font-size: 0.85rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+    min-height: 3rem;
+}
+
+.badge-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--retro-dark);
+    border: 2px dashed var(--retro-purple);
+    border-radius: 15px;
+}
+
+.empty-state h3 {
+    color: var(--retro-light);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .badges-management-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .page-header .d-flex {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .page-header .d-flex > div {
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}
+

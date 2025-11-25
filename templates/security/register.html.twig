@@ -71,8 +71,90 @@
                         {{ form_errors(registrationForm.plainPassword) }}
                         <small class="text-muted" style="display: block; margin-top: 0.25rem; font-size: 0.875rem;">
                             <i class="fas fa-shield-halved me-1"></i>
-                            Minimum 8 caractères recommandés
+                            Minimum 6 caractères requis
                         </small>
+                    </div>
+
+                    <hr style="margin: 1.5rem 0; border-color: var(--retro-cyan); opacity: 0.3;">
+
+                    <div class="text-center mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Les champs suivants sont optionnels
+                        </small>
+                    </div>
+
+                    <!-- First Name -->
+                    <div class="auth-form-group">
+                        <label for="{{ registrationForm.firstName.vars.id }}" class="form-label">
+                            <i class="fas fa-id-badge"></i>
+                            Prénom <small class="text-muted">(optionnel)</small>
+                        </label>
+                        {{ form_widget(registrationForm.firstName, {
+                            'attr': {
+                                'class': 'form-control',
+                                'placeholder': 'Votre prénom'
+                            }
+                        }) }}
+                        {{ form_errors(registrationForm.firstName) }}
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="auth-form-group">
+                        <label for="{{ registrationForm.lastName.vars.id }}" class="form-label">
+                            <i class="fas fa-id-card"></i>
+                            Nom <small class="text-muted">(optionnel)</small>
+                        </label>
+                        {{ form_widget(registrationForm.lastName, {
+                            'attr': {
+                                'class': 'form-control',
+                                'placeholder': 'Votre nom'
+                            }
+                        }) }}
+                        {{ form_errors(registrationForm.lastName) }}
+                    </div>
+
+                    <!-- Bio -->
+                    <div class="auth-form-group">
+                        <label for="{{ registrationForm.bio.vars.id }}" class="form-label">
+                            <i class="fas fa-comment"></i>
+                            Bio <small class="text-muted">(optionnel)</small>
+                        </label>
+                        {{ form_widget(registrationForm.bio, {
+                            'attr': {
+                                'class': 'form-control',
+                                'placeholder': 'Parlez-nous de votre passion pour le rétrogaming...'
+                            }
+                        }) }}
+                        {{ form_errors(registrationForm.bio) }}
+                    </div>
+
+                    <!-- Birth Date -->
+                    <div class="auth-form-group">
+                        <label for="{{ registrationForm.birthDate.vars.id }}" class="form-label">
+                            <i class="fas fa-calendar"></i>
+                            Date de naissance <small class="text-muted">(optionnel)</small>
+                        </label>
+                        {{ form_widget(registrationForm.birthDate, {
+                            'attr': {
+                                'class': 'form-control'
+                            }
+                        }) }}
+                        {{ form_errors(registrationForm.birthDate) }}
+                    </div>
+
+                    <!-- Association Join Date -->
+                    <div class="auth-form-group">
+                        <label for="{{ registrationForm.associationJoinDate.vars.id }}" class="form-label">
+                            <i class="fas fa-users"></i>
+                            Date d'arrivée dans l'association <small class="text-muted">(optionnel)</small>
+                        </label>
+                        {{ form_widget(registrationForm.associationJoinDate, {
+                            'attr': {
+                                'class': 'form-control'
+                            }
+                        }) }}
+                        {{ form_errors(registrationForm.associationJoinDate) }}
                     </div>
 
                     <!-- Submit Button -->

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon profil - {{ parent() }}{% endblock %}
+{% block title %}Profil de {{ user.username }} - {{ parent() }}{% endblock %}
 
 {% block body %}
 <div class="container my-5">
@@ -10,7 +10,7 @@
             <div class="profile-header mb-4">
                 <div class="profile-avatar-wrapper">
                     <div class="profile-avatar">
-                        <i class="fas fa-user-astronaut"></i>
+                        <i class="fas fa-user-ninja"></i>
                     </div>
                     <div class="profile-level-badge">
                         <i class="fas fa-star"></i> Lvl {{ user.gameCollections|length + user.consoleCollections|length + user.accessoryCollections|length }}
@@ -73,10 +73,11 @@
             <!-- Informations personnelles -->
             <div class="profile-section mb-4">
                 <div class="profile-section-header">
-                    <h3><i class="fas fa-id-card me-2"></i>Informations personnelles</h3>
+                    <h3><i class="fas fa-id-card me-2"></i>Informations</h3>
                 </div>
                 <div class="profile-section-body">
                     <div class="row">
+                        {% if is_granted('ROLE_ADMIN') %}
                         <div class="col-md-6 mb-3">
                             <div class="profile-info-item">
                                 <span class="profile-info-label">
@@ -85,6 +86,7 @@
                                 <span class="profile-info-value">{{ user.email }}</span>
                             </div>
                         </div>
+                        {% endif %}
                         {% if user.birthDate %}
                         <div class="col-md-6 mb-3">
                             <div class="profile-info-item">
@@ -110,18 +112,26 @@
             {% if user.badges|length > 0 %}
             <div class="profile-section mb-4">
                 <div class="profile-section-header">
-                    <h3><i class="fas fa-trophy me-2"></i>Mes badges ({{ user.badges|length }})</h3>
+                    <h3><i class="fas fa-trophy me-2"></i>Badges ({{ user.badges|length }})</h3>
                 </div>
                 <div class="profile-section-body">
                     <div class="badges-grid">
                         {% for badge in user.badges %}
-                        <div class="badge-item" {% if badge.description %}title="{{ badge.description }}"{% endif %}>
+                        <div class="badge-item {% if is_granted('ROLE_ADMIN') %}badge-item-admin{% endif %}" {% if badge.description %}title="{{ badge.description }}"{% endif %}>
                             <div class="badge-image-wrapper">
                                 <img src="{{ badge.imageUrl }}" alt="{{ badge.name }}" class="badge-image">
                             </div>
                             <p class="badge-name">{{ badge.name }}</p>
                             {% if badge.description %}
                             <p class="badge-description-hint"><i class="fas fa-info-circle"></i></p>
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <form method="post" action="{{ path('app_user_badge_remove', {'id': user.id, 'badgeId': badge.id}) }}" class="badge-remove-form">
+                                <input type="hidden" name="_token" value="{{ csrf_token('remove_badge_' ~ user.id) }}">
+                                <button type="submit" class="btn btn-sm btn-danger badge-remove-btn" onclick="return confirm('Retirer ce badge ?')" title="Retirer ce badge">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </form>
                             {% endif %}
                         </div>
                         {% endfor %}
@@ -131,33 +141,76 @@
             {% else %}
             <div class="profile-section mb-4">
                 <div class="profile-section-header">
-                    <h3><i class="fas fa-trophy me-2"></i>Mes badges</h3>
+                    <h3><i class="fas fa-trophy me-2"></i>Badges</h3>
                 </div>
                 <div class="profile-section-body text-center py-4">
                     <i class="fas fa-medal fa-3x mb-3 text-muted"></i>
-                    <p class="text-muted">Aucun badge pour le moment. Continuez à collectionner !</p>
+                    <p class="text-muted">Aucun badge pour le moment.</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Attribution de badges (Admin uniquement) -->
+            {% if is_granted('ROLE_ADMIN') and allBadges %}
+            <div class="profile-section mb-4 admin-section">
+                <div class="profile-section-header bg-warning text-dark">
+                    <h3><i class="fas fa-shield-alt me-2"></i>Administration - Attribuer des badges</h3>
+                </div>
+                <div class="profile-section-body">
+                    {% set availableBadges = [] %}
+                    {% for badge in allBadges %}
+                        {% if badge not in user.badges %}
+                            {% set availableBadges = availableBadges|merge([badge]) %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if availableBadges|length > 0 %}
+                    <div class="badges-grid">
+                        {% for badge in availableBadges %}
+                        <div class="badge-item badge-item-available">
+                            <div class="badge-image-wrapper">
+                                <img src="{{ badge.imageUrl }}" alt="{{ badge.name }}" class="badge-image">
+                            </div>
+                            <p class="badge-name">{{ badge.name }}</p>
+                            <form method="post" action="{{ path('app_user_badge_add', {'id': user.id, 'badgeId': badge.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('add_badge_' ~ user.id) }}">
+                                <button type="submit" class="btn btn-sm btn-success w-100">
+                                    <i class="fas fa-plus me-1"></i>Attribuer
+                                </button>
+                            </form>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Tous les badges ont été attribués à cet utilisateur.
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             {% endif %}
 
             <!-- Boutons d'action -->
             <div class="profile-actions">
-                <a href="{{ path('app_profile_edit') }}" class="btn btn-primary btn-lg">
-                    <i class="fas fa-edit me-2"></i>Modifier mon profil
+                <a href="{{ path('app_collection_user', {'id': user.id}) }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-box-open me-2"></i>Voir la collection
                 </a>
-                <a href="{{ path('app_collection_my') }}" class="btn btn-secondary btn-lg">
-                    <i class="fas fa-box-open me-2"></i>Ma collection
+                <a href="{{ path('app_collection_users') }}" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-users me-2"></i>Tous les membres
                 </a>
-                <a href="{{ path('app_home') }}" class="btn btn-outline-secondary btn-lg">
-                    <i class="fas fa-home me-2"></i>Accueil
+                {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_badge_index') }}" class="btn btn-warning btn-lg">
+                    <i class="fas fa-cog me-2"></i>Gérer les badges
                 </a>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
 
 <style>
-/* Profile Header */
+/* Réutilisation des styles de show.html.twig avec quelques ajustements */
 .profile-header {
     display: flex;
     align-items: center;
@@ -177,21 +230,11 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: repeating-linear-gradient(
-        0deg,
-        rgba(255, 255, 255, 0.03) 0px,
-        rgba(255, 255, 255, 0.03) 1px,
-        transparent 1px,
-        transparent 2px
-    );
+    background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 2px);
     pointer-events: none;
 }
 
-.profile-avatar-wrapper {
-    position: relative;
-    flex-shrink: 0;
-}
-
+.profile-avatar-wrapper { position: relative; flex-shrink: 0; }
 .profile-avatar {
     width: 120px;
     height: 120px;
@@ -220,29 +263,11 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.profile-header-info {
-    flex: 1;
-    color: var(--retro-light);
-}
+.profile-header-info { flex: 1; color: var(--retro-light); }
+.profile-header-info .retro-title { color: var(--retro-light); margin-bottom: 0.5rem; }
+.profile-fullname { font-size: 1.2rem; margin-bottom: 0.3rem; opacity: 0.9; }
+.profile-meta { font-size: 0.95rem; opacity: 0.8; margin-bottom: 0; }
 
-.profile-header-info .retro-title {
-    color: var(--retro-light);
-    margin-bottom: 0.5rem;
-}
-
-.profile-fullname {
-    font-size: 1.2rem;
-    margin-bottom: 0.3rem;
-    opacity: 0.9;
-}
-
-.profile-meta {
-    font-size: 0.95rem;
-    opacity: 0.8;
-    margin-bottom: 0;
-}
-
-/* Stat Cards */
 .stat-card {
     background: var(--retro-dark);
     border: 2px solid var(--retro-purple);
@@ -272,25 +297,10 @@
     color: var(--retro-light);
 }
 
-.stat-info {
-    flex: 1;
-}
+.stat-info { flex: 1; }
+.stat-value { font-size: 2rem; font-weight: bold; color: var(--retro-cyan); line-height: 1; }
+.stat-label { color: var(--retro-light); opacity: 0.8; font-size: 0.9rem; margin-top: 0.3rem; }
 
-.stat-value {
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--retro-cyan);
-    line-height: 1;
-}
-
-.stat-label {
-    color: var(--retro-light);
-    opacity: 0.8;
-    font-size: 0.9rem;
-    margin-top: 0.3rem;
-}
-
-/* Profile Sections */
 .profile-section {
     background: var(--retro-dark);
     border: 2px solid var(--retro-purple);
@@ -304,23 +314,10 @@
     border-bottom: 2px solid var(--retro-cyan);
 }
 
-.profile-section-header h3 {
-    margin: 0;
-    color: var(--retro-light);
-    font-size: 1.3rem;
-}
+.profile-section-header h3 { margin: 0; color: var(--retro-light); font-size: 1.3rem; }
+.profile-section-body { padding: 1.5rem; }
 
-.profile-section-body {
-    padding: 1.5rem;
-}
-
-/* Profile Info Items */
-.profile-info-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
+.profile-info-item { display: flex; flex-direction: column; gap: 0.5rem; }
 .profile-info-label {
     font-size: 0.85rem;
     color: var(--retro-cyan);
@@ -328,36 +325,25 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
+.profile-info-value { color: var(--retro-light); font-size: 1rem; }
 
-.profile-info-value {
-    color: var(--retro-light);
-    font-size: 1rem;
-}
-
-/* Bio */
 .profile-bio {
     padding: 1rem;
     background: rgba(103, 97, 168, 0.1);
     border-left: 4px solid var(--retro-cyan);
     border-radius: 5px;
 }
+.bio-text { color: var(--retro-light); line-height: 1.6; margin: 0; }
 
-.bio-text {
-    color: var(--retro-light);
-    line-height: 1.6;
-    margin: 0;
-}
-
-/* Badges Grid */
 .badges-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 1.5rem;
 }
 
-.badge-item {
-    text-align: center;
-}
+.badge-item { text-align: center; position: relative; }
+
+.badge-item-admin { padding-top: 10px; }
 
 .badge-image-wrapper {
     width: 100%;
@@ -378,18 +364,16 @@
     box-shadow: 0 0 20px rgba(160, 193, 185, 0.5);
 }
 
-.badge-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+.badge-item-available .badge-image-wrapper {
+    opacity: 0.6;
 }
 
-.badge-name {
-    margin-top: 0.5rem;
-    font-size: 0.85rem;
-    color: var(--retro-light);
-    font-weight: bold;
+.badge-item-available:hover .badge-image-wrapper {
+    opacity: 1;
 }
+
+.badge-image { max-width: 100%; max-height: 100%; object-fit: contain; }
+.badge-name { margin-top: 0.5rem; font-size: 0.85rem; color: var(--retro-light); font-weight: bold; }
 
 .badge-description-hint {
     margin-top: 0.25rem;
@@ -399,38 +383,35 @@
     cursor: help;
 }
 
-/* Profile Actions */
-.profile-actions {
+.badge-remove-form {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.badge-remove-btn {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border-radius: 50%;
     display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
 }
 
-.profile-actions .btn {
-    flex: 1;
-    min-width: 200px;
+.admin-section .profile-section-header.bg-warning {
+    background: var(--retro-red) !important;
+    color: var(--retro-light) !important;
 }
 
-/* Responsive */
+.profile-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+.profile-actions .btn { flex: 1; min-width: 200px; }
+
 @media (max-width: 768px) {
-    .profile-header {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .stat-card {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .badges-grid {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        gap: 1rem;
-    }
-
-    .profile-actions .btn {
-        min-width: 100%;
-    }
+    .profile-header { flex-direction: column; text-align: center; }
+    .stat-card { flex-direction: column; text-align: center; }
+    .badges-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1rem; }
+    .profile-actions .btn { min-width: 100%; }
 }
 </style>
 {% endblock %}

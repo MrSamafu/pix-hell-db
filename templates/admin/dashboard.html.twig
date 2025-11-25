@@ -1,0 +1,323 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="admin-dashboard">
+        <!-- Header -->
+        <div class="admin-header mb-4">
+            <div class="d-flex align-items-center">
+                <div class="admin-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div>
+                    <h1 class="retro-title mb-1">Panneau d'Administration</h1>
+                    <p class="mb-0 text-muted">Gérez votre application Pix Hell DB</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="admin-stat-card">
+                    <div class="stat-icon bg-primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">{{ totalUsers }}</div>
+                        <div class="stat-label">Utilisateurs</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="admin-stat-card">
+                    <div class="stat-icon bg-warning">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">{{ totalBadges }}</div>
+                        <div class="stat-label">Badges</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="admin-stat-card">
+                    <div class="stat-icon bg-success">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">-</div>
+                        <div class="stat-label">Jeux</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="admin-stat-card">
+                    <div class="stat-icon bg-info">
+                        <i class="fas fa-desktop"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">-</div>
+                        <div class="stat-label">Consoles</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3><i class="fas fa-users me-2"></i>Gestion des utilisateurs</h3>
+                    </div>
+                    <div class="admin-card-body">
+                        <p class="text-muted mb-3">Gérez les comptes utilisateurs, attribuez des rôles et des badges.</p>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="{{ path('app_admin_users') }}" class="btn btn-primary">
+                                <i class="fas fa-list me-2"></i>Liste des utilisateurs
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3><i class="fas fa-trophy me-2"></i>Gestion des badges</h3>
+                    </div>
+                    <div class="admin-card-body">
+                        <p class="text-muted mb-3">Créez, modifiez et supprimez des badges pour récompenser les membres.</p>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="{{ path('app_badge_index') }}" class="btn btn-warning text-dark">
+                                <i class="fas fa-list me-2"></i>Gérer les badges
+                            </a>
+                            <a href="{{ path('app_badge_new') }}" class="btn btn-success">
+                                <i class="fas fa-plus me-2"></i>Créer un badge
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3><i class="fas fa-gamepad me-2"></i>Contenu</h3>
+                    </div>
+                    <div class="admin-card-body">
+                        <p class="text-muted mb-3">Gérez les jeux, consoles et accessoires de la base de données.</p>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="{{ path('app_game_index') }}" class="btn btn-secondary">
+                                <i class="fas fa-gamepad me-2"></i>Jeux
+                            </a>
+                            <a href="{{ path('app_console_index') }}" class="btn btn-secondary">
+                                <i class="fas fa-desktop me-2"></i>Consoles
+                            </a>
+                            <a href="{{ path('app_accessory_index') }}" class="btn btn-secondary">
+                                <i class="fas fa-puzzle-piece me-2"></i>Accessoires
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3><i class="fas fa-chart-line me-2"></i>Statistiques</h3>
+                    </div>
+                    <div class="admin-card-body">
+                        <p class="text-muted mb-3">Consultez les statistiques et rapports de l'application.</p>
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Fonctionnalité à venir prochainement
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back button -->
+        <div class="text-center mt-4">
+            <a href="{{ path('app_home') }}" class="btn btn-outline-secondary btn-lg">
+                <i class="fas fa-home me-2"></i>Retour à l'accueil
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Admin Dashboard */
+.admin-dashboard {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.admin-header {
+    background: linear-gradient(135deg, var(--retro-red) 0%, var(--retro-purple) 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.admin-header .retro-title,
+.admin-header .text-muted {
+    color: var(--retro-light);
+}
+
+.admin-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: var(--retro-light);
+    margin-right: 1.5rem;
+    backdrop-filter: blur(10px);
+}
+
+/* Admin Stats Cards */
+.admin-stat-card {
+    background: var(--retro-dark);
+    border: 2px solid var(--retro-purple);
+    border-radius: 10px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(103, 97, 168, 0.05) 0px,
+        rgba(103, 97, 168, 0.05) 10px,
+        transparent 10px,
+        transparent 20px
+    );
+    pointer-events: none;
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(103, 97, 168, 0.5);
+    border-color: var(--retro-cyan);
+}
+
+.admin-stat-card .stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.admin-stat-card:hover .stat-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.admin-stat-card .stat-info {
+    flex: 1;
+}
+
+.admin-stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--retro-cyan);
+    line-height: 1;
+}
+
+.admin-stat-card .stat-label {
+    color: var(--retro-light);
+    opacity: 0.8;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
+
+/* Admin Cards */
+.admin-card {
+    background: var(--retro-dark);
+    border: 2px solid var(--retro-purple);
+    border-radius: 15px;
+    overflow: hidden;
+    height: 100%;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.admin-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(160, 193, 185, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.admin-card:hover {
+    border-color: var(--retro-cyan);
+    box-shadow: 0 8px 20px rgba(160, 193, 185, 0.3);
+    transform: translateY(-3px);
+}
+
+.admin-card:hover::after {
+    left: 100%;
+}
+
+.admin-card-header {
+    background: var(--retro-purple);
+    padding: 1rem 1.5rem;
+    border-bottom: 2px solid var(--retro-cyan);
+}
+
+.admin-card-header h3 {
+    margin: 0;
+    color: var(--retro-light);
+    font-size: 1.2rem;
+}
+
+.admin-card-body {
+    padding: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-header .d-flex {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .admin-icon {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+}
+</style>
+{% endblock %}
+

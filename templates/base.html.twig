@@ -27,6 +27,9 @@
             <li><a class="navbar__link" href="{{ path('app_accessory_index') }}"><i class="fas fa-plug"></i> Accessoires</a></li>
             <li><a class="navbar__link" href="{{ path('app_collection_index') }}"><i class="fas fa-folder-open"></i> Ma collection</a></li>
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li><a class="navbar__link navbar__link--admin" href="{{ path('app_admin_dashboard') }}"><i class="fas fa-shield-alt"></i> Admin</a></li>
+                {% endif %}
                 <li><a class="navbar__link" href="{{ path('app_profile') }}"><i class="fas fa-user"></i> Profil</a></li>
                 <li><a class="navbar__link" href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
             {% else %}

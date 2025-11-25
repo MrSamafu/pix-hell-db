@@ -1,0 +1,361 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le badge - Admin - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Header -->
+            <div class="page-header-admin mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h1 class="retro-title mb-1">
+                            <i class="fas fa-edit me-2"></i>Modifier le badge
+                        </h1>
+                        <p class="text-muted mb-0">Mettez à jour les informations du badge</p>
+                    </div>
+                    <a href="{{ path('app_badge_index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour
+                    </a>
+                </div>
+            </div>
+
+            <!-- Current Badge Preview -->
+            <div class="current-badge-card mb-4">
+                <div class="current-badge-header">
+                    <h3><i class="fas fa-trophy me-2"></i>Badge actuel</h3>
+                </div>
+                <div class="current-badge-body">
+                    <div class="current-badge-display">
+                        <div class="current-badge-image">
+                            <img src="{{ badge.imageUrl }}" alt="{{ badge.name }}">
+                        </div>
+                        <div class="current-badge-info">
+                            <h4>{{ badge.name }}</h4>
+                            {% if badge.description %}
+                            <p class="text-muted">{{ badge.description }}</p>
+                            {% else %}
+                            <p class="text-muted"><em>Pas de description</em></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Card -->
+            <div class="form-card">
+                <div class="form-card-header">
+                    <h3><i class="fas fa-pen me-2"></i>Modifier les informations</h3>
+                </div>
+                <div class="form-card-body">
+                    {{ form_start(form, {'attr': {'class': 'badge-form'}}) }}
+
+                        <!-- Name Field -->
+                        <div class="form-field-group mb-4">
+                            <label class="form-label-retro">
+                                <i class="fas fa-tag me-2"></i>{{ form.name.vars.label }}
+                            </label>
+                            {{ form_widget(form.name, {
+                                'attr': {
+                                    'class': 'form-control-retro',
+                                    'placeholder': 'Ex: Membre Fondateur, Collectionneur Expert...'
+                                }
+                            }) }}
+                            {{ form_errors(form.name) }}
+                            <small class="form-hint">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Nom court et descriptif du badge
+                            </small>
+                        </div>
+
+                        <!-- Image URL Field -->
+                        <div class="form-field-group mb-4">
+                            <label class="form-label-retro">
+                                <i class="fas fa-image me-2"></i>{{ form.imageUrl.vars.label }}
+                            </label>
+                            {{ form_widget(form.imageUrl, {
+                                'attr': {
+                                    'class': 'form-control-retro',
+                                    'placeholder': 'https://exemple.com/badge.png'
+                                }
+                            }) }}
+                            {{ form_errors(form.imageUrl) }}
+                            <small class="form-hint">
+                                <i class="fas fa-info-circle me-1"></i>
+                                URL publique de l'image du badge
+                            </small>
+                        </div>
+
+                        <!-- Description Field -->
+                        <div class="form-field-group mb-4">
+                            <label class="form-label-retro">
+                                <i class="fas fa-align-left me-2"></i>{{ form.description.vars.label }}
+                            </label>
+                            {{ form_widget(form.description, {
+                                'attr': {
+                                    'class': 'form-control-retro',
+                                    'placeholder': 'Décrivez ce badge et comment l\'obtenir...',
+                                    'rows': 5
+                                }
+                            }) }}
+                            {{ form_errors(form.description) }}
+                            <small class="form-hint">
+                                <i class="fas fa-lightbulb me-1"></i>
+                                Expliquez la signification du badge et les critères pour l'obtenir
+                            </small>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                            </button>
+                            <a href="{{ path('app_badge_index') }}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times me-2"></i>Annuler
+                            </a>
+                        </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="danger-zone mt-4">
+                <div class="danger-zone-header">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Zone dangereuse
+                </div>
+                <div class="danger-zone-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5>Supprimer ce badge</h5>
+                            <p class="mb-0 text-muted">Cette action est irréversible. Le badge sera retiré de tous les utilisateurs.</p>
+                        </div>
+                        <form method="post" action="{{ path('app_badge_delete', {'id': badge.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce badge définitivement ?')">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ badge.id) }}">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash me-2"></i>Supprimer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Page Header Admin */
+.page-header-admin {
+    background: linear-gradient(135deg, var(--retro-red) 0%, var(--retro-purple) 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.page-header-admin .retro-title,
+.page-header-admin .text-muted {
+    color: var(--retro-light);
+}
+
+/* Current Badge Card */
+.current-badge-card {
+    background: var(--retro-dark);
+    border: 2px solid var(--retro-cyan);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.current-badge-header {
+    background: var(--retro-cyan);
+    padding: 1rem 1.5rem;
+}
+
+.current-badge-header h3 {
+    margin: 0;
+    color: var(--retro-dark);
+    font-size: 1.2rem;
+}
+
+.current-badge-body {
+    padding: 2rem;
+}
+
+.current-badge-display {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.current-badge-image {
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(103, 97, 168, 0.2), rgba(160, 193, 185, 0.2));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border: 2px solid var(--retro-purple);
+}
+
+.current-badge-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.current-badge-info {
+    flex: 1;
+}
+
+.current-badge-info h4 {
+    color: var(--retro-light);
+    margin-bottom: 0.5rem;
+}
+
+.current-badge-info p {
+    margin: 0;
+}
+
+/* Form Card */
+.form-card {
+    background: var(--retro-dark);
+    border: 2px solid var(--retro-purple);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.form-card-header {
+    background: var(--retro-purple);
+    padding: 1.25rem 1.5rem;
+    border-bottom: 2px solid var(--retro-cyan);
+}
+
+.form-card-header h3 {
+    margin: 0;
+    color: var(--retro-light);
+    font-size: 1.2rem;
+}
+
+.form-card-body {
+    padding: 2rem;
+}
+
+/* Form Fields */
+.form-field-group {
+    position: relative;
+}
+
+.form-label-retro {
+    display: block;
+    color: var(--retro-cyan);
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-control-retro {
+    width: 100%;
+    background: rgba(13, 10, 11, 0.6);
+    border: 2px solid var(--retro-purple);
+    color: var(--retro-light);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.form-control-retro:focus {
+    background: rgba(13, 10, 11, 0.8);
+    border-color: var(--retro-cyan);
+    color: var(--retro-light);
+    box-shadow: 0 0 15px rgba(160, 193, 185, 0.3);
+    outline: none;
+}
+
+.form-control-retro::placeholder {
+    color: rgba(240, 240, 201, 0.4);
+}
+
+textarea.form-control-retro {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-hint {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: rgba(240, 240, 201, 0.6);
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(103, 97, 168, 0.3);
+}
+
+.form-actions .btn {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Danger Zone */
+.danger-zone {
+    background: rgba(163, 0, 21, 0.1);
+    border: 2px solid var(--retro-red);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.danger-zone-header {
+    background: var(--retro-red);
+    color: var(--retro-light);
+    padding: 1rem 1.5rem;
+    font-weight: bold;
+}
+
+.danger-zone-body {
+    padding: 1.5rem;
+}
+
+.danger-zone-body h5 {
+    color: var(--retro-light);
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .page-header-admin .d-flex {
+        flex-direction: column;
+        align-items: stretch !important;
+        text-align: center;
+    }
+
+    .current-badge-display {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .btn {
+        min-width: 100%;
+    }
+
+    .danger-zone-body .d-flex {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+</style>
+{% endblock %}
+

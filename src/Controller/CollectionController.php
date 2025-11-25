@@ -33,6 +33,14 @@ class CollectionController extends AbstractController
         ]);
     }
 
+    #[Route('/users', name: 'app_collection_users', methods: ['GET'])]
+    public function users(UserRepository $userRepository): Response
+    {
+        return $this->render('collection/users.html.twig', [
+            'users' => $userRepository->findAll(),
+        ]);
+    }
+
     #[Route('/my', name: 'app_collection_my', methods: ['GET'])]
     public function myCollection(
         GameCollectionRepository $gameCollectionRepository,

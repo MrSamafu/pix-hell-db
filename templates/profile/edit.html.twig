@@ -3,16 +3,423 @@
 {% block title %}Modifier profil - {{ parent() }}{% endblock %}
 
 {% block body %}
-<div class="container">
-    <h1 class="h4 mb-3">Modifier mon profil</h1>
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Header -->
+            <div class="edit-profile-header mb-4">
+                <div class="d-flex align-items-center">
+                    <div class="edit-icon">
+                        <i class="fas fa-user-edit"></i>
+                    </div>
+                    <div>
+                        <h1 class="retro-title mb-1">Modifier mon profil</h1>
+                        <p class="mb-0 text-muted">Personnalisez vos informations</p>
+                    </div>
+                </div>
+            </div>
 
-    {{ form_start(profileForm) }}
-        {{ form_row(profileForm.email) }}
-        {{ form_row(profileForm.username) }}
-        {{ form_row(profileForm.plainPassword) }}
+            {{ form_start(profileForm, {'attr': {'class': 'profile-edit-form'}}) }}
 
-        <button class="btn btn-primary" type="submit">Enregistrer</button>
-    {{ form_end(profileForm) }}
+            <!-- Section Compte -->
+            <div class="form-section mb-4">
+                <div class="form-section-header">
+                    <h3><i class="fas fa-user-circle me-2"></i>Informations de compte</h3>
+                    <span class="badge bg-danger">Obligatoire</span>
+                </div>
+                <div class="form-section-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="form-field-wrapper">
+                                <label class="form-field-label">
+                                    <i class="fas fa-user me-2"></i>{{ profileForm.username.vars.label }}
+                                </label>
+                                {{ form_widget(profileForm.username, {
+                                    'attr': {
+                                        'class': 'form-control form-control-retro',
+                                        'placeholder': 'Votre nom d\'utilisateur'
+                                    }
+                                }) }}
+                                {{ form_errors(profileForm.username) }}
+                                <small class="form-field-help">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Visible par tous les membres
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="form-field-wrapper">
+                                <label class="form-field-label">
+                                    <i class="fas fa-envelope me-2"></i>{{ profileForm.email.vars.label }}
+                                </label>
+                                {{ form_widget(profileForm.email, {
+                                    'attr': {
+                                        'class': 'form-control form-control-retro',
+                                        'placeholder': 'votre@email.com'
+                                    }
+                                }) }}
+                                {{ form_errors(profileForm.email) }}
+                                <small class="form-field-help">
+                                    <i class="fas fa-lock me-1"></i>
+                                    Votre email reste privé
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Identité -->
+            <div class="form-section mb-4">
+                <div class="form-section-header">
+                    <h3><i class="fas fa-id-card me-2"></i>Identité</h3>
+                    <span class="badge bg-secondary">Optionnel</span>
+                </div>
+                <div class="form-section-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="form-field-wrapper">
+                                <label class="form-field-label">
+                                    <i class="fas fa-signature me-2"></i>{{ profileForm.firstName.vars.label }}
+                                </label>
+                                {{ form_widget(profileForm.firstName, {
+                                    'attr': {
+                                        'class': 'form-control form-control-retro',
+                                        'placeholder': 'Votre prénom'
+                                    }
+                                }) }}
+                                {{ form_errors(profileForm.firstName) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="form-field-wrapper">
+                                <label class="form-field-label">
+                                    <i class="fas fa-signature me-2"></i>{{ profileForm.lastName.vars.label }}
+                                </label>
+                                {{ form_widget(profileForm.lastName, {
+                                    'attr': {
+                                        'class': 'form-control form-control-retro',
+                                        'placeholder': 'Votre nom'
+                                    }
+                                }) }}
+                                {{ form_errors(profileForm.lastName) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="form-field-wrapper">
+                                <label class="form-field-label">
+                                    <i class="fas fa-birthday-cake me-2"></i>{{ profileForm.birthDate.vars.label }}
+                                </label>
+                                {{ form_widget(profileForm.birthDate, {
+                                    'attr': {
+                                        'class': 'form-control form-control-retro'
+                                    }
+                                }) }}
+                                {{ form_errors(profileForm.birthDate) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="form-field-wrapper">
+                                <label class="form-field-label">
+                                    <i class="fas fa-calendar-plus me-2"></i>{{ profileForm.associationJoinDate.vars.label }}
+                                </label>
+                                {{ form_widget(profileForm.associationJoinDate, {
+                                    'attr': {
+                                        'class': 'form-control form-control-retro'
+                                    }
+                                }) }}
+                                {{ form_errors(profileForm.associationJoinDate) }}
+                                <small class="form-field-help">
+                                    <i class="fas fa-users me-1"></i>
+                                    Quand avez-vous rejoint l'association ?
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Bio -->
+            <div class="form-section mb-4">
+                <div class="form-section-header">
+                    <h3><i class="fas fa-comment-dots me-2"></i>À propos de vous</h3>
+                    <span class="badge bg-secondary">Optionnel</span>
+                </div>
+                <div class="form-section-body">
+                    <div class="form-field-wrapper">
+                        <label class="form-field-label">
+                            <i class="fas fa-pen me-2"></i>{{ profileForm.bio.vars.label }}
+                        </label>
+                        {{ form_widget(profileForm.bio, {
+                            'attr': {
+                                'class': 'form-control form-control-retro',
+                                'placeholder': 'Parlez-nous de votre passion pour le rétrogaming...',
+                                'rows': 6
+                            }
+                        }) }}
+                        {{ form_errors(profileForm.bio) }}
+                        <small class="form-field-help">
+                            <i class="fas fa-lightbulb me-1"></i>
+                            Partagez vos jeux préférés, votre collection, ou votre parcours de joueur !
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Sécurité -->
+            <div class="form-section mb-4">
+                <div class="form-section-header">
+                    <h3><i class="fas fa-shield-alt me-2"></i>Sécurité</h3>
+                    <span class="badge bg-warning text-dark">Sensible</span>
+                </div>
+                <div class="form-section-body">
+                    <div class="alert alert-info d-flex align-items-center mb-3">
+                        <i class="fas fa-info-circle fa-2x me-3"></i>
+                        <div>
+                            <strong>Changer votre mot de passe</strong><br>
+                            Laissez ce champ vide si vous ne souhaitez pas modifier votre mot de passe actuel.
+                        </div>
+                    </div>
+
+                    <div class="form-field-wrapper">
+                        <label class="form-field-label">
+                            <i class="fas fa-lock me-2"></i>{{ profileForm.plainPassword.vars.label }}
+                        </label>
+                        {{ form_widget(profileForm.plainPassword, {
+                            'attr': {
+                                'class': 'form-control form-control-retro',
+                                'placeholder': '••••••••'
+                            }
+                        }) }}
+                        {{ form_errors(profileForm.plainPassword) }}
+                        <small class="form-field-help">
+                            <i class="fas fa-key me-1"></i>
+                            Minimum 6 caractères recommandés
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg btn-retro-save">
+                    <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                </button>
+                <a href="{{ path('app_profile') }}" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-times me-2"></i>Annuler
+                </a>
+            </div>
+
+            {{ form_end(profileForm) }}
+        </div>
+    </div>
 </div>
+
+<style>
+/* Edit Profile Header */
+.edit-profile-header {
+    background: linear-gradient(135deg, var(--retro-purple) 0%, var(--retro-cyan) 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.edit-profile-header .retro-title,
+.edit-profile-header .text-muted {
+    color: var(--retro-light);
+}
+
+.edit-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: var(--retro-light);
+    margin-right: 1.5rem;
+    backdrop-filter: blur(10px);
+}
+
+/* Form Sections */
+.form-section {
+    background: var(--retro-dark);
+    border: 2px solid var(--retro-purple);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.form-section-header {
+    background: var(--retro-purple);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--retro-cyan);
+}
+
+.form-section-header h3 {
+    margin: 0;
+    color: var(--retro-light);
+    font-size: 1.2rem;
+}
+
+.form-section-header .badge {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+}
+
+.form-section-body {
+    padding: 2rem 1.5rem;
+}
+
+/* Form Fields */
+.form-field-wrapper {
+    position: relative;
+}
+
+.form-field-label {
+    display: block;
+    color: var(--retro-cyan);
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-control-retro {
+    background: rgba(13, 10, 11, 0.6);
+    border: 2px solid var(--retro-purple);
+    color: var(--retro-light);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.form-control-retro:focus {
+    background: rgba(13, 10, 11, 0.8);
+    border-color: var(--retro-cyan);
+    color: var(--retro-light);
+    box-shadow: 0 0 15px rgba(160, 193, 185, 0.3);
+    outline: none;
+}
+
+.form-control-retro::placeholder {
+    color: rgba(240, 240, 201, 0.4);
+}
+
+textarea.form-control-retro {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-field-help {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: rgba(240, 240, 201, 0.6);
+}
+
+/* Form Errors */
+.invalid-feedback,
+.form-error-message {
+    display: block;
+    color: var(--retro-red);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+/* Alerts */
+.alert-info {
+    background: rgba(160, 193, 185, 0.15);
+    border: 2px solid var(--retro-cyan);
+    color: var(--retro-light);
+    border-radius: 10px;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.btn-retro-save {
+    background: linear-gradient(135deg, var(--retro-cyan), var(--retro-purple));
+    border: none;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-retro-save::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-retro-save:hover::before {
+    left: 100%;
+}
+
+.btn-retro-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(160, 193, 185, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .edit-profile-header {
+        text-align: center;
+    }
+
+    .edit-profile-header .d-flex {
+        flex-direction: column;
+        align-items: center !important;
+    }
+
+    .edit-icon {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+
+    .form-section-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+
+/* Date inputs styling */
+input[type="date"].form-control-retro {
+    color-scheme: dark;
+}
+
+input[type="date"].form-control-retro::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+    cursor: pointer;
+}
+</style>
 {% endblock %}
 
