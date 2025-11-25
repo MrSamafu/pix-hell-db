@@ -152,6 +152,7 @@
         padding: $spacing-sm $spacing-md;
         font-size: $font-size-base;
         transition: all $transition-fast;
+        width: 100%;
 
         &:focus {
             background: lighten($color-dark, 12%);

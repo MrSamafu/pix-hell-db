@@ -265,20 +265,214 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
     .badges-grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .page-header {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .badges-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
         gap: 1rem;
+    }
+
+    .user-info-card {
+        padding: 1.25rem;
+    }
+
+    .user-avatar {
+        width: 70px;
+        height: 70px;
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: 1rem;
+        border-radius: 10px;
     }
 
     .page-header .d-flex {
         flex-direction: column;
         text-align: center;
+        gap: 1rem;
+    }
+
+    .page-header .retro-title {
+        font-size: 1.5rem;
+    }
+
+    .page-header .btn {
+        width: 100%;
+    }
+
+    .user-info-card {
+        padding: 1rem;
+        border-radius: 10px;
     }
 
     .user-info-card .d-flex {
         flex-direction: column;
         text-align: center;
+        gap: 1rem;
+    }
+
+    .user-avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 1.75rem;
+        margin: 0 auto;
+    }
+
+    .badges-section {
+        border-radius: 10px;
+    }
+
+    .badges-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 1rem;
+    }
+
+    .badge-title {
+        font-size: 0.85rem;
+        min-height: 2rem;
+    }
+
+    .badge-description {
+        font-size: 0.7rem;
+        min-height: 2rem;
+    }
+
+    .text-center .btn {
+        margin: 0.25rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .page-header {
+        padding: 0.75rem;
+    }
+
+    .page-header .retro-title {
+        font-size: 1.25rem;
+    }
+
+    .page-header .text-muted {
+        font-size: 0.85rem;
+    }
+
+    .user-info-card {
+        padding: 0.75rem;
+    }
+
+    .user-info-card h4 {
+        font-size: 1.1rem;
+    }
+
+    .user-info-card p {
+        font-size: 0.85rem;
+    }
+
+    .user-avatar {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+
+    .badges-section {
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .badges-section-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .badges-section-header h3 {
+        font-size: 1rem;
+    }
+
+    .badges-section-body {
+        padding: 1rem;
+    }
+
+    .badges-grid {
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .badge-image-container {
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .badge-title {
+        font-size: 0.75rem;
+        min-height: 1.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .badge-description {
+        font-size: 0.65rem;
+        min-height: 1.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .btn-sm {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.5rem;
+    }
+
+    .alert {
+        font-size: 0.85rem;
+        padding: 0.75rem;
+    }
+
+    .alert i {
+        font-size: 1.25rem;
+    }
+
+    /* Boutons empilés sur mobile */
+    .text-center {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .text-center .btn {
+        width: 100%;
+        margin: 0;
+    }
+}
+
+@media (max-width: 400px) {
+    .page-header .retro-title {
+        font-size: 1.1rem;
+    }
+
+    .badges-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    .badge-title {
+        font-size: 0.7rem;
+    }
+
+    .badge-description {
+        font-size: 0.6rem;
     }
 }
 </style>

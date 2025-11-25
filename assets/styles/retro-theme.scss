@@ -1531,12 +1531,7 @@ a {
   &-xl { margin-top: $spacing-xl; margin-bottom: $spacing-xl; }
 }
 
-.py {
-  &-sm { padding-top: $spacing-sm; padding-bottom: $spacing-sm; }
-  &-md { padding-top: $spacing-md; padding-bottom: $spacing-md; }
-  &-lg { padding-top: $spacing-lg; padding-bottom: $spacing-lg; }
-  &-xl { padding-top: $spacing-xl; padding-bottom: $spacing-xl; }
-}
+
 
 .d {
   &-block { display: block; }

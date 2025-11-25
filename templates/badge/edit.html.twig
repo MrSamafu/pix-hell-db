@@ -331,29 +331,257 @@ textarea.form-control-retro {
 }
 
 /* Responsive */
+@media (max-width: 1200px) {
+    .page-header-admin {
+        padding: 1.5rem;
+    }
+
+    .current-badge-body {
+        padding: 1.5rem;
+    }
+
+    .form-card-body {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .current-badge-display {
+        gap: 1.5rem;
+    }
+
+    .current-badge-image {
+        width: 100px;
+        height: 100px;
+    }
+
+    .form-actions .btn {
+        min-width: 180px;
+    }
+}
+
 @media (max-width: 768px) {
+    .page-header-admin {
+        padding: 1rem;
+        border-radius: 10px;
+    }
+
     .page-header-admin .d-flex {
         flex-direction: column;
         align-items: stretch !important;
         text-align: center;
+        gap: 1rem;
+    }
+
+    .page-header-admin .retro-title {
+        font-size: 1.5rem;
+    }
+
+    .page-header-admin .text-muted {
+        font-size: 0.9rem;
+    }
+
+    .page-header-admin .btn {
+        width: 100%;
+    }
+
+    .current-badge-card {
+        border-radius: 10px;
+    }
+
+    .current-badge-body {
+        padding: 1.25rem;
     }
 
     .current-badge-display {
         flex-direction: column;
         text-align: center;
+        gap: 1rem;
+    }
+
+    .current-badge-image {
+        margin: 0 auto;
+    }
+
+    .form-card {
+        border-radius: 10px;
+    }
+
+    .form-card-header {
+        padding: 1rem;
+    }
+
+    .form-card-header h3 {
+        font-size: 1.1rem;
+    }
+
+    .form-card-body {
+        padding: 1.25rem;
     }
 
     .form-actions {
         flex-direction: column;
+        gap: 0.75rem;
     }
 
     .form-actions .btn {
         min-width: 100%;
     }
 
+    .danger-zone {
+        border-radius: 10px;
+    }
+
     .danger-zone-body .d-flex {
         flex-direction: column;
         gap: 1rem;
+        text-align: center;
+    }
+
+    .danger-zone-body .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .page-header-admin {
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .page-header-admin .retro-title {
+        font-size: 1.25rem;
+    }
+
+    .page-header-admin .text-muted {
+        font-size: 0.85rem;
+    }
+
+    .current-badge-card {
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .current-badge-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .current-badge-header h3 {
+        font-size: 1rem;
+    }
+
+    .current-badge-body {
+        padding: 1rem;
+    }
+
+    .current-badge-image {
+        width: 80px;
+        height: 80px;
+    }
+
+    .current-badge-info h4 {
+        font-size: 1.1rem;
+    }
+
+    .current-badge-info p {
+        font-size: 0.85rem;
+    }
+
+    .form-card {
+        border-radius: 8px;
+    }
+
+    .form-card-header {
+        padding: 0.75rem;
+    }
+
+    .form-card-header h3 {
+        font-size: 1rem;
+    }
+
+    .form-card-body {
+        padding: 1rem;
+    }
+
+    .form-field-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-label-retro {
+        font-size: 0.9rem;
+    }
+
+    .form-control-retro {
+        padding: 0.65rem 0.85rem;
+        font-size: 0.95rem;
+    }
+
+    textarea.form-control-retro {
+        min-height: 100px;
+    }
+
+    .form-hint {
+        font-size: 0.8rem;
+    }
+
+    .form-actions {
+        padding-top: 1rem;
+    }
+
+    .form-actions .btn {
+        padding: 0.65rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .danger-zone {
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+
+    .danger-zone-header {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .danger-zone-body {
+        padding: 1rem;
+    }
+
+    .danger-zone-body h5 {
+        font-size: 1rem;
+    }
+
+    .danger-zone-body p {
+        font-size: 0.85rem;
+    }
+
+    .danger-zone-body .btn {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .page-header-admin .retro-title {
+        font-size: 1.1rem;
+    }
+
+    .current-badge-image {
+        width: 70px;
+        height: 70px;
+    }
+
+    .form-card-header h3 {
+        font-size: 0.95rem;
+    }
+
+    .form-control-retro {
+        font-size: 0.9rem;
     }
 }
 </style>

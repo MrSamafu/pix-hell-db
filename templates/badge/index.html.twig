@@ -185,19 +185,231 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
     .badges-management-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .page-header {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .badges-management-grid {
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
         gap: 1rem;
+    }
+
+    .badge-card-image {
+        height: 180px;
+        padding: 1.5rem;
+    }
+
+    .badge-card-content {
+        padding: 1.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: 1rem;
+        border-radius: 10px;
     }
 
     .page-header .d-flex {
         flex-direction: column;
         align-items: stretch !important;
+        gap: 1rem;
     }
 
     .page-header .d-flex > div {
         text-align: center;
+    }
+
+    .page-header .retro-title {
+        font-size: 1.5rem;
+    }
+
+    .page-header .text-muted {
+        font-size: 0.9rem;
+    }
+
+    .page-header .d-flex.gap-2 {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .page-header .btn {
+        width: 100%;
+    }
+
+    .badges-management-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem;
+    }
+
+    .badge-card-image {
+        height: 160px;
+        padding: 1.25rem;
+    }
+
+    .badge-card-title {
+        font-size: 1rem;
+    }
+
+    .badge-card-description {
+        font-size: 0.8rem;
+    }
+
+    .badge-card-actions {
+        gap: 0.4rem;
+    }
+
+    .empty-state {
+        padding: 2.5rem 1.5rem;
+        border-radius: 10px;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.25rem;
+    }
+
+    .empty-state .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .page-header {
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .page-header .retro-title {
+        font-size: 1.25rem;
+    }
+
+    .page-header .text-muted {
+        font-size: 0.85rem;
+    }
+
+    .page-header .btn {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .badges-management-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .badge-management-card {
+        border-radius: 10px;
+    }
+
+    .badge-card-image {
+        height: 140px;
+        padding: 1rem;
+    }
+
+    .badge-card-content {
+        padding: 1rem;
+    }
+
+    .badge-card-title {
+        font-size: 0.9rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .badge-card-description {
+        font-size: 0.75rem;
+        min-height: 2.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .badge-card-actions {
+        gap: 0.3rem;
+    }
+
+    .badge-card-actions .btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .empty-state {
+        padding: 2rem 1rem;
+        border-radius: 8px;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .empty-state p {
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state .btn {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .page-header .retro-title {
+        font-size: 1.1rem;
+    }
+
+    .badges-management-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 0.5rem;
+    }
+
+    .badge-card-image {
+        height: 120px;
+        padding: 0.75rem;
+    }
+
+    .badge-card-content {
+        padding: 0.75rem;
+    }
+
+    .badge-card-title {
+        font-size: 0.85rem;
+    }
+
+    .badge-card-description {
+        font-size: 0.7rem;
+        min-height: 2rem;
+    }
+
+    .badge-card-actions {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .badge-card-actions .btn {
+        width: 100%;
+        padding: 0.35rem 0.5rem;
+        font-size: 0.8rem;
     }
 }
 </style>
