@@ -47,7 +47,7 @@ class Console
     public function __construct()
     {
         $this->consoleCollections = new ArrayCollection();
-        $this->addedAt = new \DateTimeImmutable();
+        $this->addedAt = new \DateTime();
     }
 
     public function getId(): ?int

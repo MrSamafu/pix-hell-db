@@ -63,7 +63,7 @@ class Game
         $this->gameCollections = new ArrayCollection();
         $this->genres = new ArrayCollection();
         $this->modes = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
+        $this->createdAt = new \DateTime();
     }
 
     public function getId(): ?int

@@ -100,7 +100,7 @@ class ConsoleController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (!$console->getAddedAt()) {
-                $console->setAddedAt(new \DateTimeImmutable());
+                $console->setAddedAt(new \DateTime());
             }
 
             // l'image est une URL : le form a déjà mis à jour $console->image

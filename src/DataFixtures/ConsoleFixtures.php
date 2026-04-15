@@ -56,7 +56,7 @@ class ConsoleFixtures extends Fixture implements DependentFixtureInterface
             $c->setName($data['name']);
             $c->setManufacturer($data['manufacturer']);
             $c->setGeneration($data['generation']);
-            $c->setReleaseDate(new \DateTimeImmutable($data['releaseDate']));
+            $c->setReleaseDate(new \DateTime($data['releaseDate']));
             $c->setCreator($user);
             $c->setImage($data['image']);
             $c->setMaxPlayers($data['maxPlayers']);

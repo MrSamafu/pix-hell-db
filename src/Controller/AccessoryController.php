@@ -59,7 +59,7 @@ class AccessoryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (!$accessory->getCreatedAt()) {
-                $accessory->setCreatedAt(new \DateTimeImmutable());
+                $accessory->setCreatedAt(new \DateTime());
             }
             $entityManager->persist($accessory);
             $entityManager->flush();

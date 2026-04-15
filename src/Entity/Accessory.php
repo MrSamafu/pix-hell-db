@@ -44,7 +44,7 @@ class Accessory
     public function __construct()
     {
         $this->accessoryCollections = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
+        $this->createdAt = new \DateTime();
     }
 
     public function getId(): ?int
