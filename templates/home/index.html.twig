@@ -50,6 +50,33 @@
                                 par <strong>{{ entity.creator ? entity.creator.username : 'N/A' }}</strong>
                             </small>
                         </p>
+                        {# Collectionneurs #}
+                        {% set collections = item.type == 'game' ? entity.gameCollections
+                            : (item.type == 'console' ? entity.consoleCollections
+                            : entity.accessoryCollections) %}
+                        {% if collections is not empty %}
+                        <details class="collectors-section">
+                            <summary class="collectors-summary">
+                                <i class="fas fa-users"></i>
+                                Dans
+                                <span class="collectors-count">{{ collections|length }}</span>
+                                collection{{ collections|length > 1 ? 's' : '' }}
+                                <i class="fas fa-chevron-down collectors-chevron"></i>
+                            </summary>
+                            <div class="collectors-list">
+                                {% for col in collections %}
+                                <div class="collector-row">
+                                    <div class="collector-avatar">{{ col.user.username|slice(0,1) }}</div>
+                                    <span class="collector-name">{{ col.user.username }}</span>
+                                    <span class="collector-qty">
+                                        <i class="fas fa-layer-group" style="margin-right:0;font-size:0.65rem;"></i>
+                                        {{ col.quantity }}
+                                    </span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </details>
+                        {% endif %}
                     </div>
                     <div class="card__footer">
                         <a href="{{ path('app_' ~ item.type ~ '_show', {'id': entity.id}) }}" class="btn btn--primary btn--small">
