@@ -94,41 +94,81 @@
                     </div>
 
                     <div class="collection-card-body">
-                        <form method="post" action="{{ path('app_accessory_add_to_collection', {'id': accessory.id}) }}" class="collection-form">
-                            <div class="form__group">
-                                <label for="quantity" class="form__label">
-                                    Nombre d'exemplaires
-                                </label>
-                                <div class="quantity-input">
-                                    <button type="button" class="quantity-btn quantity-minus" onclick="decreaseQuantity()">−</button>
-                                    <input
-                                        type="number"
-                                        id="quantity"
-                                        name="quantity"
-                                        class="quantity-field"
-                                        value="1"
-                                        min="1"
-                                        max="99"
-                                        required
-                                    >
-                                    <button type="button" class="quantity-btn quantity-plus" onclick="increaseQuantity()">+</button>
-                                </div>
-                                <small class="form-help">
-                                    Indiquez combien d'exemplaires vous possédez
-                                </small>
+                        {% if my_collection %}
+                            <div class="already-owned-badge">
+                                <span class="owned-icon">✅</span>
+                                <span>Déjà dans votre collection</span>
                             </div>
-
-                            <button type="submit" class="btn btn-primary btn-block">
-                                <span class="btn-icon">+</span>
-                                Ajouter à ma collection
-                            </button>
-                        </form>
+                            <form method="post" action="{{ path('app_accessory_update_in_collection', {'id': accessory.id}) }}" class="collection-form">
+                                <div class="form__group">
+                                    <label for="quantity" class="form__label">Nombre d'exemplaires</label>
+                                    <div class="quantity-input">
+                                        <button type="button" class="quantity-btn quantity-minus" onclick="decreaseQuantity()">−</button>
+                                        <input type="number" id="quantity" name="quantity" class="quantity-field"
+                                            value="{{ my_collection.quantity }}" min="1" max="99" required>
+                                        <button type="button" class="quantity-btn quantity-plus" onclick="increaseQuantity()">+</button>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    💾 Mettre à jour
+                                </button>
+                            </form>
+                            <form method="post" action="{{ path('app_accessory_update_in_collection', {'id': accessory.id}) }}"
+                                  class="collection-form" style="margin-top:0.5rem;"
+                                  onsubmit="return confirm('Retirer cet accessoire de votre collection ?');">
+                                <input type="hidden" name="action" value="remove">
+                                <button type="submit" class="btn btn-danger btn-block btn-sm">
+                                    🗑️ Retirer de ma collection
+                                </button>
+                            </form>
+                        {% else %}
+                            <form method="post" action="{{ path('app_accessory_add_to_collection', {'id': accessory.id}) }}" class="collection-form">
+                                <div class="form__group">
+                                    <label for="quantity" class="form__label">Nombre d'exemplaires</label>
+                                    <div class="quantity-input">
+                                        <button type="button" class="quantity-btn quantity-minus" onclick="decreaseQuantity()">−</button>
+                                        <input type="number" id="quantity" name="quantity" class="quantity-field"
+                                            value="1" min="1" max="99" required>
+                                        <button type="button" class="quantity-btn quantity-plus" onclick="increaseQuantity()">+</button>
+                                    </div>
+                                    <small class="form-help">Indiquez combien d'exemplaires vous possédez</small>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <span class="btn-icon">+</span> Ajouter à ma collection
+                                </button>
+                            </form>
+                        {% endif %}
                     </div>
 
                     <div class="collection-card-footer">
                         <p class="collection-hint">
                             💡 Vous pourrez gérer vos accessoires depuis votre collection
                         </p>
+
+                        {# Collectionneurs #}
+                        {% if accessory.accessoryCollections is not empty %}
+                        <details class="collectors-section">
+                            <summary class="collectors-summary">
+                                <i class="fas fa-users"></i>
+                                Dans
+                                <span class="collectors-count">{{ accessory.accessoryCollections|length }}</span>
+                                collection{{ accessory.accessoryCollections|length > 1 ? 's' : '' }}
+                                <i class="fas fa-chevron-down collectors-chevron"></i>
+                            </summary>
+                            <div class="collectors-list">
+                                {% for col in accessory.accessoryCollections %}
+                                <div class="collector-row">
+                                    <div class="collector-avatar">{{ col.user.username|slice(0,1) }}</div>
+                                    <span class="collector-name">{{ col.user.username }}</span>
+                                    <span class="collector-qty">
+                                        <i class="fas fa-layer-group" style="margin-right:0;font-size:0.65rem;"></i>
+                                        {{ col.quantity }}
+                                    </span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </details>
+                        {% endif %}
                     </div>
                 </div>
             </div>

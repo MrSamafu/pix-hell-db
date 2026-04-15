@@ -6,6 +6,7 @@ use App\Entity\Game;
 use App\Entity\GameCollection;
 use App\Form\GameType;
 use App\Repository\ConsoleRepository;
+use App\Repository\GameCollectionRepository;
 use App\Repository\GameRepository;
 use App\Repository\GenreRepository;
 use App\Repository\ModeRepository;
@@ -90,13 +91,44 @@ class GameController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_game_show', methods: ['GET'])]
-    public function show(Game $game): Response
+    public function show(Game $game, GameCollectionRepository $gameCollectionRepository): Response
     {
         $this->denyAccessUnlessGranted('view', $game);
 
+        $myCollection = $this->getUser()
+            ? $gameCollectionRepository->findOneBy(['game' => $game, 'user' => $this->getUser()])
+            : null;
+
         return $this->render('game/show.html.twig', [
             'game' => $game,
+            'my_collection' => $myCollection,
         ]);
+    }
+
+    #[Route('/{id}/update-in-collection', name: 'app_game_update_in_collection', methods: ['POST'])]
+    public function updateInCollection(Request $request, Game $game, GameCollectionRepository $gameCollectionRepository, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $myCollection = $gameCollectionRepository->findOneBy(['game' => $game, 'user' => $this->getUser()]);
+
+        if (!$myCollection) {
+            $this->addFlash('error', 'Ce jeu n\'est pas dans votre collection.');
+            return $this->redirectToRoute('app_game_show', ['id' => $game->getId()]);
+        }
+
+        if ($request->request->get('action') === 'remove') {
+            $entityManager->remove($myCollection);
+            $entityManager->flush();
+            $this->addFlash('success', 'Le jeu a été retiré de votre collection.');
+        } else {
+            $quantity = max(1, (int) $request->request->get('quantity', 1));
+            $myCollection->setQuantity($quantity);
+            $entityManager->flush();
+            $this->addFlash('success', 'Quantité mise à jour avec succès.');
+        }
+
+        return $this->redirectToRoute('app_game_show', ['id' => $game->getId()]);
     }
 
     #[Route('/{id}/edit', name: 'app_game_edit', methods: ['GET', 'POST'])]

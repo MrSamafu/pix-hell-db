@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Accessory;
 use App\Entity\AccessoryCollection;
 use App\Form\AccessoryType;
+use App\Repository\AccessoryCollectionRepository;
 use App\Repository\AccessoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -75,13 +76,44 @@ class AccessoryController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_accessory_show', methods: ['GET'])]
-    public function show(Accessory $accessory): Response
+    public function show(Accessory $accessory, AccessoryCollectionRepository $accessoryCollectionRepository): Response
     {
         $this->denyAccessUnlessGranted('view', $accessory);
 
+        $myCollection = $this->getUser()
+            ? $accessoryCollectionRepository->findOneBy(['accessory' => $accessory, 'user' => $this->getUser()])
+            : null;
+
         return $this->render('accessory/show.html.twig', [
             'accessory' => $accessory,
+            'my_collection' => $myCollection,
         ]);
+    }
+
+    #[Route('/{id}/update-in-collection', name: 'app_accessory_update_in_collection', methods: ['POST'])]
+    public function updateInCollection(Request $request, Accessory $accessory, AccessoryCollectionRepository $accessoryCollectionRepository, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $myCollection = $accessoryCollectionRepository->findOneBy(['accessory' => $accessory, 'user' => $this->getUser()]);
+
+        if (!$myCollection) {
+            $this->addFlash('error', 'Cet accessoire n\'est pas dans votre collection.');
+            return $this->redirectToRoute('app_accessory_show', ['id' => $accessory->getId()]);
+        }
+
+        if ($request->request->get('action') === 'remove') {
+            $entityManager->remove($myCollection);
+            $entityManager->flush();
+            $this->addFlash('success', 'L\'accessoire a été retiré de votre collection.');
+        } else {
+            $quantity = max(1, (int) $request->request->get('quantity', 1));
+            $myCollection->setQuantity($quantity);
+            $entityManager->flush();
+            $this->addFlash('success', 'Quantité mise à jour avec succès.');
+        }
+
+        return $this->redirectToRoute('app_accessory_show', ['id' => $accessory->getId()]);
     }
 
     #[Route('/{id}/edit', name: 'app_accessory_edit', methods: ['GET', 'POST'])]

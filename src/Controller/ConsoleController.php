@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Console;
 use App\Entity\ConsoleCollection;
 use App\Form\ConsoleType;
+use App\Repository\ConsoleCollectionRepository;
 use App\Repository\ConsoleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -81,13 +82,44 @@ class ConsoleController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_console_show', methods: ['GET'])]
-    public function show(Console $console): Response
+    public function show(Console $console, ConsoleCollectionRepository $consoleCollectionRepository): Response
     {
         $this->denyAccessUnlessGranted('view', $console);
 
+        $myCollection = $this->getUser()
+            ? $consoleCollectionRepository->findOneBy(['console' => $console, 'user' => $this->getUser()])
+            : null;
+
         return $this->render('console/show.html.twig', [
             'console' => $console,
+            'my_collection' => $myCollection,
         ]);
+    }
+
+    #[Route('/{id}/update-in-collection', name: 'app_console_update_in_collection', methods: ['POST'])]
+    public function updateInCollection(Request $request, Console $console, ConsoleCollectionRepository $consoleCollectionRepository, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $myCollection = $consoleCollectionRepository->findOneBy(['console' => $console, 'user' => $this->getUser()]);
+
+        if (!$myCollection) {
+            $this->addFlash('error', 'Cette console n\'est pas dans votre collection.');
+            return $this->redirectToRoute('app_console_show', ['id' => $console->getId()]);
+        }
+
+        if ($request->request->get('action') === 'remove') {
+            $entityManager->remove($myCollection);
+            $entityManager->flush();
+            $this->addFlash('success', 'La console a été retirée de votre collection.');
+        } else {
+            $quantity = max(1, (int) $request->request->get('quantity', 1));
+            $myCollection->setQuantity($quantity);
+            $entityManager->flush();
+            $this->addFlash('success', 'Quantité mise à jour avec succès.');
+        }
+
+        return $this->redirectToRoute('app_console_show', ['id' => $console->getId()]);
     }
 
     #[Route('/{id}/edit', name: 'app_console_edit', methods: ['GET', 'POST'])]
