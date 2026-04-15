@@ -36,7 +36,10 @@
                         </div>
                         <h3 class="card__title">{{ entity.title ?? entity.name }}</h3>
                         <p class="card__text text--muted">
-                            <small>Ajouté le {{ item.date ? item.date|date('d/m/Y') : 'N/A' }}</small>
+                            <small>
+                                Ajouté le {{ item.date ? item.date|date('d/m/Y') : 'N/A' }}
+                                par <strong>{{ entity.creator ? entity.creator.username : 'N/A' }}</strong>
+                            </small>
                         </p>
                     </div>
                     <div class="card__footer">
