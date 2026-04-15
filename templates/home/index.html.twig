@@ -35,6 +35,15 @@
                             {{ item.type == 'game' ? 'Jeu' : (item.type == 'console' ? 'Console' : 'Accessoire') }}
                         </div>
                         <h3 class="card__title">{{ entity.title ?? entity.name }}</h3>
+                        {% if item.type == 'game' and entity.platform %}
+                            <p class="card__text text--muted mb-sm">
+                                <i class="fas fa-desktop"></i> <small>{{ entity.platform.name }}</small>
+                            </p>
+                        {% elseif item.type == 'accessory' and entity.compatibility %}
+                            <p class="card__text text--muted mb-sm">
+                                <i class="fas fa-desktop"></i> <small>{{ entity.compatibility }}</small>
+                            </p>
+                        {% endif %}
                         <p class="card__text text--muted">
                             <small>
                                 Ajouté le {{ item.date ? item.date|date('d/m/Y') : 'N/A' }}
