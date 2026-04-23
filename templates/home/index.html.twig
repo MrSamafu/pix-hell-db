@@ -4,128 +4,121 @@
 
 {% block body %}
 <div class="container">
-    <div class="text--center mb-xl">
-        <h1 style="font-size: 3rem; font-weight: 700; margin-bottom: 1rem; background: linear-gradient(135deg, #6761A8, #A0C1B9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-            Bienvenue sur PixHellDB
-        </h1>
-        <p class="text--muted" style="font-size: 1.2rem;">
-            Votre gestionnaire de collection retrogaming
-        </p>
+
+    {# ══════════════════════════════════════════
+       HERO
+    ══════════════════════════════════════════ #}
+    <div class="home-hero mb-xl">
+        <div class="home-hero__content">
+            <h1 class="home-hero__title">
+                Pix<span>Hell</span>DB
+            </h1>
+            <p class="home-hero__sub">
+                Votre gestionnaire de collection retrogaming
+            </p>
+        </div>
+        <div class="home-hero__deco" aria-hidden="true">
+            <span>🕹️</span>
+        </div>
     </div>
 
-    {# Derniers ajouts #}
+    {# ══════════════════════════════════════════
+       RACCOURCIS RAPIDES
+    ══════════════════════════════════════════ #}
+    <div class="home-shortcuts mb-xl">
+        <a href="{{ path('app_game_index') }}" class="home-shortcut home-shortcut--games">
+            <i class="fas fa-gamepad"></i>
+            <span>Jeux</span>
+        </a>
+        <a href="{{ path('app_console_index') }}" class="home-shortcut home-shortcut--consoles">
+            <i class="fas fa-desktop"></i>
+            <span>Consoles</span>
+        </a>
+        <a href="{{ path('app_accessory_index') }}" class="home-shortcut home-shortcut--accessories">
+            <i class="fas fa-plug"></i>
+            <span>Accessoires</span>
+        </a>
+        <a href="{{ path('app_collection_index') }}" class="home-shortcut home-shortcut--collection">
+            <i class="fas fa-folder-open"></i>
+            <span>Collection</span>
+        </a>
+    </div>
+
+    {# ══════════════════════════════════════════
+       DERNIERS AJOUTS
+    ══════════════════════════════════════════ #}
     {% if latest_items is defined and latest_items is not empty %}
     <div class="mb-xl">
-        <h2 class="mb-md" style="font-size: 2rem; font-weight: 700; color: #F0F0C9;">
-            <i class="fas fa-fire"></i> Derniers ajouts
-        </h2>
-        <div class="grid grid--3">
+        <div class="home-section-header mb-md">
+            <h2 class="home-section-title">
+                <i class="fas fa-fire"></i> Derniers ajouts
+            </h2>
+        </div>
+
+        <div class="home-feed">
             {% for item in latest_items %}
                 {% set entity = item.entity %}
-                <div class="card animate-fade-in">
-                    {% if entity.image %}
-                        <img src="{{ entity.image }}" alt="{{ entity.title ?? entity.name }}" class="card__image">
-                    {% else %}
-                        <div class="card__image" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(103, 97, 168, 0.3), rgba(160, 193, 185, 0.3));">
-                            <i class="fas fa-{{ item.type == 'game' ? 'gamepad' : (item.type == 'console' ? 'desktop' : 'plug') }}" style="font-size: 3rem; opacity: 0.5;"></i>
-                        </div>
-                    {% endif %}
-                    <div class="card__body">
-                        <div class="badge badge--{{ item.type == 'game' ? 'primary' : (item.type == 'console' ? 'secondary' : 'accent') }} mb-sm">
-                            {{ item.type == 'game' ? 'Jeu' : (item.type == 'console' ? 'Console' : 'Accessoire') }}
-                        </div>
-                        <h3 class="card__title">{{ entity.title ?? entity.name }}</h3>
-                        {% if item.type == 'game' and entity.platform %}
-                            <p class="card__text text--muted mb-sm">
-                                <i class="fas fa-desktop"></i> <small>{{ entity.platform.name }}</small>
-                            </p>
-                        {% elseif item.type == 'accessory' and entity.compatibility %}
-                            <p class="card__text text--muted mb-sm">
-                                <i class="fas fa-desktop"></i> <small>{{ entity.compatibility }}</small>
-                            </p>
+                {% set collections = item.type == 'game' ? entity.gameCollections
+                    : (item.type == 'console' ? entity.consoleCollections
+                    : entity.accessoryCollections) %}
+
+                <div class="home-feed-item animate-fade-in">
+
+                    {# Miniature #}
+                    <div class="home-feed-item__thumb">
+                        {% if entity.image %}
+                            <img src="{{ entity.image }}" alt="{{ entity.title ?? entity.name }}" class="home-feed-item__img">
+                        {% else %}
+                            <div class="home-feed-item__placeholder home-feed-item__placeholder--{{ item.type }}">
+                                <i class="fas fa-{{ item.type == 'game' ? 'gamepad' : (item.type == 'console' ? 'desktop' : 'plug') }}"></i>
+                            </div>
                         {% endif %}
-                        <p class="card__text text--muted">
-                            <small>
-                                Ajouté le {{ item.date ? item.date|date('d/m/Y') : 'N/A' }}
-                                par <strong>{{ entity.creator ? entity.creator.username : 'N/A' }}</strong>
-                            </small>
-                        </p>
-                        {# Collectionneurs #}
-                        {% set collections = item.type == 'game' ? entity.gameCollections
-                            : (item.type == 'console' ? entity.consoleCollections
-                            : entity.accessoryCollections) %}
+                        <span class="home-feed-item__type-badge home-feed-item__type-badge--{{ item.type }}">
+                            {{ item.type == 'game' ? 'Jeu' : (item.type == 'console' ? 'Console' : 'Accessoire') }}
+                        </span>
+                    </div>
+
+                    {# Contenu #}
+                    <div class="home-feed-item__body">
+                        <a href="{{ path('app_' ~ item.type ~ '_show', {'id': entity.id}) }}" class="home-feed-item__title">
+                            {{ entity.title ?? entity.name }}
+                        </a>
+
+                        <div class="home-feed-item__meta">
+                            {% if item.type == 'game' and entity.platform %}
+                                <span><i class="fas fa-desktop"></i> {{ entity.platform.name }}</span>
+                            {% elseif item.type == 'accessory' and entity.compatibility %}
+                                <span><i class="fas fa-link"></i> {{ entity.compatibility }}</span>
+                            {% endif %}
+                            <span><i class="fas fa-calendar-alt"></i> {{ item.date ? item.date|date('d/m/Y') : 'N/A' }}</span>
+                            <span><i class="fas fa-user"></i> {{ entity.creator ? entity.creator.username : 'N/A' }}</span>
+                        </div>
+
                         {% if collections is not empty %}
-                        <details class="collectors-section">
-                            <summary class="collectors-summary">
+                        <details class="home-feed-item__collectors">
+                            <summary>
                                 <i class="fas fa-users"></i>
-                                Dans
-                                <span class="collectors-count">{{ collections|length }}</span>
-                                collection{{ collections|length > 1 ? 's' : '' }}
-                                <i class="fas fa-chevron-down collectors-chevron"></i>
+                                {{ collections|length }} collection{{ collections|length > 1 ? 's' : '' }}
+                                <i class="fas fa-chevron-down home-feed-item__chevron"></i>
                             </summary>
-                            <div class="collectors-list">
+                            <div class="home-feed-item__collectors-list">
                                 {% for col in collections %}
-                                <div class="collector-row">
-                                    <div class="collector-avatar">{{ col.user.username|slice(0,1) }}</div>
-                                    <span class="collector-name">{{ col.user.username }}</span>
-                                    <span class="collector-qty">
-                                        <i class="fas fa-layer-group" style="margin-right:0;font-size:0.65rem;"></i>
-                                        {{ col.quantity }}
-                                    </span>
+                                <div class="home-feed-item__collector">
+                                    <span class="home-feed-item__collector-avatar">{{ col.user.username|slice(0,1)|upper }}</span>
+                                    <span class="home-feed-item__collector-name">{{ col.user.username }}</span>
+                                    <span class="home-feed-item__collector-qty">×{{ col.quantity }}</span>
                                 </div>
                                 {% endfor %}
                             </div>
                         </details>
                         {% endif %}
                     </div>
-                    <div class="card__footer">
-                        <a href="{{ path('app_' ~ item.type ~ '_show', {'id': entity.id}) }}" class="btn btn--primary btn--small">
-                            Voir les détails
-                        </a>
-                    </div>
+
                 </div>
             {% endfor %}
         </div>
     </div>
     {% endif %}
 
-    {# Sections principales #}
-    <div class="grid grid--4 mb-xl">
-        <div class="card">
-            <div class="card__body text--center">
-                <i class="fas fa-gamepad" style="font-size: 3rem; color: #6761A8; margin-bottom: 1rem; display: block;"></i>
-                <h3 class="card__title">Jeux vidéo</h3>
-                <p class="card__text">Explorez votre bibliothèque de jeux</p>
-                <a href="{{ path('app_game_index') }}" class="btn btn--primary">Consulter</a>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card__body text--center">
-                <i class="fas fa-desktop" style="font-size: 3rem; color: #A0C1B9; margin-bottom: 1rem; display: block;"></i>
-                <h3 class="card__title">Consoles</h3>
-                <p class="card__text">Gérez vos consoles de jeux</p>
-                <a href="{{ path('app_console_index') }}" class="btn btn--secondary">Consulter</a>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card__body text--center">
-                <i class="fas fa-plug" style="font-size: 3rem; color: #A30015; margin-bottom: 1rem; display: block;"></i>
-                <h3 class="card__title">Accessoires</h3>
-                <p class="card__text">Découvrez vos accessoires</p>
-                <a href="{{ path('app_accessory_index') }}" class="btn btn--accent">Consulter</a>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card__body text--center">
-                <i class="fas fa-folder-open" style="font-size: 3rem; color: #F0F0C9; margin-bottom: 1rem; display: block;"></i>
-                <h3 class="card__title">Ma Collection</h3>
-                <p class="card__text">Accédez à votre collection</p>
-                <a href="{{ path('app_collection_index') }}" class="btn btn--outline">Consulter</a>
-            </div>
-        </div>
-    </div>
 </div>
 {% endblock %}
