@@ -1,4 +1,5 @@
 import TomSelect from 'tom-select';
+import 'tom-select/dist/css/tom-select.min.css';
 import '../styles/kit.scss';
 
 // ---- Initialisation des selects avec recherche AJAX ----

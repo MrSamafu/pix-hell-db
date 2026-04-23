@@ -4,7 +4,8 @@
 // ============================================
 
 @import 'retro-theme';
-@import 'tom-select/dist/scss/tom-select';
+
+// tom-select : CSS importé côté JS (import 'tom-select/dist/css/tom-select.min.css')
 
 // ============================================
 // TOM-SELECT — surcharge thème sombre
