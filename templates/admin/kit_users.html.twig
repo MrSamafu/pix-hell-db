@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des kits - Admin - {{ parent() }}{% endblock %}
+
+{% block body %}
+
+<div class="admin-hero">
+    <div class="admin-hero__icon">
+        <i class="fas fa-briefcase"></i>
+    </div>
+    <div class="admin-hero__text">
+        <h1 class="admin-hero__title">Gestion des Kits Convention</h1>
+        <p class="admin-hero__sub">{{ users|length }} membre(s) — cliquez sur un utilisateur pour gérer son kit</p>
+    </div>
+    <a href="{{ path('app_admin_dashboard') }}" class="btn-outline admin-hero__back">
+        <i class="fas fa-arrow-left"></i> Dashboard
+    </a>
+</div>
+
+<div class="admin-sections" style="margin-top: 2rem;">
+
+    {% if users is empty %}
+        <div class="alert alert--info">
+            <i class="fas fa-info-circle"></i> Aucun utilisateur trouvé.
+        </div>
+    {% else %}
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Utilisateur</th>
+                        <th class="text--center">🎮 Jeux</th>
+                        <th class="text--center">📺 Consoles</th>
+                        <th class="text--center">🎧 Accessoires</th>
+                        <th class="text--center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div class="admin-avatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div>
+                                        <strong>{{ user.username }}</strong>
+                                        {% if 'ROLE_ADMIN' in user.roles %}
+                                            <span class="badge badge--warning ml-sm" style="font-size:0.7rem;">Admin</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text--center">
+                                <span class="badge badge--primary">{{ stats[user.id].games ?? 0 }}</span>
+                            </td>
+                            <td class="text--center">
+                                <span class="badge badge--secondary">{{ stats[user.id].consoles ?? 0 }}</span>
+                            </td>
+                            <td class="text--center">
+                                <span class="badge badge--accent">{{ stats[user.id].accessories ?? 0 }}</span>
+                            </td>
+                            <td class="text--center">
+                                <a href="{{ path('app_admin_kit_user', {'id': user.id}) }}" class="btn-primary" style="font-size:0.85rem; padding: 0.4rem 0.8rem;">
+                                    <i class="fas fa-edit"></i> Gérer le kit
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
+

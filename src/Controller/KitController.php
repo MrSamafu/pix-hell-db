@@ -126,6 +126,52 @@ class KitController extends AbstractController
         ]);
     }
 
+    // --- API Autocomplete ---
+    #[Route('/api/games', name: 'app_kit_api_games', methods: ['GET'])]
+    public function apiGames(Request $request, GameRepository $gameRepository): JsonResponse
+    {
+        $q = $request->query->get('q', '');
+        if (strlen($q) < 2) {
+            return $this->json([]);
+        }
+        $games = $gameRepository->searchByTitle($q);
+        $data = array_map(fn($g) => [
+            'id'   => $g->getId(),
+            'text' => $g->getTitle() . ' (' . ($g->getPlatform()?->getName() ?? 'N/A') . ')',
+        ], $games);
+        return $this->json($data);
+    }
+
+    #[Route('/api/consoles', name: 'app_kit_api_consoles', methods: ['GET'])]
+    public function apiConsoles(Request $request, ConsoleRepository $consoleRepository): JsonResponse
+    {
+        $q = $request->query->get('q', '');
+        if (strlen($q) < 2) {
+            return $this->json([]);
+        }
+        $consoles = $consoleRepository->searchByName($q);
+        $data = array_map(fn($c) => [
+            'id'   => $c->getId(),
+            'text' => $c->getName() . ($c->getManufacturer() ? ' (' . $c->getManufacturer() . ')' : ''),
+        ], $consoles);
+        return $this->json($data);
+    }
+
+    #[Route('/api/accessories', name: 'app_kit_api_accessories', methods: ['GET'])]
+    public function apiAccessories(Request $request, AccessoryRepository $accessoryRepository): JsonResponse
+    {
+        $q = $request->query->get('q', '');
+        if (strlen($q) < 2) {
+            return $this->json([]);
+        }
+        $accessories = $accessoryRepository->searchByName($q);
+        $data = array_map(fn($a) => [
+            'id'   => $a->getId(),
+            'text' => $a->getName() . ($a->getType() ? ' (' . $a->getType() . ')' : ''),
+        ], $accessories);
+        return $this->json($data);
+    }
+
     // --- Ajouter un jeu au kit ---
     #[Route('/game/add', name: 'app_kit_game_add', methods: ['POST'])]
     public function addGame(

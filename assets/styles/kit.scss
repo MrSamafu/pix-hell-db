@@ -1,0 +1,279 @@
+// ============================================
+// KIT CONVENTION — tom-select + layout
+// Mobile First
+// ============================================
+
+@import 'retro-theme';
+@import 'tom-select/dist/scss/tom-select.bootstrap5';
+
+// ============================================
+// TOM-SELECT — surcharge thème sombre
+// ============================================
+
+.ts-wrapper {
+  width: 100%;
+}
+
+.ts-control {
+  background: rgba($color-dark, 0.6);
+  border: 1px solid rgba($color-primary, 0.35);
+  border-radius: $border-radius-sm;
+  color: $color-cream;
+  padding: $spacing-xs $spacing-sm;
+  min-height: 42px;
+  cursor: text;
+
+  input {
+    color: $color-cream;
+    font-size: $font-size-sm;
+
+    &::placeholder { color: rgba($color-cream, 0.3); }
+  }
+
+  .item {
+    background: rgba($color-primary, 0.25);
+    color: $color-cream;
+    border: 1px solid rgba($color-primary, 0.4);
+    border-radius: $border-radius-sm;
+    padding: 2px 8px;
+  }
+
+  &.focus, &:focus-within {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.15);
+  }
+}
+
+.ts-dropdown {
+  background: lighten($color-dark, 6%);
+  border: 1px solid rgba($color-primary, 0.35);
+  border-radius: $border-radius-sm;
+  color: $color-cream;
+  z-index: 9999;
+  margin-top: 2px;
+  box-shadow: $box-shadow-lg;
+
+  .option {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+    cursor: pointer;
+    transition: background $transition-fast;
+
+    &:hover,
+    &.active {
+      background: rgba($color-primary, 0.2);
+      color: $color-cream;
+    }
+  }
+
+  .no-results,
+  .loading {
+    padding: $spacing-xs $spacing-sm;
+    color: $color-text-muted;
+    font-style: italic;
+    font-size: $font-size-sm;
+    text-align: center;
+  }
+}
+
+// ============================================
+// PANNEAU D'AJOUT
+// ============================================
+
+.kit-add-panel {
+  background: $color-surface;
+  border: 1px solid rgba($color-primary, 0.25);
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  margin-bottom: $spacing-xl;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-md;
+    background: linear-gradient(135deg, rgba($color-primary, 0.2), rgba($color-primary, 0.1));
+    border-bottom: 2px solid rgba($color-primary, 0.3);
+    font-weight: 700;
+    font-size: $font-size-base;
+    color: $color-cream;
+
+    i { color: lighten($color-primary, 20%); }
+  }
+
+  &__body {
+    padding: $spacing-md;
+  }
+}
+
+// ---- Onglets de type (Jeu / Console / Accessoire) ----
+.kit-type-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: $spacing-md;
+  background: rgba($color-dark, 0.4);
+  border: 1px solid rgba($color-primary, 0.2);
+  border-radius: $border-radius-md;
+  overflow: hidden;
+}
+
+.kit-type-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition-fast;
+  white-space: nowrap;
+
+  i { font-size: 0.85rem; }
+
+  &:hover {
+    color: $color-cream;
+    background: rgba($color-primary, 0.07);
+  }
+
+  &--active {
+    color: $color-cream;
+    border-bottom-color: $color-primary;
+    background: rgba($color-primary, 0.12);
+  }
+}
+
+// ---- Zone de recherche ----
+.kit-add-type {
+  display: none;
+
+  &--active { display: block; }
+}
+
+.kit-add-search {
+  margin-bottom: $spacing-md;
+
+  .coll-label { margin-bottom: $spacing-xs; }
+
+  &__hint {
+    margin-top: $spacing-xs;
+    font-size: 0.75rem;
+    color: $color-text-muted;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    i { font-size: 0.7rem; color: lighten($color-primary, 20%); }
+  }
+}
+
+.kit-add-meta {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+
+  @media (min-width: $breakpoint-mobile) {
+    grid-template-columns: 120px 1fr;
+  }
+}
+
+.kit-add-btn {
+  width: 100%;
+
+  @media (min-width: $breakpoint-mobile) {
+    width: auto;
+  }
+}
+
+// ============================================
+// PLACEHOLDER IMAGES (cartes kit)
+// ============================================
+
+.card__image--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card__image--game {
+  background: linear-gradient(135deg, rgba($color-teal, 0.15), rgba($color-purple, 0.15));
+}
+
+.card__image--console {
+  background: linear-gradient(135deg, rgba($color-purple, 0.15), rgba($color-teal, 0.15));
+}
+
+.card__image--accessory {
+  background: linear-gradient(135deg, rgba($color-red, 0.15), rgba($color-purple, 0.15));
+}
+
+.card__placeholder-icon {
+  font-size: 3rem;
+  opacity: 0.4;
+}
+
+// ============================================
+// ADMIN KIT — table
+// ============================================
+
+.kit-add-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-sm;
+  align-items: end;
+
+  @media (min-width: 700px) {
+    grid-template-columns: 2fr 100px 2fr auto;
+  }
+}
+
+.admin-kit-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: $spacing-sm;
+
+  th, td {
+    padding: 0.6rem 0.9rem;
+    border-bottom: 1px solid rgba($color-primary, 0.15);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  th {
+    background: rgba($color-primary, 0.12);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $color-text-muted;
+  }
+
+  tr:hover td {
+    background: rgba($color-primary, 0.05);
+  }
+
+  .quantity-input { width: 70px; }
+  .note-input     { width: 180px; min-height: 36px; resize: vertical; }
+}
+
+.admin-kit-section {
+  margin-bottom: $spacing-xl;
+
+  h2 { margin-bottom: $spacing-sm; }
+}
+
+.admin-kit-container {
+  max-width: 1100px;
+  margin-top: $spacing-lg;
+}
+
+.admin-kit-actions {
+  white-space: nowrap;
+
+  button + button { margin-left: 0.3rem; }
+}

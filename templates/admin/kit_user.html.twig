@@ -1,0 +1,255 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Kit de {{ user.username }} - Admin - {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('admin-kit') }}
+{% endblock %}
+
+{% block body %}
+
+{# Config JS via data-attributes #}
+<div id="admin-kit-config" hidden
+     data-user-id="{{ user.id }}"
+     data-games-url="{{ path('app_kit_api_games') }}"
+     data-consoles-url="{{ path('app_kit_api_consoles') }}"
+     data-accessories-url="{{ path('app_kit_api_accessories') }}">
+</div>
+
+<div class="admin-hero">
+    <div class="admin-hero__icon">
+        <i class="fas fa-briefcase"></i>
+    </div>
+    <div class="admin-hero__text">
+        <h1 class="admin-hero__title">Kit de {{ user.username }}</h1>
+        <p class="admin-hero__sub">
+            🎮 {{ total_games }} jeu(x) &nbsp;|&nbsp;
+            📺 {{ total_consoles }} console(s) &nbsp;|&nbsp;
+            🎧 {{ total_accessories }} accessoire(s)
+        </p>
+    </div>
+    <a href="{{ path('app_admin_kit_users') }}" class="btn-outline admin-hero__back">
+        <i class="fas fa-arrow-left"></i> Liste des kits
+    </a>
+</div>
+
+<div class="container admin-kit-container">
+
+    {# ===================== JEUX ===================== #}
+    <div class="admin-kit-section">
+        <h2>🎮 Jeux</h2>
+
+        <div class="card mb-md">
+            <div class="card__body">
+                <h4 class="mb-sm">Ajouter un jeu</h4>
+                <div class="kit-add-grid">
+                    <div>
+                        <label class="form__label">Rechercher un jeu</label>
+                        <select id="admin-game-select" placeholder="Tapez pour chercher…"></select>
+                    </div>
+                    <div>
+                        <label class="form__label">Quantité</label>
+                        <input type="number" class="form__input" id="admin-game-qty" value="1" min="1">
+                    </div>
+                    <div>
+                        <label class="form__label">Note</label>
+                        <textarea class="form__input" id="admin-game-note" placeholder="État, câbles..." rows="1"></textarea>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn--primary admin-kit-add-btn" data-type="game">
+                            <i class="fas fa-plus"></i> Ajouter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if game_kits %}
+        <table class="admin-kit-table">
+            <thead>
+                <tr>
+                    <th>Jeu</th>
+                    <th>Plateforme</th>
+                    <th>Quantité</th>
+                    <th>Note</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for kit in game_kits %}
+                <tr data-kit-id="{{ kit.id }}" data-kit-type="game">
+                    <td><strong>{{ kit.game.title }}</strong></td>
+                    <td>{{ kit.game.platform.name ?? 'N/A' }}</td>
+                    <td>
+                        <input type="number" class="form__input quantity-input" value="{{ kit.quantity }}" min="1"
+                               data-id="{{ kit.id }}" data-type="game">
+                    </td>
+                    <td>
+                        <textarea class="form__input note-input" rows="1"
+                                  data-id="{{ kit.id }}" data-type="game">{{ kit.note }}</textarea>
+                    </td>
+                    <td class="admin-kit-actions">
+                        <button class="btn-primary update-btn" data-id="{{ kit.id }}" data-type="game" title="Sauvegarder">
+                            <i class="fas fa-save"></i>
+                        </button>
+                        <button class="btn-danger delete-btn" data-id="{{ kit.id }}" data-type="game" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="text--muted">Aucun jeu dans le kit.</p>
+        {% endif %}
+    </div>
+
+    {# ===================== CONSOLES ===================== #}
+    <div class="admin-kit-section">
+        <h2>📺 Consoles</h2>
+
+        <div class="card mb-md">
+            <div class="card__body">
+                <h4 class="mb-sm">Ajouter une console</h4>
+                <div class="kit-add-grid">
+                    <div>
+                        <label class="form__label">Rechercher une console</label>
+                        <select id="admin-console-select" placeholder="Tapez pour chercher…"></select>
+                    </div>
+                    <div>
+                        <label class="form__label">Quantité</label>
+                        <input type="number" class="form__input" id="admin-console-qty" value="1" min="1">
+                    </div>
+                    <div>
+                        <label class="form__label">Note</label>
+                        <textarea class="form__input" id="admin-console-note" placeholder="État, câbles..." rows="1"></textarea>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn--secondary admin-kit-add-btn" data-type="console">
+                            <i class="fas fa-plus"></i> Ajouter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if console_kits %}
+        <table class="admin-kit-table">
+            <thead>
+                <tr>
+                    <th>Console</th>
+                    <th>Fabricant</th>
+                    <th>Quantité</th>
+                    <th>Note</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for kit in console_kits %}
+                <tr data-kit-id="{{ kit.id }}" data-kit-type="console">
+                    <td><strong>{{ kit.console.name }}</strong></td>
+                    <td>{{ kit.console.manufacturer ?? 'N/A' }}</td>
+                    <td>
+                        <input type="number" class="form__input quantity-input" value="{{ kit.quantity }}" min="1"
+                               data-id="{{ kit.id }}" data-type="console">
+                    </td>
+                    <td>
+                        <textarea class="form__input note-input" rows="1"
+                                  data-id="{{ kit.id }}" data-type="console">{{ kit.note }}</textarea>
+                    </td>
+                    <td class="admin-kit-actions">
+                        <button class="btn-primary update-btn" data-id="{{ kit.id }}" data-type="console" title="Sauvegarder">
+                            <i class="fas fa-save"></i>
+                        </button>
+                        <button class="btn-danger delete-btn" data-id="{{ kit.id }}" data-type="console" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="text--muted">Aucune console dans le kit.</p>
+        {% endif %}
+    </div>
+
+    {# ===================== ACCESSOIRES ===================== #}
+    <div class="admin-kit-section">
+        <h2>🎧 Accessoires</h2>
+
+        <div class="card mb-md">
+            <div class="card__body">
+                <h4 class="mb-sm">Ajouter un accessoire</h4>
+                <div class="kit-add-grid">
+                    <div>
+                        <label class="form__label">Rechercher un accessoire</label>
+                        <select id="admin-accessory-select" placeholder="Tapez pour chercher…"></select>
+                    </div>
+                    <div>
+                        <label class="form__label">Quantité</label>
+                        <input type="number" class="form__input" id="admin-accessory-qty" value="1" min="1">
+                    </div>
+                    <div>
+                        <label class="form__label">Note</label>
+                        <textarea class="form__input" id="admin-accessory-note" placeholder="État, câbles..." rows="1"></textarea>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn--accent admin-kit-add-btn" data-type="accessory">
+                            <i class="fas fa-plus"></i> Ajouter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if accessory_kits %}
+        <table class="admin-kit-table">
+            <thead>
+                <tr>
+                    <th>Accessoire</th>
+                    <th>Type</th>
+                    <th>Quantité</th>
+                    <th>Note</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for kit in accessory_kits %}
+                <tr data-kit-id="{{ kit.id }}" data-kit-type="accessory">
+                    <td><strong>{{ kit.accessory.name }}</strong></td>
+                    <td>{{ kit.accessory.type ?? 'N/A' }}</td>
+                    <td>
+                        <input type="number" class="form__input quantity-input" value="{{ kit.quantity }}" min="1"
+                               data-id="{{ kit.id }}" data-type="accessory">
+                    </td>
+                    <td>
+                        <textarea class="form__input note-input" rows="1"
+                                  data-id="{{ kit.id }}" data-type="accessory">{{ kit.note }}</textarea>
+                    </td>
+                    <td class="admin-kit-actions">
+                        <button class="btn-primary update-btn" data-id="{{ kit.id }}" data-type="accessory" title="Sauvegarder">
+                            <i class="fas fa-save"></i>
+                        </button>
+                        <button class="btn-danger delete-btn" data-id="{{ kit.id }}" data-type="accessory" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="text--muted">Aucun accessoire dans le kit.</p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('admin-kit') }}
+{% endblock %}
