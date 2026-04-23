@@ -582,6 +582,291 @@
 }
 
 // ============================================
+// INDEX : HERO CARD (Ma Collection)
+// ============================================
+
+.coll-hero-card {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-lg $spacing-md;
+  background: linear-gradient(135deg, rgba($color-purple, 0.2) 0%, rgba($color-teal, 0.12) 100%);
+  border: 1px solid rgba($color-primary, 0.3);
+  border-radius: $border-radius-lg;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 3px,
+      rgba($color-primary, 0.03) 3px, rgba($color-primary, 0.03) 4px
+    );
+    pointer-events: none;
+  }
+
+  @media (min-width: $breakpoint-mobile) {
+    flex-direction: row;
+    align-items: center;
+    padding: $spacing-xl $spacing-lg;
+  }
+
+  &__visual {
+    flex-shrink: 0;
+    position: relative;
+    width: 80px;
+    height: 80px;
+    align-self: center;
+
+    @media (min-width: $breakpoint-mobile) {
+      width: 100px;
+      height: 100px;
+    }
+  }
+
+  &__emoji {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 3rem;
+    background: linear-gradient(135deg, rgba($color-purple, 0.3), rgba($color-teal, 0.2));
+    border: 2px solid rgba($color-primary, 0.4);
+    border-radius: $border-radius-lg;
+    position: relative;
+    z-index: 1;
+
+    @media (min-width: $breakpoint-mobile) {
+      font-size: 3.5rem;
+    }
+  }
+
+  &__glow {
+    position: absolute;
+    inset: -8px;
+    background: radial-gradient(circle, rgba($color-purple, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: 700;
+    color: $color-cream;
+    margin: 0;
+    line-height: 1.2;
+
+    @media (min-width: $breakpoint-tablet) {
+      font-size: $font-size-2xl;
+    }
+  }
+
+  &__desc {
+    color: $color-text-muted;
+    margin: 0;
+    font-size: $font-size-sm;
+    line-height: 1.5;
+
+    @media (min-width: $breakpoint-tablet) {
+      font-size: $font-size-base;
+    }
+  }
+}
+
+// ============================================
+// INDEX : GRILLE INFÉRIEURE
+// ============================================
+
+.coll-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-md;
+
+  @media (min-width: $breakpoint-tablet) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-lg;
+  }
+}
+
+// ============================================
+// INDEX : PANELS (Collectionneurs / Recherche)
+// ============================================
+
+// Override : sur la page index, les panels sont toujours visibles
+.coll-bottom-grid .coll-panel {
+  display: flex;
+  flex-direction: column;
+  background: $color-surface;
+  border: 1px solid rgba($color-primary, 0.2);
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+
+  &:hover {
+    border-color: rgba($color-primary, 0.45);
+    box-shadow: $box-shadow;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-md;
+    background: linear-gradient(135deg, rgba($color-primary, 0.2), rgba($color-primary, 0.12));
+    border-bottom: 2px solid rgba($color-primary, 0.3);
+
+    .badge {
+      margin-left: auto;
+    }
+  }
+
+  &__icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  &__title {
+    font-size: $font-size-base;
+    font-weight: 700;
+    color: $color-cream;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    @media (min-width: $breakpoint-tablet) {
+      font-size: $font-size-lg;
+    }
+  }
+
+  &__body {
+    padding: $spacing-md;
+    flex: 1;
+  }
+}
+
+// ============================================
+// INDEX : LISTE UTILISATEURS
+// ============================================
+
+.coll-user-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 340px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: $color-purple transparent;
+
+  &::-webkit-scrollbar { width: 5px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: rgba($color-purple, 0.5); border-radius: 4px; }
+
+  li {
+    border-bottom: 1px solid rgba($color-primary, 0.1);
+
+    &:last-child { border-bottom: none; }
+  }
+}
+
+.coll-user-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-xs;
+  color: $color-cream;
+  text-decoration: none;
+  transition: background $transition-fast, padding-left $transition-fast;
+  border-radius: $border-radius-sm;
+
+  &:hover {
+    background: rgba($color-primary, 0.1);
+    padding-left: $spacing-sm;
+    color: $color-cream;
+  }
+
+  &__avatar {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $color-purple, $color-teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-cream;
+    font-size: 0.8rem;
+
+    .fas { margin: 0; }
+  }
+
+  &__name {
+    flex: 1;
+    min-width: 0;
+    font-weight: 600;
+    font-size: $font-size-sm;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__arrow {
+    flex-shrink: 0;
+    color: rgba($color-primary, 0.5);
+    font-size: 0.75rem;
+    transition: color $transition-fast, transform $transition-fast;
+    margin: 0;
+
+    .coll-user-item:hover & {
+      color: $color-primary;
+      transform: translateX(3px);
+    }
+  }
+}
+
+// ============================================
+// INDEX : RECHERCHE
+// ============================================
+
+.coll-search-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.coll-search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &__icon {
+    position: absolute;
+    left: $spacing-sm;
+    color: $color-text-muted;
+    pointer-events: none;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  &__input {
+    padding-left: 2.5rem !important;
+  }
+}
+
+// ============================================
 // SCROLLBAR CUSTOM (liste users)
 // ============================================
 
