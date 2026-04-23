@@ -1,11 +1,5 @@
+# AssetMapper est désactivé - on utilise Webpack Encore à la place
+# See webpack.config.js and webpack_encore.yaml
 framework:
     asset_mapper:
-        # The paths to make available to the asset mapper.
-        paths:
-            - assets/
-        missing_import_mode: strict
-
-when@prod:
-    framework:
-        asset_mapper:
-            missing_import_mode: warn
+        paths: []
