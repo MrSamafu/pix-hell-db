@@ -6,7 +6,8 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
 
 Encore
     .setOutputPath('public/build/')
-    .setPublicPath('/build')
+    .setPublicPath('/pixhelldb/build')
+    .setManifestKeyPrefix('build/')
     .addEntry('app', './assets/app.js')
     .addEntry('kit', './assets/js/kit.js')
     .addEntry('admin-kit', './assets/js/admin-kit.js')
