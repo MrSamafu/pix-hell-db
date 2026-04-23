@@ -12,157 +12,94 @@
             {% if is_granted('ROLE_USER') %}
                 <a href="{{ path('app_accessory_new') }}" class="btn btn-primary">
                     <span class="btn-icon">+</span>
-                    Ajouter un accessoire
+                    <span class="hide-mobile">Ajouter un accessoire</span>
+                    <span class="hide-desktop">Ajouter</span>
                 </a>
             {% endif %}
         </div>
     </div>
 
-    {# Barre de recherche et filtres #}
     <div class="search-container">
         <form method="get" action="{{ path('app_accessory_index') }}" class="search-form">
-            {# Barre de recherche principale #}
             <div class="search-bar">
                 <div class="search-input-wrapper">
                     <span class="search-icon">🔍</span>
-                    <input
-                        type="text"
-                        name="search"
-                        class="search-input"
-                        placeholder="Rechercher un accessoire (nom, type, compatibilité)..."
-                        value="{{ currentFilters.search ?? '' }}"
-                    >
+                    <input type="text" name="search" class="search-input"
+                           placeholder="Nom, type, compatibilité..."
+                           value="{{ currentFilters.search ?? '' }}">
                     {% if currentFilters.search %}
-                        <a href="{{ path('app_accessory_index') }}" class="search-clear" title="Effacer la recherche">✕</a>
+                        <a href="{{ path('app_accessory_index') }}" class="search-clear" title="Effacer">✕</a>
                     {% endif %}
                 </div>
-                <button type="submit" class="btn btn-primary">
-                    Rechercher
-                </button>
+                <button type="submit" class="btn btn-primary">Rechercher</button>
             </div>
 
-            {# Filtres avancés #}
             <div class="search-filters">
                 <div class="filters-toggle" onclick="toggleFilters()">
                     <span class="filters-icon">⚙️</span>
                     <span class="filters-text">Filtres avancés</span>
                     <span class="filters-arrow" id="filters-arrow">▼</span>
                 </div>
-
                 <div class="filters-content" id="filters-content">
                     <div class="filters-grid">
-                        {# Filtre Type #}
                         <div class="filter-group">
                             <label for="type" class="filter-label">🎮 Type</label>
                             <select name="type" id="type" class="filter-select">
                                 <option value="">Tous les types</option>
                                 {% for type in types %}
-                                    <option value="{{ type }}" {{ currentFilters.type == type ? 'selected' : '' }}>
-                                        {{ type }}
-                                    </option>
+                                    <option value="{{ type }}" {{ currentFilters.type == type ? 'selected' : '' }}>{{ type }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-
-                        {# Filtre Compatibilité #}
                         <div class="filter-group">
                             <label for="compatibility" class="filter-label">🔗 Compatibilité</label>
                             <select name="compatibility" id="compatibility" class="filter-select">
-                                <option value="">Toutes les compatibilités</option>
+                                <option value="">Toutes</option>
                                 {% for compatibility in compatibilities %}
-                                    <option value="{{ compatibility }}" {{ currentFilters.compatibility == compatibility ? 'selected' : '' }}>
-                                        {{ compatibility }}
-                                    </option>
+                                    <option value="{{ compatibility }}" {{ currentFilters.compatibility == compatibility ? 'selected' : '' }}>{{ compatibility }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-
-                        {# Filtre Année #}
                         <div class="filter-group">
                             <label for="year" class="filter-label">📅 Année</label>
                             <select name="year" id="year" class="filter-select">
                                 <option value="">Toutes les années</option>
                                 {% for year in years %}
-                                    <option value="{{ year }}" {{ currentFilters.year == year ? 'selected' : '' }}>
-                                        {{ year }}
-                                    </option>
+                                    <option value="{{ year }}" {{ currentFilters.year == year ? 'selected' : '' }}>{{ year }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                     </div>
-
-                    {# Recherche alphabétique #}
                     <div class="filter-group alphabet-filter">
-                        <label class="filter-label">🔤 Recherche alphabétique</label>
+                        <label class="filter-label">🔤 Alphabétique</label>
                         <div class="alphabet-grid">
-                            <a href="{{ path('app_accessory_index') }}"
-                               class="alphabet-btn {{ currentFilters.letter is empty ? 'active' : '' }}"
-                               title="Tous">
-                                Tous
-                            </a>
+                            <a href="{{ path('app_accessory_index') }}" class="alphabet-btn {{ currentFilters.letter is empty ? 'active' : '' }}">Tous</a>
                             {% for letter in alphabet %}
-                                <a href="{{ path('app_accessory_index', {letter: letter}) }}"
-                                   class="alphabet-btn {{ currentFilters.letter == letter ? 'active' : '' }}"
-                                   title="Commence par {{ letter }}">
-                                    {{ letter }}
-                                </a>
+                                <a href="{{ path('app_accessory_index', {letter: letter}) }}" class="alphabet-btn {{ currentFilters.letter == letter ? 'active' : '' }}">{{ letter }}</a>
                             {% endfor %}
                         </div>
                     </div>
-
-                    {# Actions des filtres #}
                     <div class="filters-actions">
-                        <button type="submit" class="btn btn-primary">
-                            ✓ Appliquer les filtres
-                        </button>
-                        <a href="{{ path('app_accessory_index') }}" class="btn btn-outline">
-                            ✕ Réinitialiser
-                        </a>
+                        <button type="submit" class="btn btn-primary">✓ Appliquer</button>
+                        <a href="{{ path('app_accessory_index') }}" class="btn btn-outline">✕ Réinitialiser</a>
                     </div>
                 </div>
             </div>
         </form>
 
-        {# Résumé des filtres actifs #}
         {% if currentFilters.search or currentFilters.type or currentFilters.compatibility or currentFilters.year or currentFilters.letter %}
-            <div class="active-filters">
-                <span class="active-filters-label">Filtres actifs :</span>
-                <div class="active-filters-list">
-                    {% if currentFilters.search %}
-                        <span class="filter-tag">
-                            🔍 "{{ currentFilters.search }}"
-                            <a href="{{ path('app_accessory_index', currentFilters|filter((v, k) => k != 'search')) }}" class="filter-tag-remove">✕</a>
-                        </span>
-                    {% endif %}
-                    {% if currentFilters.type %}
-                        <span class="filter-tag">
-                            🎮 {{ currentFilters.type }}
-                            <a href="{{ path('app_accessory_index', currentFilters|filter((v, k) => k != 'type')) }}" class="filter-tag-remove">✕</a>
-                        </span>
-                    {% endif %}
-                    {% if currentFilters.compatibility %}
-                        <span class="filter-tag">
-                            🔗 {{ currentFilters.compatibility }}
-                            <a href="{{ path('app_accessory_index', currentFilters|filter((v, k) => k != 'compatibility')) }}" class="filter-tag-remove">✕</a>
-                        </span>
-                    {% endif %}
-                    {% if currentFilters.year %}
-                        <span class="filter-tag">
-                            📅 {{ currentFilters.year }}
-                            <a href="{{ path('app_accessory_index', currentFilters|filter((v, k) => k != 'year')) }}" class="filter-tag-remove">✕</a>
-                        </span>
-                    {% endif %}
-                    {% if currentFilters.letter %}
-                        <span class="filter-tag">
-                            🔤 {{ currentFilters.letter }}
-                            <a href="{{ path('app_accessory_index', currentFilters|filter((v, k) => k != 'letter')) }}" class="filter-tag-remove">✕</a>
-                        </span>
-                    {% endif %}
-                </div>
+        <div class="active-filters">
+            <span class="active-filters-label">Filtres :</span>
+            <div class="active-filters-list">
+                {% if currentFilters.search %}<span class="filter-tag">🔍 "{{ currentFilters.search }}" <a href="{{ path('app_accessory_index', currentFilters|filter((v, k) => k != 'search')) }}" class="filter-tag-remove">✕</a></span>{% endif %}
+                {% if currentFilters.type %}<span class="filter-tag">🎮 {{ currentFilters.type }} <a href="{{ path('app_accessory_index', currentFilters|filter((v, k) => k != 'type')) }}" class="filter-tag-remove">✕</a></span>{% endif %}
+                {% if currentFilters.compatibility %}<span class="filter-tag">🔗 {{ currentFilters.compatibility }} <a href="{{ path('app_accessory_index', currentFilters|filter((v, k) => k != 'compatibility')) }}" class="filter-tag-remove">✕</a></span>{% endif %}
+                {% if currentFilters.year %}<span class="filter-tag">📅 {{ currentFilters.year }} <a href="{{ path('app_accessory_index', currentFilters|filter((v, k) => k != 'year')) }}" class="filter-tag-remove">✕</a></span>{% endif %}
+                {% if currentFilters.letter %}<span class="filter-tag">🔤 {{ currentFilters.letter }} <a href="{{ path('app_accessory_index', currentFilters|filter((v, k) => k != 'letter')) }}" class="filter-tag-remove">✕</a></span>{% endif %}
             </div>
+        </div>
         {% endif %}
 
-        {# Compteur de résultats #}
         <div class="search-results-count">
             <strong>{{ accessories|length }}</strong> accessoire{{ accessories|length > 1 ? 's' : '' }} trouvé{{ accessories|length > 1 ? 's' : '' }}
         </div>
@@ -178,63 +115,57 @@
             {% endif %}
         </div>
     {% else %}
-        <div class="cards-grid">
+        <div class="catalog-grid">
             {% for accessory in accessories %}
-                <div class="card-item">
-                    {% if accessory.image %}
-                        <div class="card-image" style="background-image: url('{{ accessory.image }}');">
-                            <div class="card-image-overlay"></div>
-                        </div>
-                    {% else %}
-                        <div class="card-image card-image-placeholder">
-                            <span class="placeholder-icon">🎧</span>
-                        </div>
-                    {% endif %}
+                <div class="catalog-card">
+                    <a href="{{ path('app_accessory_show', {'id': accessory.id}) }}" class="catalog-card__thumb">
+                        {% if accessory.image %}
+                            <img src="{{ accessory.image }}" alt="{{ accessory.name }}" class="catalog-card__img">
+                        {% else %}
+                            <div class="catalog-card__placeholder catalog-card__placeholder--accessory">
+                                <i class="fas fa-plug"></i>
+                            </div>
+                        {% endif %}
+                    </a>
 
-                    <div class="card-content">
-                        <h3 class="card-title">{{ accessory.name }}</h3>
-
-                        <div class="card-meta">
+                    <div class="catalog-card__body">
+                        <a href="{{ path('app_accessory_show', {'id': accessory.id}) }}" class="catalog-card__title">
+                            {{ accessory.name }}
+                        </a>
+                        <div class="catalog-card__chips">
                             {% if accessory.type %}
-                                <span class="meta-item">
-                                    <span class="meta-label">Type</span>
-                                    <span class="meta-value">{{ accessory.type }}</span>
+                                <span class="catalog-chip catalog-chip--platform">
+                                    <i class="fas fa-tag"></i> {{ accessory.type }}
                                 </span>
                             {% endif %}
-
                             {% if accessory.compatibility %}
-                                <span class="meta-item">
-                                    <span class="meta-label">Compatibilité</span>
-                                    <span class="meta-value">{{ accessory.compatibility }}</span>
+                                <span class="catalog-chip catalog-chip--muted">
+                                    <i class="fas fa-link"></i> {{ accessory.compatibility }}
                                 </span>
                             {% endif %}
-
                             {% if accessory.releaseDate %}
-                                <span class="meta-item">
-                                    <span class="meta-label">Sortie</span>
-                                    <span class="meta-value">{{ accessory.releaseDate|date('d/m/Y') }}</span>
+                                <span class="catalog-chip">
+                                    <i class="fas fa-calendar-alt"></i> {{ accessory.releaseDate|date('Y') }}
                                 </span>
                             {% endif %}
                         </div>
+                    </div>
 
-                        <div class="card-actions">
-                            <a href="{{ path('app_accessory_show', {'id': accessory.id}) }}" class="btn btn-secondary btn-sm">
-                                Voir détails
+                    <div class="catalog-card__actions">
+                        {% if is_granted('edit', accessory) %}
+                            <a href="{{ path('app_accessory_edit', {'id': accessory.id}) }}" class="catalog-action catalog-action--edit" title="Modifier">
+                                <i class="fas fa-pencil-alt"></i>
                             </a>
-
-                            {% if is_granted('edit', accessory) %}
-                                <a href="{{ path('app_accessory_edit', {'id': accessory.id}) }}" class="btn btn-outline btn-sm" title="Modifier">
-                                    ✏️
-                                </a>
-                            {% endif %}
-
-                            {% if is_granted('delete', accessory) %}
-                                <form method="post" action="{{ path('app_accessory_delete', {'id': accessory.id}) }}" class="inline-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet accessoire ?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ accessory.id) }}">
-                                    <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">🗑️</button>
-                                </form>
-                            {% endif %}
-                        </div>
+                        {% endif %}
+                        {% if is_granted('delete', accessory) %}
+                            <form method="post" action="{{ path('app_accessory_delete', {'id': accessory.id}) }}" class="inline-form"
+                                  onsubmit="return confirm('Supprimer cet accessoire ?')">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ accessory.id) }}">
+                                <button type="submit" class="catalog-action catalog-action--delete" title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
@@ -245,18 +176,11 @@
         function toggleFilters() {
             const content = document.getElementById('filters-content');
             const arrow = document.getElementById('filters-arrow');
-
-            if (content.style.display === 'none' || content.style.display === '') {
-                content.style.display = 'block';
-                arrow.textContent = '▲';
-            } else {
-                content.style.display = 'none';
-                arrow.textContent = '▼';
-            }
+            const open = content.style.display === 'block';
+            content.style.display = open ? 'none' : 'block';
+            arrow.textContent = open ? '▼' : '▲';
         }
-
-        // Ouvrir les filtres automatiquement si des filtres sont actifs
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const hasActiveFilters = {{ (currentFilters.type or currentFilters.compatibility or currentFilters.year) ? 'true' : 'false' }};
             if (hasActiveFilters) {
                 document.getElementById('filters-content').style.display = 'block';
@@ -265,4 +189,3 @@
         });
     </script>
 {% endblock %}
-

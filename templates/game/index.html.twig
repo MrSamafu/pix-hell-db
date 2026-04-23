@@ -12,7 +12,8 @@
             {% if is_granted('ROLE_USER') %}
                 <a href="{{ path('app_game_new') }}" class="btn btn-primary">
                     <span class="btn-icon">+</span>
-                    Ajouter un jeu
+                    <span class="hide-mobile">Ajouter un jeu</span>
+                    <span class="hide-desktop">Ajouter</span>
                 </a>
             {% endif %}
         </div>
@@ -21,167 +22,95 @@
     {# Barre de recherche et filtres #}
     <div class="search-container">
         <form method="get" action="{{ path('app_game_index') }}" class="search-form">
-            {# Barre de recherche principale #}
             <div class="search-bar">
                 <div class="search-input-wrapper">
                     <span class="search-icon">🔍</span>
-                    <input
-                        type="text"
-                        name="search"
-                        class="search-input"
-                        placeholder="Rechercher un jeu (titre, série, éditeur, développeur)..."
-                        value="{{ currentFilters.search ?? '' }}"
-                    >
+                    <input type="text" name="search" class="search-input"
+                           placeholder="Titre, série, éditeur, développeur..."
+                           value="{{ currentFilters.search ?? '' }}">
                     {% if currentFilters.search %}
-                        <a href="{{ path('app_game_index') }}" class="search-clear" title="Effacer la recherche">✕</a>
+                        <a href="{{ path('app_game_index') }}" class="search-clear" title="Effacer">✕</a>
                     {% endif %}
                 </div>
-                <button type="submit" class="btn btn-primary">
-                    Rechercher
-                </button>
+                <button type="submit" class="btn btn-primary">Rechercher</button>
             </div>
 
-            {# Filtres avancés #}
             <div class="search-filters">
                 <div class="filters-toggle" onclick="toggleFilters()">
                     <span class="filters-icon">⚙️</span>
                     <span class="filters-text">Filtres avancés</span>
                     <span class="filters-arrow" id="filters-arrow">▼</span>
                 </div>
-
                 <div class="filters-content" id="filters-content">
                     <div class="filters-grid">
-                        {# Filtre Console/Plateforme #}
                         <div class="filter-group">
                             <label for="platform" class="filter-label">🕹️ Console</label>
                             <select name="platform" id="platform" class="filter-select">
                                 <option value="">Toutes les consoles</option>
                                 {% for console in consoles %}
-                                    <option value="{{ console.id }}" {{ currentFilters.platform == console.id ? 'selected' : '' }}>
-                                        {{ console.name }}
-                                    </option>
+                                    <option value="{{ console.id }}" {{ currentFilters.platform == console.id ? 'selected' : '' }}>{{ console.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-
-                        {# Filtre Année #}
                         <div class="filter-group">
                             <label for="year" class="filter-label">📅 Année</label>
                             <select name="year" id="year" class="filter-select">
                                 <option value="">Toutes les années</option>
                                 {% for year in years %}
-                                    <option value="{{ year }}" {{ currentFilters.year == year ? 'selected' : '' }}>
-                                        {{ year }}
-                                    </option>
+                                    <option value="{{ year }}" {{ currentFilters.year == year ? 'selected' : '' }}>{{ year }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-
-                        {# Filtre Genre #}
                         <div class="filter-group">
                             <label for="genre" class="filter-label">🎯 Genre</label>
                             <select name="genre" id="genre" class="filter-select">
                                 <option value="">Tous les genres</option>
                                 {% for genre in genres %}
-                                    <option value="{{ genre.id }}" {{ currentFilters.genre == genre.id ? 'selected' : '' }}>
-                                        {{ genre.name }}
-                                    </option>
+                                    <option value="{{ genre.id }}" {{ currentFilters.genre == genre.id ? 'selected' : '' }}>{{ genre.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-
-                        {# Filtre Mode #}
                         <div class="filter-group">
                             <label for="mode" class="filter-label">🎮 Mode</label>
                             <select name="mode" id="mode" class="filter-select">
                                 <option value="">Tous les modes</option>
                                 {% for mode in modes %}
-                                    <option value="{{ mode.id }}" {{ currentFilters.mode == mode.id ? 'selected' : '' }}>
-                                        {{ mode.name }}
-                                    </option>
+                                    <option value="{{ mode.id }}" {{ currentFilters.mode == mode.id ? 'selected' : '' }}>{{ mode.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                     </div>
-
-                    {# Recherche alphabétique #}
                     <div class="filter-group alphabet-filter">
-                        <label class="filter-label">🔤 Recherche alphabétique</label>
+                        <label class="filter-label">🔤 Alphabétique</label>
                         <div class="alphabet-grid">
-                            <a href="{{ path('app_game_index') }}"
-                               class="alphabet-btn {{ currentFilters.letter is empty ? 'active' : '' }}"
-                               title="Tous">
-                                Tous
-                            </a>
+                            <a href="{{ path('app_game_index') }}" class="alphabet-btn {{ currentFilters.letter is empty ? 'active' : '' }}">Tous</a>
                             {% for letter in alphabet %}
-                                <a href="{{ path('app_game_index', {letter: letter}) }}"
-                                   class="alphabet-btn {{ currentFilters.letter == letter ? 'active' : '' }}"
-                                   title="Commence par {{ letter }}">
-                                    {{ letter }}
-                                </a>
+                                <a href="{{ path('app_game_index', {letter: letter}) }}" class="alphabet-btn {{ currentFilters.letter == letter ? 'active' : '' }}">{{ letter }}</a>
                             {% endfor %}
                         </div>
                     </div>
-
-                    {# Actions des filtres #}
                     <div class="filters-actions">
-                        <button type="submit" class="btn btn-primary">
-                            ✓ Appliquer les filtres
-                        </button>
-                        <a href="{{ path('app_game_index') }}" class="btn btn-outline">
-                            ✕ Réinitialiser
-                        </a>
+                        <button type="submit" class="btn btn-primary">✓ Appliquer</button>
+                        <a href="{{ path('app_game_index') }}" class="btn btn-outline">✕ Réinitialiser</a>
                     </div>
                 </div>
             </div>
         </form>
 
-        {# Résumé des filtres actifs #}
         {% if currentFilters.search or currentFilters.platform or currentFilters.year or currentFilters.genre or currentFilters.mode or currentFilters.letter %}
-            <div class="active-filters">
-                <span class="active-filters-label">Filtres actifs :</span>
-                <div class="active-filters-list">
-                    {% if currentFilters.search %}
-                        <span class="filter-tag">
-                            🔍 "{{ currentFilters.search }}"
-                            <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'search')) }}" class="filter-tag-remove">✕</a>
-                        </span>
-                    {% endif %}
-                    {% if currentFilters.platform %}
-                        <span class="filter-tag">
-                            🕹️ Console
-                            <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'platform')) }}" class="filter-tag-remove">✕</a>
-                        </span>
-                    {% endif %}
-                    {% if currentFilters.year %}
-                        <span class="filter-tag">
-                            📅 {{ currentFilters.year }}
-                            <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'year')) }}" class="filter-tag-remove">✕</a>
-                        </span>
-                    {% endif %}
-                    {% if currentFilters.genre %}
-                        <span class="filter-tag">
-                            🎯 Genre
-                            <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'genre')) }}" class="filter-tag-remove">✕</a>
-                        </span>
-                    {% endif %}
-                    {% if currentFilters.mode %}
-                        <span class="filter-tag">
-                            🎮 Mode
-                            <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'mode')) }}" class="filter-tag-remove">✕</a>
-                        </span>
-                    {% endif %}
-                    {% if currentFilters.letter %}
-                        <span class="filter-tag">
-                            🔤 {{ currentFilters.letter }}
-                            <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'letter')) }}" class="filter-tag-remove">✕</a>
-                        </span>
-                    {% endif %}
-                </div>
+        <div class="active-filters">
+            <span class="active-filters-label">Filtres :</span>
+            <div class="active-filters-list">
+                {% if currentFilters.search %}<span class="filter-tag">🔍 "{{ currentFilters.search }}" <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'search')) }}" class="filter-tag-remove">✕</a></span>{% endif %}
+                {% if currentFilters.platform %}<span class="filter-tag">🕹️ Console <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'platform')) }}" class="filter-tag-remove">✕</a></span>{% endif %}
+                {% if currentFilters.year %}<span class="filter-tag">📅 {{ currentFilters.year }} <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'year')) }}" class="filter-tag-remove">✕</a></span>{% endif %}
+                {% if currentFilters.genre %}<span class="filter-tag">🎯 Genre <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'genre')) }}" class="filter-tag-remove">✕</a></span>{% endif %}
+                {% if currentFilters.mode %}<span class="filter-tag">🎮 Mode <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'mode')) }}" class="filter-tag-remove">✕</a></span>{% endif %}
+                {% if currentFilters.letter %}<span class="filter-tag">🔤 {{ currentFilters.letter }} <a href="{{ path('app_game_index', currentFilters|filter((v, k) => k != 'letter')) }}" class="filter-tag-remove">✕</a></span>{% endif %}
             </div>
+        </div>
         {% endif %}
 
-        {# Compteur de résultats #}
         <div class="search-results-count">
             <strong>{{ games|length }}</strong> jeu{{ games|length > 1 ? 'x' : '' }} trouvé{{ games|length > 1 ? 's' : '' }}
         </div>
@@ -197,71 +126,67 @@
             {% endif %}
         </div>
     {% else %}
-        <div class="cards-grid">
+        <div class="catalog-grid">
             {% for game in games %}
-                <div class="card-item">
-                    {% if game.image %}
-                        <div class="card-image" style="background-image: url('{{ game.image }}');">
-                            <div class="card-image-overlay"></div>
-                        </div>
-                    {% else %}
-                        <div class="card-image card-image-placeholder">
-                            <span class="placeholder-icon">🎮</span>
-                        </div>
-                    {% endif %}
-
-                    <div class="card-content">
-                        <h3 class="card-title">{{ game.title }}</h3>
-
-                        <div class="card-meta">
-                            {% if game.platform %}
-                                <span class="meta-item">
-                                    <span class="meta-label">Plateforme</span>
-                                    <span class="meta-value">{{ game.platform.name }}</span>
-                                </span>
-                            {% endif %}
-
-                            {% if game.developer %}
-                                <span class="meta-item">
-                                    <span class="meta-label">Développeur</span>
-                                    <span class="meta-value">{{ game.developer }}</span>
-                                </span>
-                            {% endif %}
-
-                            {% if game.releaseDate %}
-                                <span class="meta-item">
-                                    <span class="meta-label">Sortie</span>
-                                    <span class="meta-value">{{ game.releaseDate|date('d/m/Y') }}</span>
-                                </span>
-                            {% endif %}
-                        </div>
-
-                        {% if game.genres is not empty %}
-                            <div class="card-tags">
-                                {% for genre in game.genres %}
-                                    <span class="tag">{{ genre.name }}</span>
-                                {% endfor %}
+                <div class="catalog-card">
+                    {# Vignette #}
+                    <a href="{{ path('app_game_show', {'id': game.id}) }}" class="catalog-card__thumb">
+                        {% if game.image %}
+                            <img src="{{ game.image }}" alt="{{ game.title }}" class="catalog-card__img">
+                        {% else %}
+                            <div class="catalog-card__placeholder catalog-card__placeholder--game">
+                                <i class="fas fa-gamepad"></i>
                             </div>
                         {% endif %}
+                    </a>
 
-                        <div class="card-actions">
-                            <a href="{{ path('app_game_show', {'id': game.id}) }}" class="btn btn-secondary btn-sm">
-                                Voir détails
-                            </a>
+                    {# Contenu #}
+                    <div class="catalog-card__body">
+                        <a href="{{ path('app_game_show', {'id': game.id}) }}" class="catalog-card__title">
+                            {{ game.title }}
+                        </a>
 
-                            {% if is_granted('edit', game) %}
-                                <a href="{{ path('app_game_edit', {'id': game.id}) }}" class="btn btn-outline btn-sm" title="Modifier">
-                                    ✏️
-                                </a>
+                        <div class="catalog-card__chips">
+                            {% if game.platform %}
+                                <span class="catalog-chip catalog-chip--platform">
+                                    <i class="fas fa-desktop"></i> {{ game.platform.name }}
+                                </span>
                             {% endif %}
-
-                            {% if is_granted('delete', game) %}
-                                <form method="post" action="{{ path('app_game_delete', {'id': game.id}) }}" class="inline-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce jeu ?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ game.id) }}">
-                                    <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">🗑️</button>
-                                </form>
+                            {% if game.releaseDate %}
+                                <span class="catalog-chip">
+                                    <i class="fas fa-calendar-alt"></i> {{ game.releaseDate|date('Y') }}
+                                </span>
+                            {% endif %}
+                            {% if game.developer %}
+                                <span class="catalog-chip catalog-chip--muted">
+                                    <i class="fas fa-code"></i> {{ game.developer }}
+                                </span>
+                            {% endif %}
+                            {% for genre in game.genres|slice(0, 2) %}
+                                <span class="catalog-chip catalog-chip--tag">{{ genre.name }}</span>
+                            {% endfor %}
+                            {% if game.genres|length > 2 %}
+                                <span class="catalog-chip catalog-chip--more">+{{ game.genres|length - 2 }}</span>
                             {% endif %}
                         </div>
+                    </div>
+
+                    {# Actions #}
+                    <div class="catalog-card__actions">
+                        {% if is_granted('edit', game) %}
+                            <a href="{{ path('app_game_edit', {'id': game.id}) }}" class="catalog-action catalog-action--edit" title="Modifier">
+                                <i class="fas fa-pencil-alt"></i>
+                            </a>
+                        {% endif %}
+                        {% if is_granted('delete', game) %}
+                            <form method="post" action="{{ path('app_game_delete', {'id': game.id}) }}" class="inline-form"
+                                  onsubmit="return confirm('Supprimer ce jeu ?')">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ game.id) }}">
+                                <button type="submit" class="catalog-action catalog-action--delete" title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
@@ -272,18 +197,11 @@
         function toggleFilters() {
             const content = document.getElementById('filters-content');
             const arrow = document.getElementById('filters-arrow');
-
-            if (content.style.display === 'none' || content.style.display === '') {
-                content.style.display = 'block';
-                arrow.textContent = '▲';
-            } else {
-                content.style.display = 'none';
-                arrow.textContent = '▼';
-            }
+            const open = content.style.display === 'block';
+            content.style.display = open ? 'none' : 'block';
+            arrow.textContent = open ? '▼' : '▲';
         }
-
-        // Ouvrir les filtres automatiquement si des filtres sont actifs
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const hasActiveFilters = {{ (currentFilters.platform or currentFilters.year or currentFilters.genre or currentFilters.mode) ? 'true' : 'false' }};
             if (hasActiveFilters) {
                 document.getElementById('filters-content').style.display = 'block';
