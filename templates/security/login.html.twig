@@ -77,6 +77,13 @@
                         <label for="remember_me">Se souvenir de moi</label>
                     </div>
 
+                    <!-- Lien mot de passe oublié -->
+                    <div style="text-align: right; margin-top: 0.5rem;">
+                        <a href="{{ path('app_forgot_password') }}" class="auth-forgot-link">
+                            <i class="fas fa-key"></i> Mot de passe oublié ?
+                        </a>
+                    </div>
+
                     <!-- Submit Button -->
                     <div style="margin-top: 2rem;">
                         <button type="submit" class="auth-submit-btn">
