@@ -1,0 +1,315 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Kit - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="page-header">
+        <div class="page-header-content">
+            <h1 class="page-title">
+                <span class="icon">🎒</span>
+                Mon Kit Convention
+            </h1>
+            <a href="{{ path('app_kit_index') }}" class="btn btn--secondary">
+                ← Retour
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Statistiques -->
+        <div class="collection-stats mb-xl">
+            <div class="stat-card">
+                <div class="stat-icon">🎮</div>
+                <div class="stat-value">{{ total_games }}</div>
+                <div class="stat-label">Jeux</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📺</div>
+                <div class="stat-value">{{ total_consoles }}</div>
+                <div class="stat-label">Consoles</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎧</div>
+                <div class="stat-value">{{ total_accessories }}</div>
+                <div class="stat-label">Accessoires</div>
+            </div>
+        </div>
+
+        <!-- Ajout rapide -->
+        <div class="card mb-xl">
+            <div class="card__body">
+                <h2 class="card__title mb-md">➕ Ajouter au kit</h2>
+                <div class="grid grid--3">
+                    <!-- Ajouter un jeu -->
+                    <div>
+                        <h4 class="mb-sm">🎮 Jeu</h4>
+                        <form id="add-game-form">
+                            <div class="form__group">
+                                <input type="number" class="form__input" id="game-id-input" placeholder="ID du jeu" min="1">
+                            </div>
+                            <div class="form__group">
+                                <input type="number" class="form__input" id="game-qty-input" placeholder="Quantité" value="1" min="1">
+                            </div>
+                            <div class="form__group">
+                                <textarea class="form__input" id="game-note-input" placeholder="Note (état, câbles...)" rows="2"></textarea>
+                            </div>
+                            <button type="button" class="btn btn--primary btn--small" onclick="addToKit('game')">
+                                Ajouter
+                            </button>
+                        </form>
+                    </div>
+                    <!-- Ajouter une console -->
+                    <div>
+                        <h4 class="mb-sm">📺 Console</h4>
+                        <form id="add-console-form">
+                            <div class="form__group">
+                                <input type="number" class="form__input" id="console-id-input" placeholder="ID de la console" min="1">
+                            </div>
+                            <div class="form__group">
+                                <input type="number" class="form__input" id="console-qty-input" placeholder="Quantité" value="1" min="1">
+                            </div>
+                            <div class="form__group">
+                                <textarea class="form__input" id="console-note-input" placeholder="Note (état, câbles...)" rows="2"></textarea>
+                            </div>
+                            <button type="button" class="btn btn--secondary btn--small" onclick="addToKit('console')">
+                                Ajouter
+                            </button>
+                        </form>
+                    </div>
+                    <!-- Ajouter un accessoire -->
+                    <div>
+                        <h4 class="mb-sm">🎧 Accessoire</h4>
+                        <form id="add-accessory-form">
+                            <div class="form__group">
+                                <input type="number" class="form__input" id="accessory-id-input" placeholder="ID de l'accessoire" min="1">
+                            </div>
+                            <div class="form__group">
+                                <input type="number" class="form__input" id="accessory-qty-input" placeholder="Quantité" value="1" min="1">
+                            </div>
+                            <div class="form__group">
+                                <textarea class="form__input" id="accessory-note-input" placeholder="Note (état, câbles...)" rows="2"></textarea>
+                            </div>
+                            <button type="button" class="btn btn--accent btn--small" onclick="addToKit('accessory')">
+                                Ajouter
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <p class="text--muted mt-md" style="font-size: 0.85rem;">
+                    💡 Astuce : trouvez l'ID d'un élément dans ses pages de détail (affiché dans l'URL).
+                </p>
+            </div>
+        </div>
+
+        <!-- Navigation par onglets -->
+        <ul class="nav nav-tabs mb-lg" id="kitTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="games-tab" data-bs-toggle="tab" data-bs-target="#games" type="button" role="tab">
+                    🎮 Jeux <span class="badge badge--primary ml-sm">{{ game_kits|length }}</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="consoles-tab" data-bs-toggle="tab" data-bs-target="#consoles" type="button" role="tab">
+                    📺 Consoles <span class="badge badge--secondary ml-sm">{{ console_kits|length }}</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="accessories-tab" data-bs-toggle="tab" data-bs-target="#accessories" type="button" role="tab">
+                    🎧 Accessoires <span class="badge badge--accent ml-sm">{{ accessory_kits|length }}</span>
+                </button>
+            </li>
+        </ul>
+
+        <!-- Contenu des onglets -->
+        <div class="tab-content" id="kitTabsContent">
+            <!-- Onglet Jeux -->
+            <div class="tab-pane fade show active" id="games" role="tabpanel">
+                {% if game_kits %}
+                    <div class="grid grid--3">
+                        {% for kit in game_kits %}
+                            <div class="card collection-item" data-kit-id="{{ kit.id }}">
+                                {% if kit.game.image %}
+                                    <img src="{{ kit.game.image }}" class="card__image" alt="{{ kit.game.title }}">
+                                {% else %}
+                                    <div class="card__image" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(103, 97, 168, 0.3), rgba(160, 193, 185, 0.3));">
+                                        <span style="font-size: 3rem; opacity: 0.5;">🎮</span>
+                                    </div>
+                                {% endif %}
+                                <div class="card__body">
+                                    <h3 class="card__title">{{ kit.game.title }}</h3>
+                                    <p class="card__text text--muted mb-md">
+                                        <small>{{ kit.game.platform.name ?? 'N/A' }}</small>
+                                    </p>
+                                    <div class="item-controls">
+                                        <label class="form__label">Quantité</label>
+                                        <input type="number" class="quantity-input" value="{{ kit.quantity }}" min="1" data-type="game" data-id="{{ kit.id }}">
+                                        <label class="form__label mt-sm">Note (état, câbles...)</label>
+                                        <textarea class="note-input" rows="2" data-type="game" data-id="{{ kit.id }}" placeholder="État, câbles inclus...">{{ kit.note }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="card__footer">
+                                    <button class="btn btn--primary btn--small update-btn" data-type="game" data-id="{{ kit.id }}">💾 Sauvegarder</button>
+                                    <button class="btn btn--danger btn--small delete-btn" data-type="game" data-id="{{ kit.id }}" title="Retirer">🗑️</button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text--center" style="padding: 3rem;">
+                        <p style="font-size: 3rem; margin-bottom: 1rem;">🎮</p>
+                        <p class="text--muted mb-md">Aucun jeu dans votre kit</p>
+                        <a href="{{ path('app_game_index') }}" class="btn btn--primary">Parcourir les jeux</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Onglet Consoles -->
+            <div class="tab-pane fade" id="consoles" role="tabpanel">
+                {% if console_kits %}
+                    <div class="grid grid--3">
+                        {% for kit in console_kits %}
+                            <div class="card collection-item" data-kit-id="{{ kit.id }}">
+                                {% if kit.console.image %}
+                                    <img src="{{ kit.console.image }}" class="card__image" alt="{{ kit.console.name }}">
+                                {% else %}
+                                    <div class="card__image" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(160, 193, 185, 0.3), rgba(103, 97, 168, 0.3));">
+                                        <span style="font-size: 3rem; opacity: 0.5;">📺</span>
+                                    </div>
+                                {% endif %}
+                                <div class="card__body">
+                                    <h3 class="card__title">{{ kit.console.name }}</h3>
+                                    <p class="card__text text--muted mb-md">
+                                        <small>{{ kit.console.manufacturer ?? 'N/A' }}</small>
+                                    </p>
+                                    <div class="item-controls">
+                                        <label class="form__label">Quantité</label>
+                                        <input type="number" class="quantity-input" value="{{ kit.quantity }}" min="1" data-type="console" data-id="{{ kit.id }}">
+                                        <label class="form__label mt-sm">Note</label>
+                                        <textarea class="note-input" rows="2" data-type="console" data-id="{{ kit.id }}" placeholder="État, câbles inclus...">{{ kit.note }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="card__footer">
+                                    <button class="btn btn--secondary btn--small update-btn" data-type="console" data-id="{{ kit.id }}">💾 Sauvegarder</button>
+                                    <button class="btn btn--danger btn--small delete-btn" data-type="console" data-id="{{ kit.id }}" title="Retirer">🗑️</button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text--center" style="padding: 3rem;">
+                        <p style="font-size: 3rem; margin-bottom: 1rem;">📺</p>
+                        <p class="text--muted mb-md">Aucune console dans votre kit</p>
+                        <a href="{{ path('app_console_index') }}" class="btn btn--secondary">Parcourir les consoles</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Onglet Accessoires -->
+            <div class="tab-pane fade" id="accessories" role="tabpanel">
+                {% if accessory_kits %}
+                    <div class="grid grid--3">
+                        {% for kit in accessory_kits %}
+                            <div class="card collection-item" data-kit-id="{{ kit.id }}">
+                                {% if kit.accessory.image %}
+                                    <img src="{{ kit.accessory.image }}" class="card__image" alt="{{ kit.accessory.name }}">
+                                {% else %}
+                                    <div class="card__image" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(163, 0, 21, 0.3), rgba(103, 97, 168, 0.3));">
+                                        <span style="font-size: 3rem; opacity: 0.5;">🎧</span>
+                                    </div>
+                                {% endif %}
+                                <div class="card__body">
+                                    <h3 class="card__title">{{ kit.accessory.name }}</h3>
+                                    <p class="card__text text--muted mb-md">
+                                        <small>{{ kit.accessory.type ?? 'N/A' }}</small>
+                                    </p>
+                                    <div class="item-controls">
+                                        <label class="form__label">Quantité</label>
+                                        <input type="number" class="quantity-input" value="{{ kit.quantity }}" min="1" data-type="accessory" data-id="{{ kit.id }}">
+                                        <label class="form__label mt-sm">Note</label>
+                                        <textarea class="note-input" rows="2" data-type="accessory" data-id="{{ kit.id }}" placeholder="État, câbles inclus...">{{ kit.note }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="card__footer">
+                                    <button class="btn btn--accent btn--small update-btn" data-type="accessory" data-id="{{ kit.id }}">💾 Sauvegarder</button>
+                                    <button class="btn btn--danger btn--small delete-btn" data-type="accessory" data-id="{{ kit.id }}" title="Retirer">🗑️</button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text--center" style="padding: 3rem;">
+                        <p style="font-size: 3rem; margin-bottom: 1rem;">🎧</p>
+                        <p class="text--muted mb-md">Aucun accessoire dans votre kit</p>
+                        <a href="{{ path('app_accessory_index') }}" class="btn btn--accent">Parcourir les accessoires</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function addToKit(type) {
+            const id = document.getElementById(type + '-id-input').value;
+            const qty = document.getElementById(type + '-qty-input').value;
+            const note = document.getElementById(type + '-note-input').value;
+
+            if (!id) { alert('Veuillez saisir un ID'); return; }
+
+            const body = new URLSearchParams();
+            body.append(type + '_id', id);
+            body.append('quantity', qty);
+            body.append('note', note);
+
+            fetch(`/kit/${type}/add`, { method: 'POST', body: body })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) { alert(data.message); location.reload(); }
+                    else { alert('Erreur : ' + data.message); }
+                })
+                .catch(() => alert('Une erreur est survenue'));
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.update-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const type = this.dataset.type;
+                    const id = this.dataset.id;
+                    const card = this.closest('[data-kit-id]');
+                    const quantity = card.querySelector('.quantity-input').value;
+                    const note = card.querySelector('.note-input').value;
+
+                    fetch(`/kit/${type}/${id}/update`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `quantity=${quantity}&note=${encodeURIComponent(note)}`
+                    })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) { alert('Kit mis à jour !'); }
+                            else { alert('Erreur : ' + data.message); }
+                        });
+                });
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    if (!confirm('Retirer cet élément de votre kit ?')) return;
+                    const type = this.dataset.type;
+                    const id = this.dataset.id;
+                    const card = this.closest('[data-kit-id]');
+
+                    fetch(`/kit/${type}/${id}/delete`, { method: 'POST' })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) { card.remove(); location.reload(); }
+                            else { alert('Erreur : ' + data.message); }
+                        });
+                });
+            });
+        });
+    </script>
+{% endblock %}
+

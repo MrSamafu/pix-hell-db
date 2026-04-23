@@ -57,6 +57,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: AccessoryCollection::class)]
     private Collection $accessoryCollections;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: GameKit::class)]
+    private Collection $gameKits;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ConsoleKit::class)]
+    private Collection $consoleKits;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: AccessoryKit::class)]
+    private Collection $accessoryKits;
+
     #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Game::class)]
     private Collection $createdGames;
 
@@ -71,6 +80,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->gameCollections = new ArrayCollection();
         $this->consoleCollections = new ArrayCollection();
         $this->accessoryCollections = new ArrayCollection();
+        $this->gameKits = new ArrayCollection();
+        $this->consoleKits = new ArrayCollection();
+        $this->accessoryKits = new ArrayCollection();
         $this->createdGames = new ArrayCollection();
         $this->createdConsoles = new ArrayCollection();
         $this->createdAccessories = new ArrayCollection();
@@ -152,6 +164,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->accessoryCollections;
     }
+
+    public function getGameKits(): Collection { return $this->gameKits; }
+    public function getConsoleKits(): Collection { return $this->consoleKits; }
+    public function getAccessoryKits(): Collection { return $this->accessoryKits; }
 
     public function getCreatedGames(): Collection
     {

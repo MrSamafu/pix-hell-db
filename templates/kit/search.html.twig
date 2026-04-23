@@ -1,0 +1,183 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche dans les kits - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="page-header">
+        <div class="page-header-content">
+            <h1 class="page-title">
+                <span class="icon">🔍</span>
+                Recherche dans les kits
+            </h1>
+            <a href="{{ path('app_kit_index') }}" class="btn btn--secondary">
+                ← Retour
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Formulaire de recherche -->
+        <div class="card mb-xl">
+            <div class="card__body">
+                <h2 class="card__title mb-md">⚙️ Critères de recherche</h2>
+                <form action="{{ path('app_kit_search') }}" method="get">
+                    <div class="form__group">
+                        <label for="search-query" class="form__label">Rechercher un élément</label>
+                        <input type="text"
+                               class="form__input"
+                               id="search-query"
+                               name="q"
+                               value="{{ query }}"
+                               placeholder="Ex: Super Mario, PlayStation, Manette..."
+                               required>
+                    </div>
+                    <div class="form__group">
+                        <label for="search-type" class="form__label">Type</label>
+                        <select class="form__select" id="search-type" name="type">
+                            <option value="all" {% if type == 'all' %}selected{% endif %}>Tous les types</option>
+                            <option value="game" {% if type == 'game' %}selected{% endif %}>Jeux uniquement</option>
+                            <option value="console" {% if type == 'console' %}selected{% endif %}>Consoles uniquement</option>
+                            <option value="accessory" {% if type == 'accessory' %}selected{% endif %}>Accessoires uniquement</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn--accent">
+                        🔍 Lancer la recherche
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {% if query %}
+            {% if type == 'all' or type == 'game' %}
+                {% if results.games is not empty %}
+                    <div class="mb-xl">
+                        <h2 style="margin-bottom: 1.5rem;">🎮 Jeux <span class="badge badge--primary">{{ results.games|length }}</span></h2>
+                        <div class="grid grid--3">
+                            {% for result in results.games %}
+                                <div class="card">
+                                    {% if result.item.image %}
+                                        <img src="{{ result.item.image }}" class="card__image" alt="{{ result.item.title }}">
+                                    {% else %}
+                                        <div class="card__image" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(103,97,168,.3),rgba(160,193,185,.3));">
+                                            <span style="font-size:3rem;opacity:.5;">🎮</span>
+                                        </div>
+                                    {% endif %}
+                                    <div class="card__body">
+                                        <h3 class="card__title">{{ result.item.title }}</h3>
+                                        <p class="card__text text--muted mb-md"><small>{{ result.item.platform.name ?? 'N/A' }}</small></p>
+                                        <div class="owners-box">
+                                            <strong class="owners-title">🎒 Dans le kit de</strong>
+                                            <div style="margin-top:.5rem;">
+                                                {% for holder in result.holders %}
+                                                    <a href="{{ path('app_kit_user', {'id': holder.id}) }}" class="link" style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(103,97,168,.2);">
+                                                        <span>👤 {{ holder.username }}</span>
+                                                        <span>
+                                                            <span class="badge badge--primary">×{{ holder.quantity }}</span>
+                                                            {% if holder.note %}<span class="text--muted ml-sm" style="font-size:.8rem;" title="{{ holder.note }}">📝</span>{% endif %}
+                                                        </span>
+                                                    </a>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            {% if type == 'all' or type == 'console' %}
+                {% if results.consoles is not empty %}
+                    <div class="mb-xl">
+                        <h2 style="margin-bottom: 1.5rem;">📺 Consoles <span class="badge badge--secondary">{{ results.consoles|length }}</span></h2>
+                        <div class="grid grid--3">
+                            {% for result in results.consoles %}
+                                <div class="card">
+                                    {% if result.item.image %}
+                                        <img src="{{ result.item.image }}" class="card__image" alt="{{ result.item.name }}">
+                                    {% else %}
+                                        <div class="card__image" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(160,193,185,.3),rgba(103,97,168,.3));">
+                                            <span style="font-size:3rem;opacity:.5;">📺</span>
+                                        </div>
+                                    {% endif %}
+                                    <div class="card__body">
+                                        <h3 class="card__title">{{ result.item.name }}</h3>
+                                        <p class="card__text text--muted mb-md"><small>{{ result.item.manufacturer ?? 'N/A' }}</small></p>
+                                        <div class="owners-box">
+                                            <strong class="owners-title">🎒 Dans le kit de</strong>
+                                            <div style="margin-top:.5rem;">
+                                                {% for holder in result.holders %}
+                                                    <a href="{{ path('app_kit_user', {'id': holder.id}) }}" class="link" style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(160,193,185,.2);">
+                                                        <span>👤 {{ holder.username }}</span>
+                                                        <span>
+                                                            <span class="badge badge--secondary">×{{ holder.quantity }}</span>
+                                                            {% if holder.note %}<span class="text--muted ml-sm" style="font-size:.8rem;" title="{{ holder.note }}">📝</span>{% endif %}
+                                                        </span>
+                                                    </a>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            {% if type == 'all' or type == 'accessory' %}
+                {% if results.accessories is not empty %}
+                    <div class="mb-xl">
+                        <h2 style="margin-bottom: 1.5rem;">🎧 Accessoires <span class="badge badge--accent">{{ results.accessories|length }}</span></h2>
+                        <div class="grid grid--3">
+                            {% for result in results.accessories %}
+                                <div class="card">
+                                    {% if result.item.image %}
+                                        <img src="{{ result.item.image }}" class="card__image" alt="{{ result.item.name }}">
+                                    {% else %}
+                                        <div class="card__image" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(163,0,21,.3),rgba(103,97,168,.3));">
+                                            <span style="font-size:3rem;opacity:.5;">🎧</span>
+                                        </div>
+                                    {% endif %}
+                                    <div class="card__body">
+                                        <h3 class="card__title">{{ result.item.name }}</h3>
+                                        <p class="card__text text--muted mb-md"><small>{{ result.item.type ?? 'N/A' }}</small></p>
+                                        <div class="owners-box">
+                                            <strong class="owners-title">🎒 Dans le kit de</strong>
+                                            <div style="margin-top:.5rem;">
+                                                {% for holder in result.holders %}
+                                                    <a href="{{ path('app_kit_user', {'id': holder.id}) }}" class="link" style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(163,0,21,.2);">
+                                                        <span>👤 {{ holder.username }}</span>
+                                                        <span>
+                                                            <span class="badge badge--accent">×{{ holder.quantity }}</span>
+                                                            {% if holder.note %}<span class="text--muted ml-sm" style="font-size:.8rem;" title="{{ holder.note }}">📝</span>{% endif %}
+                                                        </span>
+                                                    </a>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            {% if results.games is empty and results.consoles is empty and results.accessories is empty %}
+                <div class="text--center" style="padding: 3rem;">
+                    <p style="font-size: 3rem; margin-bottom: 1rem;">🔍</p>
+                    <p class="text--muted mb-sm">Aucun résultat dans les kits pour "<strong>{{ query }}</strong>"</p>
+                    <p class="text--muted" style="font-size: 0.875rem;">Essayez avec un autre terme, ou l'élément n'est dans aucun kit pour le moment.</p>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="text--center" style="padding: 3rem;">
+                <p style="font-size: 3rem; margin-bottom: 1rem;">🎒</p>
+                <p class="text--muted">Utilisez le formulaire ci-dessus pour savoir qui apporte quoi lors des prochaines conventions.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+

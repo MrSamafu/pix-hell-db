@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Accessory;
 use App\Entity\AccessoryCollection;
+use App\Entity\AccessoryKit;
 use App\Form\AccessoryType;
 use App\Repository\AccessoryCollectionRepository;
+use App\Repository\AccessoryKitRepository;
 use App\Repository\AccessoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -76,7 +78,7 @@ class AccessoryController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_accessory_show', methods: ['GET'])]
-    public function show(Accessory $accessory, AccessoryCollectionRepository $accessoryCollectionRepository): Response
+    public function show(Accessory $accessory, AccessoryCollectionRepository $accessoryCollectionRepository, AccessoryKitRepository $accessoryKitRepository): Response
     {
         $this->denyAccessUnlessGranted('view', $accessory);
 
@@ -84,9 +86,14 @@ class AccessoryController extends AbstractController
             ? $accessoryCollectionRepository->findOneBy(['accessory' => $accessory, 'user' => $this->getUser()])
             : null;
 
+        $myKit = $this->getUser()
+            ? $accessoryKitRepository->findOneBy(['accessory' => $accessory, 'user' => $this->getUser()])
+            : null;
+
         return $this->render('accessory/show.html.twig', [
             'accessory' => $accessory,
             'my_collection' => $myCollection,
+            'my_kit' => $myKit,
         ]);
     }
 
@@ -168,6 +175,61 @@ class AccessoryController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'L\'accessoire a été ajouté à votre collection.');
+        return $this->redirectToRoute('app_accessory_show', ['id' => $accessory->getId()]);
+    }
+
+    #[Route('/{id}/add-to-kit', name: 'app_accessory_add_to_kit', methods: ['POST'])]
+    public function addToKit(Request $request, Accessory $accessory, AccessoryKitRepository $accessoryKitRepository, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $existing = $accessoryKitRepository->findOneBy(['accessory' => $accessory, 'user' => $this->getUser()]);
+        if ($existing) {
+            $this->addFlash('error', 'Cet accessoire est déjà dans votre kit.');
+            return $this->redirectToRoute('app_accessory_show', ['id' => $accessory->getId()]);
+        }
+
+        $quantity = max(1, (int) $request->request->get('quantity', 1));
+        $note = $request->request->get('note', '');
+
+        $kit = new AccessoryKit();
+        $kit->setUser($this->getUser());
+        $kit->setAccessory($accessory);
+        $kit->setQuantity($quantity);
+        $kit->setNote($note ?: null);
+
+        $entityManager->persist($kit);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'L\'accessoire a été ajouté à votre kit convention.');
+        return $this->redirectToRoute('app_accessory_show', ['id' => $accessory->getId()]);
+    }
+
+    #[Route('/{id}/update-in-kit', name: 'app_accessory_update_in_kit', methods: ['POST'])]
+    public function updateInKit(Request $request, Accessory $accessory, AccessoryKitRepository $accessoryKitRepository, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $myKit = $accessoryKitRepository->findOneBy(['accessory' => $accessory, 'user' => $this->getUser()]);
+
+        if (!$myKit) {
+            $this->addFlash('error', 'Cet accessoire n\'est pas dans votre kit.');
+            return $this->redirectToRoute('app_accessory_show', ['id' => $accessory->getId()]);
+        }
+
+        if ($request->request->get('action') === 'remove') {
+            $entityManager->remove($myKit);
+            $entityManager->flush();
+            $this->addFlash('success', 'L\'accessoire a été retiré de votre kit.');
+        } else {
+            $quantity = max(1, (int) $request->request->get('quantity', 1));
+            $note = $request->request->get('note', '');
+            $myKit->setQuantity($quantity);
+            $myKit->setNote($note ?: null);
+            $entityManager->flush();
+            $this->addFlash('success', 'Kit mis à jour avec succès.');
+        }
+
         return $this->redirectToRoute('app_accessory_show', ['id' => $accessory->getId()]);
     }
 

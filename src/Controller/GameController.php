@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Game;
 use App\Entity\GameCollection;
+use App\Entity\GameKit;
 use App\Form\GameType;
 use App\Repository\ConsoleRepository;
 use App\Repository\GameCollectionRepository;
+use App\Repository\GameKitRepository;
 use App\Repository\GameRepository;
 use App\Repository\GenreRepository;
 use App\Repository\ModeRepository;
@@ -91,7 +93,7 @@ class GameController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_game_show', methods: ['GET'])]
-    public function show(Game $game, GameCollectionRepository $gameCollectionRepository): Response
+    public function show(Game $game, GameCollectionRepository $gameCollectionRepository, GameKitRepository $gameKitRepository): Response
     {
         $this->denyAccessUnlessGranted('view', $game);
 
@@ -99,9 +101,14 @@ class GameController extends AbstractController
             ? $gameCollectionRepository->findOneBy(['game' => $game, 'user' => $this->getUser()])
             : null;
 
+        $myKit = $this->getUser()
+            ? $gameKitRepository->findOneBy(['game' => $game, 'user' => $this->getUser()])
+            : null;
+
         return $this->render('game/show.html.twig', [
             'game' => $game,
             'my_collection' => $myCollection,
+            'my_kit' => $myKit,
         ]);
     }
 
@@ -186,6 +193,61 @@ class GameController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Le jeu a été ajouté à votre collection.');
+        return $this->redirectToRoute('app_game_show', ['id' => $game->getId()]);
+    }
+
+    #[Route('/{id}/add-to-kit', name: 'app_game_add_to_kit', methods: ['POST'])]
+    public function addToKit(Request $request, Game $game, GameKitRepository $gameKitRepository, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $existing = $gameKitRepository->findOneBy(['game' => $game, 'user' => $this->getUser()]);
+        if ($existing) {
+            $this->addFlash('error', 'Ce jeu est déjà dans votre kit.');
+            return $this->redirectToRoute('app_game_show', ['id' => $game->getId()]);
+        }
+
+        $quantity = max(1, (int) $request->request->get('quantity', 1));
+        $note = $request->request->get('note', '');
+
+        $kit = new GameKit();
+        $kit->setUser($this->getUser());
+        $kit->setGame($game);
+        $kit->setQuantity($quantity);
+        $kit->setNote($note ?: null);
+
+        $entityManager->persist($kit);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le jeu a été ajouté à votre kit convention.');
+        return $this->redirectToRoute('app_game_show', ['id' => $game->getId()]);
+    }
+
+    #[Route('/{id}/update-in-kit', name: 'app_game_update_in_kit', methods: ['POST'])]
+    public function updateInKit(Request $request, Game $game, GameKitRepository $gameKitRepository, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $myKit = $gameKitRepository->findOneBy(['game' => $game, 'user' => $this->getUser()]);
+
+        if (!$myKit) {
+            $this->addFlash('error', 'Ce jeu n\'est pas dans votre kit.');
+            return $this->redirectToRoute('app_game_show', ['id' => $game->getId()]);
+        }
+
+        if ($request->request->get('action') === 'remove') {
+            $entityManager->remove($myKit);
+            $entityManager->flush();
+            $this->addFlash('success', 'Le jeu a été retiré de votre kit.');
+        } else {
+            $quantity = max(1, (int) $request->request->get('quantity', 1));
+            $note = $request->request->get('note', '');
+            $myKit->setQuantity($quantity);
+            $myKit->setNote($note ?: null);
+            $entityManager->flush();
+            $this->addFlash('success', 'Kit mis à jour avec succès.');
+        }
+
         return $this->redirectToRoute('app_game_show', ['id' => $game->getId()]);
     }
 

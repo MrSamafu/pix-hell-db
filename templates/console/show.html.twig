@@ -176,6 +176,65 @@
                         {% endif %}
                     </div>
                 </div>
+
+                {# Carte Kit Convention #}
+                <div class="collection-card" style="margin-top: 1rem;">
+                    <div class="collection-card-header">
+                        <h3 class="collection-card-title">🎒 Mon Kit Convention</h3>
+                    </div>
+                    <div class="collection-card-body">
+                        {% if my_kit %}
+                            <div class="already-owned-badge">
+                                <span class="owned-icon">✅</span>
+                                <span>Déjà dans votre kit</span>
+                            </div>
+                            <form method="post" action="{{ path('app_console_update_in_kit', {'id': console.id}) }}" class="collection-form">
+                                <div class="form__group">
+                                    <label for="kit-quantity" class="form__label">Quantité</label>
+                                    <div class="quantity-input">
+                                        <button type="button" class="quantity-btn quantity-minus" onclick="decreaseKitQuantity()">−</button>
+                                        <input type="number" id="kit-quantity" name="quantity" class="quantity-field"
+                                            value="{{ my_kit.quantity }}" min="1" max="99" required>
+                                        <button type="button" class="quantity-btn quantity-plus" onclick="increaseKitQuantity()">+</button>
+                                    </div>
+                                </div>
+                                <div class="form__group">
+                                    <label for="kit-note" class="form__label">Note (état, câbles...)</label>
+                                    <textarea id="kit-note" name="note" class="form__input" rows="2" placeholder="État, câbles inclus...">{{ my_kit.note }}</textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">💾 Mettre à jour</button>
+                            </form>
+                            <form method="post" action="{{ path('app_console_update_in_kit', {'id': console.id}) }}"
+                                  class="collection-form" style="margin-top:0.5rem;"
+                                  onsubmit="return confirm('Retirer cette console de votre kit ?');">
+                                <input type="hidden" name="action" value="remove">
+                                <button type="submit" class="btn btn-danger btn-block btn-sm">🗑️ Retirer du kit</button>
+                            </form>
+                        {% else %}
+                            <form method="post" action="{{ path('app_console_add_to_kit', {'id': console.id}) }}" class="collection-form">
+                                <div class="form__group">
+                                    <label for="kit-quantity" class="form__label">Quantité</label>
+                                    <div class="quantity-input">
+                                        <button type="button" class="quantity-btn quantity-minus" onclick="decreaseKitQuantity()">−</button>
+                                        <input type="number" id="kit-quantity" name="quantity" class="quantity-field"
+                                            value="1" min="1" max="99" required>
+                                        <button type="button" class="quantity-btn quantity-plus" onclick="increaseKitQuantity()">+</button>
+                                    </div>
+                                </div>
+                                <div class="form__group">
+                                    <label for="kit-note" class="form__label">Note (état, câbles...)</label>
+                                    <textarea id="kit-note" name="note" class="form__input" rows="2" placeholder="État, câbles inclus..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <span class="btn-icon">+</span> Ajouter à mon kit
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                    <div class="collection-card-footer">
+                        <p class="collection-hint">💡 Le kit recense le matériel confié par l'association</p>
+                    </div>
+                </div>
             </div>
         {% endif %}
     </div>
@@ -184,17 +243,22 @@
         function increaseQuantity() {
             const input = document.getElementById('quantity');
             const currentValue = parseInt(input.value) || 1;
-            if (currentValue < 99) {
-                input.value = currentValue + 1;
-            }
+            if (currentValue < 99) input.value = currentValue + 1;
         }
-
         function decreaseQuantity() {
             const input = document.getElementById('quantity');
             const currentValue = parseInt(input.value) || 1;
-            if (currentValue > 1) {
-                input.value = currentValue - 1;
-            }
+            if (currentValue > 1) input.value = currentValue - 1;
+        }
+        function increaseKitQuantity() {
+            const input = document.getElementById('kit-quantity');
+            const currentValue = parseInt(input.value) || 1;
+            if (currentValue < 99) input.value = currentValue + 1;
+        }
+        function decreaseKitQuantity() {
+            const input = document.getElementById('kit-quantity');
+            const currentValue = parseInt(input.value) || 1;
+            if (currentValue > 1) input.value = currentValue - 1;
         }
     </script>
 {% endblock %}

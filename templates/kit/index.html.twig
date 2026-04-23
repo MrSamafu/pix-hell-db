@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Kits Convention - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="page-header">
+        <div class="page-header-content">
+            <h1 class="page-title">
+                <span class="icon">🎒</span>
+                Kits Convention
+            </h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="grid grid--3 mb-xl">
+            <!-- Mon Kit -->
+            <div class="card">
+                <div class="card__body text--center">
+                    <div class="mb-md">
+                        <span style="font-size: 3rem;">🎒</span>
+                    </div>
+                    <h2 class="card__title">Mon Kit</h2>
+                    <p class="card__text text--muted mb-md">
+                        Gérez le matériel que vous apportez lors des conventions et manifestations de l'association.
+                    </p>
+                    <a href="{{ path('app_kit_my') }}" class="btn btn--primary">
+                        Voir mon kit
+                    </a>
+                </div>
+            </div>
+
+            <!-- Kits des bénévoles -->
+            <div class="card">
+                <div class="card__body">
+                    <div class="mb-md text--center">
+                        <span style="font-size: 3rem;">👥</span>
+                    </div>
+                    <h2 class="card__title text--center">
+                        Bénévoles
+                        <span class="badge badge--secondary ml-sm">{{ users|length }}</span>
+                    </h2>
+                    <p class="card__text text--muted text--center mb-md">
+                        Consultez le kit de chaque bénévole
+                    </p>
+                    <div class="users-list">
+                        {% for user in users %}
+                            <a href="{{ path('app_kit_user', {'id': user.id}) }}" class="link link--block">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-bottom: 1px solid rgba(103, 97, 168, 0.2); transition: all 0.2s;">
+                                    <span>
+                                        <i class="fas fa-user-circle" style="margin-right: 0.5rem; color: #A0C1B9;"></i>
+                                        {{ user.username }}
+                                    </span>
+                                    <i class="fas fa-chevron-right" style="color: #6761A8;"></i>
+                                </div>
+                            </a>
+                        {% else %}
+                            <p class="text--muted text--center">Aucun utilisateur</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recherche dans les kits -->
+            <div class="card">
+                <div class="card__body">
+                    <div class="mb-md text--center">
+                        <span style="font-size: 3rem;">🔍</span>
+                    </div>
+                    <h2 class="card__title text--center">Recherche</h2>
+                    <p class="card__text text--muted text--center mb-md">
+                        Trouvez qui apporte quoi lors des prochaines manifestations
+                    </p>
+                    <form action="{{ path('app_kit_search') }}" method="get">
+                        <div class="form__group">
+                            <label for="search-query" class="form__label">Rechercher</label>
+                            <input type="text"
+                                   class="form__input"
+                                   id="search-query"
+                                   name="q"
+                                   placeholder="Nom du matériel..."
+                                   required>
+                        </div>
+                        <div class="form__group">
+                            <label for="search-type" class="form__label">Type</label>
+                            <select class="form__select" id="search-type" name="type">
+                                <option value="all">Tous</option>
+                                <option value="game">Jeux</option>
+                                <option value="console">Consoles</option>
+                                <option value="accessory">Accessoires</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn--accent" style="width: 100%;">
+                            Rechercher
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

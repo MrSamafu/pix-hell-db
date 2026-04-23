@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Console;
 use App\Entity\ConsoleCollection;
+use App\Entity\ConsoleKit;
 use App\Form\ConsoleType;
 use App\Repository\ConsoleCollectionRepository;
+use App\Repository\ConsoleKitRepository;
 use App\Repository\ConsoleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -82,7 +84,7 @@ class ConsoleController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_console_show', methods: ['GET'])]
-    public function show(Console $console, ConsoleCollectionRepository $consoleCollectionRepository): Response
+    public function show(Console $console, ConsoleCollectionRepository $consoleCollectionRepository, ConsoleKitRepository $consoleKitRepository): Response
     {
         $this->denyAccessUnlessGranted('view', $console);
 
@@ -90,9 +92,14 @@ class ConsoleController extends AbstractController
             ? $consoleCollectionRepository->findOneBy(['console' => $console, 'user' => $this->getUser()])
             : null;
 
+        $myKit = $this->getUser()
+            ? $consoleKitRepository->findOneBy(['console' => $console, 'user' => $this->getUser()])
+            : null;
+
         return $this->render('console/show.html.twig', [
             'console' => $console,
             'my_collection' => $myCollection,
+            'my_kit' => $myKit,
         ]);
     }
 
@@ -180,6 +187,61 @@ class ConsoleController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'La console a été ajoutée à votre collection.');
+        return $this->redirectToRoute('app_console_show', ['id' => $console->getId()]);
+    }
+
+    #[Route('/{id}/add-to-kit', name: 'app_console_add_to_kit', methods: ['POST'])]
+    public function addToKit(Request $request, Console $console, ConsoleKitRepository $consoleKitRepository, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $existing = $consoleKitRepository->findOneBy(['console' => $console, 'user' => $this->getUser()]);
+        if ($existing) {
+            $this->addFlash('error', 'Cette console est déjà dans votre kit.');
+            return $this->redirectToRoute('app_console_show', ['id' => $console->getId()]);
+        }
+
+        $quantity = max(1, (int) $request->request->get('quantity', 1));
+        $note = $request->request->get('note', '');
+
+        $kit = new ConsoleKit();
+        $kit->setUser($this->getUser());
+        $kit->setConsole($console);
+        $kit->setQuantity($quantity);
+        $kit->setNote($note ?: null);
+
+        $entityManager->persist($kit);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La console a été ajoutée à votre kit convention.');
+        return $this->redirectToRoute('app_console_show', ['id' => $console->getId()]);
+    }
+
+    #[Route('/{id}/update-in-kit', name: 'app_console_update_in_kit', methods: ['POST'])]
+    public function updateInKit(Request $request, Console $console, ConsoleKitRepository $consoleKitRepository, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $myKit = $consoleKitRepository->findOneBy(['console' => $console, 'user' => $this->getUser()]);
+
+        if (!$myKit) {
+            $this->addFlash('error', 'Cette console n\'est pas dans votre kit.');
+            return $this->redirectToRoute('app_console_show', ['id' => $console->getId()]);
+        }
+
+        if ($request->request->get('action') === 'remove') {
+            $entityManager->remove($myKit);
+            $entityManager->flush();
+            $this->addFlash('success', 'La console a été retirée de votre kit.');
+        } else {
+            $quantity = max(1, (int) $request->request->get('quantity', 1));
+            $note = $request->request->get('note', '');
+            $myKit->setQuantity($quantity);
+            $myKit->setNote($note ?: null);
+            $entityManager->flush();
+            $this->addFlash('success', 'Kit mis à jour avec succès.');
+        }
+
         return $this->redirectToRoute('app_console_show', ['id' => $console->getId()]);
     }
 
