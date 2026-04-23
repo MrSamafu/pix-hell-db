@@ -3,188 +3,207 @@
 {% block title %}Collection de {{ user.username }} - {{ parent() }}{% endblock %}
 
 {% block body %}
-    <div class="page-header">
-        <div class="page-header-content">
-            <h1 class="page-title">
-                <span class="icon">👤</span>
-                Collection de {{ user.username }}
-            </h1>
-            <a href="{{ path('app_collection_index') }}" class="btn btn--secondary">
-                ← Retour
-            </a>
-        </div>
+
+{# ---- Header ---- #}
+<div class="coll-hero coll-hero--viewer">
+    <div class="coll-hero__icon">
+        <i class="fas fa-user-circle"></i>
     </div>
-
-    <div class="container">
-        <!-- Statistiques -->
-        <div class="collection-stats mb-xl">
-            <div class="stat-card">
-                <div class="stat-icon">🎮</div>
-                <div class="stat-value">{{ total_games }}</div>
-                <div class="stat-label">Jeux</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">📺</div>
-                <div class="stat-value">{{ total_consoles }}</div>
-                <div class="stat-label">Consoles</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">🎧</div>
-                <div class="stat-value">{{ total_accessories }}</div>
-                <div class="stat-label">Accessoires</div>
-            </div>
-        </div>
-
-        <!-- Navigation par onglets -->
-        <ul class="nav nav-tabs mb-lg" id="collectionTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="games-tab" data-bs-toggle="tab" data-bs-target="#games" type="button" role="tab">
-                    🎮 Jeux <span class="badge badge--primary ml-sm">{{ game_collections|length }}</span>
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="consoles-tab" data-bs-toggle="tab" data-bs-target="#consoles" type="button" role="tab">
-                    📺 Consoles <span class="badge badge--secondary ml-sm">{{ console_collections|length }}</span>
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="accessories-tab" data-bs-toggle="tab" data-bs-target="#accessories" type="button" role="tab">
-                    🎧 Accessoires <span class="badge badge--accent ml-sm">{{ accessory_collections|length }}</span>
-                </button>
-            </li>
-        </ul>
-
-        <!-- Contenu des onglets -->
-        <div class="tab-content" id="collectionTabsContent">
-            <!-- Onglet Jeux -->
-            <div class="tab-pane fade show active" id="games" role="tabpanel">
-                {% if game_collections %}
-                    <div class="grid grid--3">
-                        {% for collection in game_collections %}
-                            <div class="card">
-                                {% if collection.game.image %}
-                                    <img src="{{ collection.game.image }}" class="card__image" alt="{{ collection.game.title }}">
-                                {% else %}
-                                    <div class="card__image" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(103, 97, 168, 0.3), rgba(160, 193, 185, 0.3));">
-                                        <span style="font-size: 3rem; opacity: 0.5;">🎮</span>
-                                    </div>
-                                {% endif %}
-                                <div class="card__body">
-                                    <div class="badge badge--primary mb-sm">Jeu</div>
-                                    <h3 class="card__title">{{ collection.game.title }}</h3>
-                                    <p class="card__text text--muted">
-                                        <small>{{ collection.game.platform.name ?? 'N/A' }}</small><br>
-                                        <small>📦 Quantité : {{ collection.quantity }}</small>
-                                    </p>
-                                    {% if collection.note %}
-                                        <div class="owners-box mt-sm">
-                                            <strong class="owners-title">📝 Note</strong>
-                                            <p style="margin: 0; font-size: 0.875rem;">{{ collection.note }}</p>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                                <div class="card__footer">
-                                    <a href="{{ path('app_game_show', {'id': collection.game.id}) }}" class="btn btn--primary btn--small">
-                                        Voir les détails
-                                    </a>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="text--center" style="padding: 3rem;">
-                        <p style="font-size: 3rem; margin-bottom: 1rem;">🎮</p>
-                        <p class="text--muted">{{ user.username }} n'a aucun jeu dans sa collection</p>
-                    </div>
-                {% endif %}
-            </div>
-
-            <!-- Onglet Consoles -->
-            <div class="tab-pane fade" id="consoles" role="tabpanel">
-                {% if console_collections %}
-                    <div class="grid grid--3">
-                        {% for collection in console_collections %}
-                            <div class="card">
-                                {% if collection.console.image %}
-                                    <img src="{{ collection.console.image }}" class="card__image" alt="{{ collection.console.name }}">
-                                {% else %}
-                                    <div class="card__image" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(160, 193, 185, 0.3), rgba(103, 97, 168, 0.3));">
-                                        <span style="font-size: 3rem; opacity: 0.5;">📺</span>
-                                    </div>
-                                {% endif %}
-                                <div class="card__body">
-                                    <div class="badge badge--secondary mb-sm">Console</div>
-                                    <h3 class="card__title">{{ collection.console.name }}</h3>
-                                    <p class="card__text text--muted">
-                                        <small>{{ collection.console.manufacturer ?? 'N/A' }}</small><br>
-                                        <small>📦 Quantité : {{ collection.quantity }}</small>
-                                    </p>
-                                    {% if collection.note %}
-                                        <div class="owners-box mt-sm">
-                                            <strong class="owners-title">📝 Note</strong>
-                                            <p style="margin: 0; font-size: 0.875rem;">{{ collection.note }}</p>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                                <div class="card__footer">
-                                    <a href="{{ path('app_console_show', {'id': collection.console.id}) }}" class="btn btn--secondary btn--small">
-                                        Voir les détails
-                                    </a>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="text--center" style="padding: 3rem;">
-                        <p style="font-size: 3rem; margin-bottom: 1rem;">📺</p>
-                        <p class="text--muted">{{ user.username }} n'a aucune console dans sa collection</p>
-                    </div>
-                {% endif %}
-            </div>
-
-            <!-- Onglet Accessoires -->
-            <div class="tab-pane fade" id="accessories" role="tabpanel">
-                {% if accessory_collections %}
-                    <div class="grid grid--3">
-                        {% for collection in accessory_collections %}
-                            <div class="card">
-                                {% if collection.accessory.image %}
-                                    <img src="{{ collection.accessory.image }}" class="card__image" alt="{{ collection.accessory.name }}">
-                                {% else %}
-                                    <div class="card__image" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(163, 0, 21, 0.3), rgba(103, 97, 168, 0.3));">
-                                        <span style="font-size: 3rem; opacity: 0.5;">🎧</span>
-                                    </div>
-                                {% endif %}
-                                <div class="card__body">
-                                    <div class="badge badge--accent mb-sm">Accessoire</div>
-                                    <h3 class="card__title">{{ collection.accessory.name }}</h3>
-                                    <p class="card__text text--muted">
-                                        <small>{{ collection.accessory.type ?? 'N/A' }}</small><br>
-                                        <small>📦 Quantité : {{ collection.quantity }}</small>
-                                    </p>
-                                    {% if collection.note %}
-                                        <div class="owners-box mt-sm">
-                                            <strong class="owners-title">📝 Note</strong>
-                                            <p style="margin: 0; font-size: 0.875rem;">{{ collection.note }}</p>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                                <div class="card__footer">
-                                    <a href="{{ path('app_accessory_show', {'id': collection.accessory.id}) }}" class="btn btn--accent btn--small">
-                                        Voir les détails
-                                    </a>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="text--center" style="padding: 3rem;">
-                        <p style="font-size: 3rem; margin-bottom: 1rem;">🎧</p>
-                        <p class="text--muted">{{ user.username }} n'a aucun accessoire dans sa collection</p>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
+    <div class="coll-hero__text">
+        <h1 class="coll-hero__title">Collection de <span class="coll-hero__username">{{ user.username }}</span></h1>
+        <p class="coll-hero__sub">{{ total_games + total_consoles + total_accessories }} élément(s) au total</p>
     </div>
+    <a href="{{ path('app_collection_index') }}" class="btn-outline coll-hero__back">
+        <i class="fas fa-arrow-left"></i> Retour
+    </a>
+</div>
+
+{# ---- Stats ---- #}
+<div class="coll-stats">
+    <div class="coll-stat coll-stat--games">
+        <i class="fas fa-gamepad coll-stat__icon"></i>
+        <span class="coll-stat__value">{{ total_games }}</span>
+        <span class="coll-stat__label">Jeux</span>
+    </div>
+    <div class="coll-stat coll-stat--consoles">
+        <i class="fas fa-desktop coll-stat__icon"></i>
+        <span class="coll-stat__value">{{ total_consoles }}</span>
+        <span class="coll-stat__label">Consoles</span>
+    </div>
+    <div class="coll-stat coll-stat--accessories">
+        <i class="fas fa-headphones coll-stat__icon"></i>
+        <span class="coll-stat__value">{{ total_accessories }}</span>
+        <span class="coll-stat__label">Accessoires</span>
+    </div>
+</div>
+
+{# ---- Tabs ---- #}
+<div class="coll-tabs" role="tablist">
+    <button class="coll-tab coll-tab--active" data-tab="games" role="tab">
+        <i class="fas fa-gamepad"></i>
+        <span>Jeux</span>
+        <span class="coll-tab__count">{{ game_collections|length }}</span>
+    </button>
+    <button class="coll-tab" data-tab="consoles" role="tab">
+        <i class="fas fa-desktop"></i>
+        <span>Consoles</span>
+        <span class="coll-tab__count">{{ console_collections|length }}</span>
+    </button>
+    <button class="coll-tab" data-tab="accessories" role="tab">
+        <i class="fas fa-headphones"></i>
+        <span>Accessoires</span>
+        <span class="coll-tab__count">{{ accessory_collections|length }}</span>
+    </button>
+</div>
+
+{# ---- Panneau Jeux ---- #}
+<div class="coll-panel coll-panel--active" id="tab-games" role="tabpanel">
+    {% if game_collections %}
+        <div class="coll-grid">
+            {% for collection in game_collections %}
+            <div class="coll-card coll-card--readonly">
+                <div class="coll-card__media">
+                    {% if collection.game.image %}
+                        <img src="{{ collection.game.image }}" alt="{{ collection.game.title }}" class="coll-card__img">
+                    {% else %}
+                        <div class="coll-card__placeholder coll-card__placeholder--games">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                    {% endif %}
+                    <span class="coll-card__type-badge coll-card__type-badge--games">Jeu</span>
+                    {% if collection.quantity > 1 %}
+                        <span class="coll-card__qty-badge">×{{ collection.quantity }}</span>
+                    {% endif %}
+                </div>
+                <div class="coll-card__body">
+                    <h3 class="coll-card__title">{{ collection.game.title }}</h3>
+                    <p class="coll-card__sub">{{ collection.game.platform.name ?? 'N/A' }}</p>
+                    {% if collection.note %}
+                        <div class="coll-card__note">
+                            <i class="fas fa-sticky-note"></i>
+                            <span>{{ collection.note }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="coll-card__footer">
+                    <a href="{{ path('app_game_show', {'id': collection.game.id}) }}" class="btn-primary btn-sm">
+                        <i class="fas fa-eye"></i> Voir les détails
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="coll-empty">
+            <i class="fas fa-gamepad coll-empty__icon"></i>
+            <p class="coll-empty__text">{{ user.username }} n'a aucun jeu dans sa collection</p>
+        </div>
+    {% endif %}
+</div>
+
+{# ---- Panneau Consoles ---- #}
+<div class="coll-panel" id="tab-consoles" role="tabpanel">
+    {% if console_collections %}
+        <div class="coll-grid">
+            {% for collection in console_collections %}
+            <div class="coll-card coll-card--readonly">
+                <div class="coll-card__media">
+                    {% if collection.console.image %}
+                        <img src="{{ collection.console.image }}" alt="{{ collection.console.name }}" class="coll-card__img">
+                    {% else %}
+                        <div class="coll-card__placeholder coll-card__placeholder--consoles">
+                            <i class="fas fa-desktop"></i>
+                        </div>
+                    {% endif %}
+                    <span class="coll-card__type-badge coll-card__type-badge--consoles">Console</span>
+                    {% if collection.quantity > 1 %}
+                        <span class="coll-card__qty-badge">×{{ collection.quantity }}</span>
+                    {% endif %}
+                </div>
+                <div class="coll-card__body">
+                    <h3 class="coll-card__title">{{ collection.console.name }}</h3>
+                    <p class="coll-card__sub">{{ collection.console.manufacturer ?? 'N/A' }}</p>
+                    {% if collection.note %}
+                        <div class="coll-card__note">
+                            <i class="fas fa-sticky-note"></i>
+                            <span>{{ collection.note }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="coll-card__footer">
+                    <a href="{{ path('app_console_show', {'id': collection.console.id}) }}" class="btn-secondary btn-sm">
+                        <i class="fas fa-eye"></i> Voir les détails
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="coll-empty">
+            <i class="fas fa-desktop coll-empty__icon"></i>
+            <p class="coll-empty__text">{{ user.username }} n'a aucune console dans sa collection</p>
+        </div>
+    {% endif %}
+</div>
+
+{# ---- Panneau Accessoires ---- #}
+<div class="coll-panel" id="tab-accessories" role="tabpanel">
+    {% if accessory_collections %}
+        <div class="coll-grid">
+            {% for collection in accessory_collections %}
+            <div class="coll-card coll-card--readonly">
+                <div class="coll-card__media">
+                    {% if collection.accessory.image %}
+                        <img src="{{ collection.accessory.image }}" alt="{{ collection.accessory.name }}" class="coll-card__img">
+                    {% else %}
+                        <div class="coll-card__placeholder coll-card__placeholder--accessories">
+                            <i class="fas fa-headphones"></i>
+                        </div>
+                    {% endif %}
+                    <span class="coll-card__type-badge coll-card__type-badge--accessories">Accessoire</span>
+                    {% if collection.quantity > 1 %}
+                        <span class="coll-card__qty-badge">×{{ collection.quantity }}</span>
+                    {% endif %}
+                </div>
+                <div class="coll-card__body">
+                    <h3 class="coll-card__title">{{ collection.accessory.name }}</h3>
+                    <p class="coll-card__sub">{{ collection.accessory.type ?? 'N/A' }}</p>
+                    {% if collection.note %}
+                        <div class="coll-card__note">
+                            <i class="fas fa-sticky-note"></i>
+                            <span>{{ collection.note }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="coll-card__footer">
+                    <a href="{{ path('app_accessory_show', {'id': collection.accessory.id}) }}" class="btn-outline btn-sm">
+                        <i class="fas fa-eye"></i> Voir les détails
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="coll-empty">
+            <i class="fas fa-headphones coll-empty__icon"></i>
+            <p class="coll-empty__text">{{ user.username }} n'a aucun accessoire dans sa collection</p>
+        </div>
+    {% endif %}
+</div>
+
 {% endblock %}
 
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.querySelectorAll('.coll-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+        const target = this.dataset.tab;
+        document.querySelectorAll('.coll-tab').forEach(t => t.classList.remove('coll-tab--active'));
+        document.querySelectorAll('.coll-panel').forEach(p => p.classList.remove('coll-panel--active'));
+        this.classList.add('coll-tab--active');
+        document.getElementById('tab-' + target).classList.add('coll-panel--active');
+    });
+});
+</script>
+{% endblock %}
