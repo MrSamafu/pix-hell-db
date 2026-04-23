@@ -17,7 +17,7 @@ class ConsoleKit
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'consoleKits')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Console $console = null;
 

@@ -17,7 +17,7 @@ class AccessoryKit
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'accessoryKits')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Accessory $accessory = null;
 

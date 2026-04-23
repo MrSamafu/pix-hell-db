@@ -17,7 +17,7 @@ class GameKit
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'gameKits')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Game $game = null;
 

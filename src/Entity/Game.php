@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\GameKit;
 
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 class Game
@@ -36,6 +37,9 @@ class Game
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: GameCollection::class, orphanRemoval: true)]
     private Collection $gameCollections;
 
+    #[ORM\OneToMany(mappedBy: 'game', targetEntity: GameKit::class)]
+    private Collection $gameKits;
+
     // Nouveaux champs demandés
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $developer = null;
@@ -61,6 +65,7 @@ class Game
     public function __construct()
     {
         $this->gameCollections = new ArrayCollection();
+        $this->gameKits = new ArrayCollection();
         $this->genres = new ArrayCollection();
         $this->modes = new ArrayCollection();
         $this->createdAt = new \DateTime();
@@ -129,6 +134,11 @@ class Game
     public function getGameCollections(): Collection
     {
         return $this->gameCollections;
+    }
+
+    public function getGameKits(): Collection
+    {
+        return $this->gameKits;
     }
 
     public function addGameCollection(GameCollection $gameCollection): static

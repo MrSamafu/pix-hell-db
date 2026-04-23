@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ConsoleRepository;
+use App\Entity\ConsoleKit;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -44,9 +45,13 @@ class Console
     #[ORM\OneToMany(mappedBy: 'console', targetEntity: ConsoleCollection::class, orphanRemoval: true)]
     private Collection $consoleCollections;
 
+    #[ORM\OneToMany(mappedBy: 'console', targetEntity: ConsoleKit::class)]
+    private Collection $consoleKits;
+
     public function __construct()
     {
         $this->consoleCollections = new ArrayCollection();
+        $this->consoleKits = new ArrayCollection();
         $this->addedAt = new \DateTime();
     }
 
@@ -146,6 +151,11 @@ class Console
     public function getConsoleCollections(): Collection
     {
         return $this->consoleCollections;
+    }
+
+    public function getConsoleKits(): Collection
+    {
+        return $this->consoleKits;
     }
 
     public function addConsoleCollection(ConsoleCollection $consoleCollection): static

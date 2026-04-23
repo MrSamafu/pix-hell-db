@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\AccessoryRepository;
+use App\Entity\AccessoryKit;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -41,9 +42,13 @@ class Accessory
     #[ORM\OneToMany(mappedBy: 'accessory', targetEntity: AccessoryCollection::class, orphanRemoval: true)]
     private Collection $accessoryCollections;
 
+    #[ORM\OneToMany(mappedBy: 'accessory', targetEntity: AccessoryKit::class)]
+    private Collection $accessoryKits;
+
     public function __construct()
     {
         $this->accessoryCollections = new ArrayCollection();
+        $this->accessoryKits = new ArrayCollection();
         $this->createdAt = new \DateTime();
     }
 
@@ -132,6 +137,11 @@ class Accessory
     public function getAccessoryCollections(): Collection
     {
         return $this->accessoryCollections;
+    }
+
+    public function getAccessoryKits(): Collection
+    {
+        return $this->accessoryKits;
     }
 
     public function addAccessoryCollection(AccessoryCollection $accessoryCollection): static

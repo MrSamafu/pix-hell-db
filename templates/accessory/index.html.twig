@@ -149,6 +149,25 @@
                                 </span>
                             {% endif %}
                         </div>
+
+                        <div class="catalog-card__counters">
+                            {% set collCount = accessory.accessoryCollections|length %}
+                            {% set kitCount  = accessory.accessoryKits|length %}
+                            {% if collCount > 0 %}
+                                {% set collNames = [] %}
+                                {% for col in accessory.accessoryCollections %}{% set collNames = collNames|merge([col.user.username]) %}{% endfor %}
+                                <span class="catalog-counter catalog-counter--coll" title="{{ collNames|join(', ') }}">
+                                    <i class="fas fa-box-open"></i> {{ collCount }}
+                                </span>
+                            {% endif %}
+                            {% if kitCount > 0 %}
+                                {% set kitNames = [] %}
+                                {% for kit in accessory.accessoryKits %}{% set kitNames = kitNames|merge([kit.user.username]) %}{% endfor %}
+                                <span class="catalog-counter catalog-counter--kit" title="{{ kitNames|join(', ') }}">
+                                    <i class="fas fa-suitcase"></i> {{ kitCount }}
+                                </span>
+                            {% endif %}
+                        </div>
                     </div>
 
                     <div class="catalog-card__actions">
