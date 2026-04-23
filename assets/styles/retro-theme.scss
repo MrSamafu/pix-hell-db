@@ -29,6 +29,7 @@ $spacing-xl: 3rem;
 $breakpoint-mobile: 576px;
 $breakpoint-tablet: 768px;
 $breakpoint-desktop: 1024px;
+$breakpoint-nav: 1100px;
 $breakpoint-wide: 1440px;
 
 // Typographie
@@ -150,6 +151,7 @@ a {
     align-items: center;
     max-width: $breakpoint-wide;
     margin: 0 auto;
+    gap: $spacing-sm;
   }
 
   &__brand {
@@ -158,6 +160,8 @@ a {
     color: $color-cream;
     text-transform: uppercase;
     letter-spacing: 1px;
+    white-space: nowrap;
+    flex-shrink: 0;
 
     span {
       color: $color-accent;
@@ -173,8 +177,9 @@ a {
     cursor: pointer;
     border-radius: $border-radius-sm;
     transition: all $transition-fast;
+    flex-shrink: 0;
 
-    @media (max-width: $breakpoint-tablet) {
+    @media (max-width: $breakpoint-nav) {
       display: block;
     }
 
@@ -183,12 +188,14 @@ a {
     }
   }
 
-  &__menu {
+  // Conteneur déroulant (desktop: flex row, mobile: drawer)
+  &__collapse {
     display: flex;
-    gap: $spacing-lg;
-    list-style: none;
+    align-items: center;
+    flex: 1;
+    gap: $spacing-sm;
 
-    @media (max-width: $breakpoint-tablet) {
+    @media (max-width: $breakpoint-nav) {
       display: none;
       position: absolute;
       top: 100%;
@@ -196,12 +203,59 @@ a {
       right: 0;
       background: $color-surface;
       flex-direction: column;
+      align-items: stretch;
       padding: $spacing-md;
       box-shadow: $box-shadow-lg;
+      border-top: 1px solid rgba($color-primary, 0.3);
+      max-height: calc(100vh - 70px);
+      overflow-y: auto;
+      animation: slideInDown $transition-normal;
+      z-index: 999;
 
       &.active {
         display: flex;
       }
+    }
+  }
+
+  &__menu {
+    display: flex;
+    gap: $spacing-sm;
+    list-style: none;
+    flex-wrap: wrap;
+    align-items: center;
+
+    // Menu principal : prend l'espace disponible
+    &:not(&--user) {
+      flex: 1;
+      justify-content: flex-start;
+    }
+
+    // Zone utilisateur : séparée visuellement à droite
+    &--user {
+      flex-shrink: 0;
+      padding-left: $spacing-md;
+      border-left: 2px solid rgba($color-primary, 0.4);
+      margin-left: $spacing-sm;
+      gap: $spacing-xs;
+
+      @media (max-width: $breakpoint-nav) {
+        padding-left: 0;
+        border-left: none;
+        margin-left: 0;
+        border-top: 2px solid rgba($color-primary, 0.4);
+        padding-top: $spacing-sm;
+        margin-top: $spacing-xs;
+        width: 100%;
+        flex-wrap: wrap;
+      }
+    }
+
+    // Sur mobile, les menus occupent toute la largeur
+    @media (max-width: $breakpoint-nav) {
+      width: 100%;
+      flex-direction: column;
+      gap: 0;
     }
   }
 
@@ -212,6 +266,42 @@ a {
     border-radius: $border-radius-sm;
     transition: all $transition-fast;
     position: relative;
+    font-size: $font-size-sm;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+
+    // Sur grand écran: taille normale
+    @media (min-width: $breakpoint-nav) {
+      font-size: $font-size-base;
+    }
+
+    // Sur mobile (menu ouvert): plein largeur
+    @media (max-width: $breakpoint-nav) {
+      width: 100%;
+      padding: $spacing-sm;
+      font-size: $font-size-base;
+      border-bottom: 1px solid rgba($color-primary, 0.1);
+    }
+
+    .fas, .fa, .far, .fab {
+      margin-right: 0;
+      width: 1.25em;
+      text-align: center;
+      flex-shrink: 0;
+
+      @media (min-width: $breakpoint-nav) {
+        margin-right: 0.3rem;
+      }
+    }
+
+    // Masquer le texte entre tablet et nav-breakpoint pour gagner de la place
+    .nav-label {
+      @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-desktop) {
+        display: none;
+      }
+    }
 
     &::after {
       content: '';
@@ -227,6 +317,7 @@ a {
 
     &:hover {
       color: $color-primary;
+      background: rgba($color-primary, 0.08);
 
       &::after {
         width: 80%;
@@ -256,6 +347,60 @@ a {
         transform: translateY(-2px);
       }
     }
+
+    // Style lien Profil
+    &--user {
+      border: 1px solid rgba($color-secondary, 0.5);
+      color: $color-secondary;
+
+      &:hover {
+        background: rgba($color-secondary, 0.15);
+        color: lighten($color-secondary, 10%);
+        border-color: $color-secondary;
+      }
+
+      &::after { display: none; }
+    }
+
+    // Style lien Connexion
+    &--login {
+      background: linear-gradient(135deg, $color-primary, lighten($color-primary, 10%));
+      color: $color-cream;
+      font-weight: 600;
+      border: 2px solid transparent;
+
+      &::after { display: none; }
+
+      &:hover {
+        color: $color-cream;
+        box-shadow: 0 0 12px rgba($color-primary, 0.6);
+        transform: translateY(-2px);
+      }
+    }
+
+    // Style lien Déconnexion
+    &--logout {
+      color: rgba($color-cream, 0.6);
+      font-size: $font-size-sm;
+
+      &:hover {
+        color: $color-accent;
+        background: rgba($color-accent, 0.08);
+      }
+
+      &::after { display: none; }
+    }
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -1029,7 +1174,7 @@ a {
   border-radius: $border-radius-lg;
   overflow: hidden;
   box-shadow: $box-shadow-lg;
-  position: sticky;
+  position: relative;
   top: $spacing-lg;
 
   &-header {

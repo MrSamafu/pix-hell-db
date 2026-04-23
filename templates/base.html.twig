@@ -17,26 +17,32 @@
         <a class="navbar__brand" href="{{ path('app_home') }}">
             Pix<span>Hell</span>DB
         </a>
-        <button class="navbar__toggle" type="button" onclick="toggleMenu()">
+        <button class="navbar__toggle" type="button" aria-expanded="false" aria-controls="navCollapse" onclick="toggleMenu(this)">
             <i class="fas fa-bars"></i>
         </button>
-        <ul class="navbar__menu" id="navMenu">
-            <li><a class="navbar__link" href="{{ path('app_home') }}"><i class="fas fa-home"></i> Accueil</a></li>
-            <li><a class="navbar__link" href="{{ path('app_game_index') }}"><i class="fas fa-gamepad"></i> Jeux vidéo</a></li>
-            <li><a class="navbar__link" href="{{ path('app_console_index') }}"><i class="fas fa-desktop"></i> Consoles</a></li>
-            <li><a class="navbar__link" href="{{ path('app_accessory_index') }}"><i class="fas fa-plug"></i> Accessoires</a></li>
-            <li><a class="navbar__link" href="{{ path('app_collection_index') }}"><i class="fas fa-folder-open"></i> Ma collection</a></li>
-            <li><a class="navbar__link" href="{{ path('app_kit_index') }}"><i class="fas fa-box-open"></i> Kits Convention</a></li>
-            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                {% if is_granted('ROLE_ADMIN') %}
-                    <li><a class="navbar__link navbar__link--admin" href="{{ path('app_admin_dashboard') }}"><i class="fas fa-shield-alt"></i> Admin</a></li>
+
+        <div class="navbar__collapse" id="navCollapse">
+            <ul class="navbar__menu" id="navMenu">
+                <li><a class="navbar__link" href="{{ path('app_home') }}"><i class="fas fa-home"></i><span class="nav-label"> Accueil</span></a></li>
+                <li><a class="navbar__link" href="{{ path('app_game_index') }}"><i class="fas fa-gamepad"></i><span class="nav-label"> Jeux vidéo</span></a></li>
+                <li><a class="navbar__link" href="{{ path('app_console_index') }}"><i class="fas fa-desktop"></i><span class="nav-label"> Consoles</span></a></li>
+                <li><a class="navbar__link" href="{{ path('app_accessory_index') }}"><i class="fas fa-plug"></i><span class="nav-label"> Accessoires</span></a></li>
+                <li><a class="navbar__link" href="{{ path('app_collection_index') }}"><i class="fas fa-folder-open"></i><span class="nav-label"> Ma collection</span></a></li>
+                <li><a class="navbar__link" href="{{ path('app_kit_index') }}"><i class="fas fa-box-open"></i><span class="nav-label"> Kits Convention</span></a></li>
+            </ul>
+
+            <ul class="navbar__menu navbar__menu--user" id="navMenuUser">
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li><a class="navbar__link navbar__link--admin" href="{{ path('app_admin_dashboard') }}"><i class="fas fa-shield-alt"></i><span class="nav-label"> Admin</span></a></li>
+                    {% endif %}
+                    <li><a class="navbar__link navbar__link--user" href="{{ path('app_profile') }}"><i class="fas fa-user-circle"></i><span class="nav-label"> Profil</span></a></li>
+                    <li><a class="navbar__link navbar__link--logout" href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i><span class="nav-label"> Déconnexion</span></a></li>
+                {% else %}
+                    <li><a class="navbar__link navbar__link--login" href="{{ path('app_login') }}"><i class="fas fa-sign-in-alt"></i><span class="nav-label"> Connexion</span></a></li>
                 {% endif %}
-                <li><a class="navbar__link" href="{{ path('app_profile') }}"><i class="fas fa-user"></i> Profil</a></li>
-                <li><a class="navbar__link" href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
-            {% else %}
-                <li><a class="navbar__link" href="{{ path('app_login') }}"><i class="fas fa-sign-in-alt"></i> Connexion</a></li>
-            {% endif %}
-        </ul>
+            </ul>
+        </div>
     </div>
 </nav>
 
@@ -62,10 +68,23 @@
             {{ encore_entry_script_tags('app') }}
     {{ encore_entry_script_tags('app') }}
     <script>
-        function toggleMenu() {
-            const menu = document.getElementById('navMenu');
-            menu.classList.toggle('active');
+        function toggleMenu(btn) {
+            const collapse = document.getElementById('navCollapse');
+            const isOpen = collapse.classList.toggle('active');
+            btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
         }
+
+        document.addEventListener('click', function(e) {
+            const navbar = document.querySelector('.navbar__container');
+            if (!navbar.contains(e.target)) {
+                const collapse = document.getElementById('navCollapse');
+                const btn = document.querySelector('.navbar__toggle');
+                if (collapse.classList.contains('active')) {
+                    collapse.classList.remove('active');
+                    btn.setAttribute('aria-expanded', 'false');
+                }
+            }
+        });
     </script>
 {% endblock %}
 </body>
